@@ -108,7 +108,8 @@ importer_table_access <- function(table, base_access = "Tables_ref.accdb"){
   }
 
   import <- normaliser_nom_champs(import) %>%
-    caracteres_vides_na()
+    caracteres_vides_na() %>%
+    dplyr::mutate_at(.cols = which(purrr::map_chr(import, class) == "character"), iconv, to = "UTF-8")
 
   return(import)
 
