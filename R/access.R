@@ -56,7 +56,7 @@ importer_table_access <- function(table, base_access = "Tables_ref.accdb"){
     #Session R 32bits necessaire
 
     connexion <- RODBC::odbcConnectAccess2007(base_access)
-    liste_tables <- liste_tables_odbc(connexion)
+    liste_tables <- importr::liste_tables_odbc(connexion)
 
     if (match(table, liste_tables) %>% .[!is.na(.)] %>% length() == 0) {
       stop(paste0("Table \"", table, "\" non trouvee dans la base"), call. = FALSE)
@@ -107,9 +107,12 @@ importer_table_access <- function(table, base_access = "Tables_ref.accdb"){
     }
   }
 
-  import <- normaliser_nom_champs(import) %>%
-    caracteres_vides_na() %>%
-    dplyr::mutate_at(.cols = which(purrr::map_chr(import, class) == "character"), iconv, to = "UTF-8")
+  import <- importr::normaliser_nom_champs(import) %>%
+    importr::caracteres_vides_na()
+
+  if (any(purrr::map_chr(import, class) == "character")) {
+    import <-dplyr::mutate_at(import, .cols = dplyr::vars(which(purrr::map_chr(import, class) == "character")), iconv, to = "UTF-8")
+  }
 
   return(import)
 
