@@ -5,7 +5,8 @@
 \title{Importer les fichiers Excel d'un repertoire (recursif)}
 \usage{
 importer_masse_excel(chemin, regex_fichier, regex_onglet = ".",
-  ligne_debut = 1, archive_zip = TRUE, test_champ_manquant = NULL,
+  ligne_debut = 1, paralleliser = TRUE, archive_zip = TRUE,
+  test_champ_manquant = NULL,
   archive_zip_repertoire_sortie = "import_masse_excel")
 }
 \arguments{

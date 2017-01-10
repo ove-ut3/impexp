@@ -363,7 +363,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' importr::importer_masse_xlsx(paste0(racine_packages, "importr/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "importr")
 #'
 #' @export
-importer_masse_excel <- function(chemin, regex_fichier, regex_onglet = ".", ligne_debut = 1, archive_zip = TRUE, test_champ_manquant = NULL, archive_zip_repertoire_sortie = "import_masse_excel") {
+importer_masse_excel <- function(chemin, regex_fichier, regex_onglet = ".", ligne_debut = 1, paralleliser = TRUE, archive_zip = TRUE, test_champ_manquant = NULL, archive_zip_repertoire_sortie = "import_masse_excel") {
 
   fichiers <- dplyr::tibble(fichier = list.files(chemin, pattern = regex_fichier, recursive = TRUE, full.names = TRUE))
 
@@ -372,7 +372,7 @@ importer_masse_excel <- function(chemin, regex_fichier, regex_onglet = ".", lign
 
     divr::vider_repertoire(archive_zip_repertoire_sortie)
 
-    archives_zip <- divr::extraire_masse_zip(chemin, regex_fichier = regex_fichier, repertoire_sortie = archive_zip_repertoire_sortie)
+    archives_zip <- divr::extraire_masse_zip(chemin, regex_fichier = regex_fichier, repertoire_sortie = archive_zip_repertoire_sortie, paralleliser = paralleliser)
 
     fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
       arrange(fichier)
@@ -384,7 +384,13 @@ importer_masse_excel <- function(chemin, regex_fichier, regex_onglet = ".", lign
   }
 
   message("Import des fichiers excels:")
-  cluster <- divr::initialiser_cluster()
+
+  if (paralleliser == TRUE) {
+    cluster <- divr::initialiser_cluster()
+  } else {
+    cluster <- NULL
+  }
+
   import_masse_xlsx <- pbapply::pblapply(fichiers$fichier %>% unique, importer_fichier_excel, regex_onglet = regex_onglet, ligne_debut = ligne_debut, test_champ_manquant = test_champ_manquant, cl = cluster) %>%
     dplyr::bind_rows() %>%
     dplyr::mutate(package = map(import, attributes) %>% map_chr( ~ ifelse(!is.null(.$package), .$package, NA_character_)),
@@ -393,7 +399,9 @@ importer_masse_excel <- function(chemin, regex_fichier, regex_onglet = ".", lign
                   info = map(import, attributes) %>% map_chr( ~ ifelse(!is.null(.$info), .$info, NA_character_))
            )
 
-  divr::stopper_cluster(cluster)
+  if (paralleliser == TRUE) {
+    divr::stopper_cluster(cluster)
+  }
 
   if (archive_zip == TRUE) {
     import_masse_xlsx <- left_join(fichiers, import_masse_xlsx, by = "fichier") %>%
