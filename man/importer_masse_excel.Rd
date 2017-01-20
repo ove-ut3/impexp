@@ -4,15 +4,15 @@
 \alias{importer_masse_excel}
 \title{Importer les fichiers Excel d'un repertoire (recursif)}
 \usage{
-importer_masse_excel(chemin, regex_fichier, regex_onglet = ".",
+importer_masse_excel(regex_fichier, chemin = ".", regex_onglet = ".",
   ligne_debut = 1, paralleliser = TRUE, archive_zip = TRUE,
   test_champ_manquant = NULL,
   archive_zip_repertoire_sortie = "import_masse_excel")
 }
 \arguments{
-\item{chemin}{Chemin du répertoire à partir duquel seront importés les fichiers excel (récursif).}
-
 \item{regex_fichier}{Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.}
+
+\item{chemin}{Chemin du répertoire à partir duquel seront importés les fichiers excel (récursif).}
 
 \item{regex_onglet}{Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.}
 
