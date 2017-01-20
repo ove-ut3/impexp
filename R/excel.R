@@ -365,7 +365,8 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' @export
 importer_masse_excel <- function(chemin, regex_fichier, regex_onglet = ".", ligne_debut = 1, paralleliser = TRUE, archive_zip = TRUE, test_champ_manquant = NULL, archive_zip_repertoire_sortie = "import_masse_excel") {
 
-  fichiers <- dplyr::tibble(fichier = list.files(chemin, pattern = regex_fichier, recursive = TRUE, full.names = TRUE))
+  fichiers <- dplyr::tibble(fichier = list.files(chemin, recursive = TRUE, full.names = TRUE) %>%
+                              .[which(stringr::str_detect(., regex_fichier))])
 
   # Si l'on inclut les archives zip
   if (archive_zip == TRUE) {
