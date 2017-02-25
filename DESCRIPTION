@@ -1,7 +1,7 @@
 Package: importr
 Title: Fonctions d'importation : Access, Excel, ODBC, SAS
 Version: 0.1
-Authors@R: person("SIES", "Departement des outils d'aide a la decision", email = "ce.siesc3@education.gouv.fr", role = c("aut", "cre"))
+Authors@R: person("Stéphane Le Hénanff", "Stéphane Le Hénanff", email = "github@le-henanff.fr", role = c("aut", "cre"))
 Description: Fonctions d'importation : Access, Excel, ODBC, SAS.
 Depends:
     R (>= 3.2.5)
