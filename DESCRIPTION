@@ -17,6 +17,7 @@ Imports:
     readxl,
     xlsx,
     openxlsx,
+    caractr,
     pbapply,
     ODB,
     haven
