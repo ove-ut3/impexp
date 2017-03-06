@@ -356,6 +356,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' @param fichier_log Chemin du fichier de log.
 #' @param archive_zip \code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
 #' @param test_champ_manquant Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.
+#' @param message_import Le message à afficher pendant l'importation (par défaut : "Import des fichiers excels:")
 #'
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
 #'
@@ -363,7 +364,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' importr::importer_masse_xlsx(paste0(racine_packages, "importr/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "importr")
 #'
 #' @export
-importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, paralleliser = TRUE, archive_zip = TRUE, test_champ_manquant = NULL, archive_zip_repertoire_sortie = "import_masse_excel") {
+importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, paralleliser = TRUE, archive_zip = TRUE, test_champ_manquant = NULL, archive_zip_repertoire_sortie = "import_masse_excel", message_import = "Import des fichiers excels:") {
 
   fichiers <- dplyr::tibble(fichier = list.files(chemin, recursive = TRUE, full.names = TRUE) %>%
                               .[which(stringr::str_detect(., regex_fichier))])
@@ -384,7 +385,7 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
     return(NULL)
   }
 
-  message("Import des fichiers excels:")
+  message(message_import)
 
   if (paralleliser == TRUE) {
     cluster <- divr::initialiser_cluster()

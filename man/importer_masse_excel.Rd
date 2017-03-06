@@ -7,7 +7,8 @@
 importer_masse_excel(regex_fichier, chemin = ".", regex_onglet = ".",
   ligne_debut = 1, paralleliser = TRUE, archive_zip = TRUE,
   test_champ_manquant = NULL,
-  archive_zip_repertoire_sortie = "import_masse_excel")
+  archive_zip_repertoire_sortie = "import_masse_excel",
+  message_import = "Import des fichiers excels:")
 }
 \arguments{
 \item{regex_fichier}{Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.}
@@ -22,6 +23,8 @@ importer_masse_excel(regex_fichier, chemin = ".", regex_onglet = ".",
 
 \item{test_champ_manquant}{Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.}
 
+\item{message_import}{Le message à afficher pendant l'importation (par défaut : "Import des fichiers excels:")}
+
 \item{fichier_log}{Chemin du fichier de log.}
 }
 \value{
@@ -34,4 +37,3 @@ Importer les fichiers Excel d'un répertoire (récursif).
 importr::importer_masse_xlsx(paste0(racine_packages, "importr/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "importr")
 
 }
-
