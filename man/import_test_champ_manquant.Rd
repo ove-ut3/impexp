@@ -25,4 +25,3 @@ Un data frame importé à partir de la première ligne non-vide.
 Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide d'un champ (fonction générique).
 }
 \keyword{internal}
-

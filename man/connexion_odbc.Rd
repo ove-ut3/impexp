@@ -28,4 +28,3 @@ Connexion à une librairie ODBC.
 connexion_bce <- importr::connexion_odbc("bce")
 
 }
-

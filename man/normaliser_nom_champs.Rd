@@ -25,4 +25,3 @@ table <- dplyr::data_frame(
 importr::normaliser_nom_champs(table)
 
 }
-

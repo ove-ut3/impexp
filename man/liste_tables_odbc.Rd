@@ -22,9 +22,8 @@ Lister les tables d'une base ODBC (filtre possible sur un schéma).
 importr::connexion_odbc("bce") \%>\%
   importr::liste_tables_odbc()
 
-# La liste des tables de la BCE du schéma "BCE"
+# La liste des tables de la BCE du schÃ©ma "BCE"
 importr::connexion_odbc("bce") \%>\%
   importr::liste_tables_odbc(schema = "BCE")
 
 }
-

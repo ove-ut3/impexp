@@ -43,4 +43,3 @@ importr::importer_fichier_excel(paste0(racine_packages, "importr/inst/extdata/im
   regex_onglet = "^Autre")
 
 }
-

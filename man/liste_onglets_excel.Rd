@@ -19,4 +19,3 @@ Lister les onglets d'un fichier excel.
 importr::liste_onglets_excel(paste0(racine_packages, "importr/inst/extdata/importr.xlsx"))
 
 }
-

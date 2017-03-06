@@ -23,4 +23,3 @@ Un data frame correspondant à la feuille excel.
 Importer un fichier Excel (fonction générique).
 }
 \keyword{internal}
-

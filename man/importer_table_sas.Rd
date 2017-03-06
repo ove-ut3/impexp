@@ -19,4 +19,3 @@ Importer une table SAS
 importr::importer_table_sas(paste0(racine_packages, "importr/inst/extdata/importr.sas7bdat"))
 
 }
-

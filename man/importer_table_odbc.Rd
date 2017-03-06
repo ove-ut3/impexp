@@ -30,4 +30,3 @@ connexion_bce <- importr::connexion_odbc("bce")
 n_nature_uai <- importr::importer_table_odbc("N_NATURE_UAI", connexion_bce, schema = "BCE")
 
 }
-

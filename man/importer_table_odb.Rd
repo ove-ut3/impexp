@@ -24,4 +24,3 @@ importr::importer_table_odb("importr",
   base_odb = paste0(racine_packages, "importr/inst/extdata/importr.odb"))
 
 }
-

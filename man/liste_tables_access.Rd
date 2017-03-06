@@ -19,4 +19,3 @@ Lister les tables d'une base Access.
 importr::liste_tables_access(paste0(racine_packages, "importr/inst/extdata/importr.accdb"))
 
 }
-

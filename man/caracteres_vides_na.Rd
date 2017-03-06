@@ -23,4 +23,3 @@ table <- dplyr::data_frame(
 importr::caracteres_vides_na(table)
 
 }
-

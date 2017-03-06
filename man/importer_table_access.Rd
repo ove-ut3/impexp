@@ -22,4 +22,3 @@ importr::importer_table_access("Table_importr",
   base_access = paste0(racine_packages, "importr/inst/extdata/importr.accdb"))
 
 }
-

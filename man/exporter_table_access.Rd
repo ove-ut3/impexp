@@ -28,4 +28,3 @@ importr::exporter_table_access(data_frame, base_access = "Chemin/vers/une/base/A
   table_access = "export")
 
 }
-

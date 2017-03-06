@@ -16,9 +16,8 @@ Un vecteur des schémas ODBC de la connexion.
 Lister les schémas d'une base ODBC.
 }
 \examples{
-# La liste des schémas de la BCE
+# La liste des schÃ©mas de la BCE
 importr::connexion_odbc("bce") \%>\%
   importr::liste_schemas_odbc()
 
 }
-

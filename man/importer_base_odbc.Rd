@@ -30,4 +30,3 @@ iuf <- importr::importer_base_odbc(librairie = "siredo", schema = "IUF")
 iuf
 
 }
-
