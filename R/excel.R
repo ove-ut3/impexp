@@ -395,10 +395,10 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
 
   import_masse_xlsx <- pbapply::pblapply(fichiers$fichier %>% unique, importer_fichier_excel, regex_onglet = regex_onglet, ligne_debut = ligne_debut, test_champ_manquant = test_champ_manquant, cl = cluster) %>%
     dplyr::bind_rows() %>%
-    dplyr::mutate(package = map(import, attributes) %>% map_chr( ~ ifelse(!is.null(.$package), .$package, NA_character_)),
-                  erreur = map(import, attributes) %>% map_chr( ~ ifelse(!is.null(.$erreur), .$erreur, NA_character_)),
-                  warning = map(import, attributes) %>% map_chr( ~ ifelse(!is.null(.$warning), .$warning, NA_character_)),
-                  info = map(import, attributes) %>% map_chr( ~ ifelse(!is.null(.$info), .$info, NA_character_))
+    dplyr::mutate(package = purrr::map(import, attributes) %>% purrr::map_chr( ~ ifelse(!is.null(.$package), .$package, NA_character_)),
+                  erreur = purrr::map(import, attributes) %>% purrr::map_chr( ~ ifelse(!is.null(.$erreur), .$erreur, NA_character_)),
+                  warning = purrr::map(import, attributes) %>% purrr::map_chr( ~ ifelse(!is.null(.$warning), .$warning, NA_character_)),
+                  info = purrr::map(import, attributes) %>% purrr::map_chr( ~ ifelse(!is.null(.$info), .$info, NA_character_))
            )
 
   if (paralleliser == TRUE) {
