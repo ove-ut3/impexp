@@ -364,7 +364,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' importr::importer_masse_xlsx(paste0(racine_packages, "importr/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "importr")
 #'
 #' @export
-importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, paralleliser = TRUE, archive_zip = TRUE, test_champ_manquant = NULL, archive_zip_repertoire_sortie = "import_masse_excel", message_import = "Import des fichiers excels:") {
+importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, paralleliser = FALSE, archive_zip = FALSE, test_champ_manquant = NULL, archive_zip_repertoire_sortie = "import_masse_excel", message_import = "Import des fichiers excels:") {
 
   fichiers <- dplyr::tibble(fichier = list.files(chemin, recursive = TRUE, full.names = TRUE) %>%
                               .[which(stringr::str_detect(., regex_fichier))])
