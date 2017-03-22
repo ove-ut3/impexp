@@ -22,22 +22,11 @@ liste_onglets_excel <- function(fichier) {
     stop(paste0("Le fichier \"", fichier, "\" n'est pas un fichier excel"), call. = FALSE)
   }
 
-  # Temporaire avant correction du package readxl
-  if (Sys.info()['sysname'] == "Windows") file <- "NUL"
-  else if (Sys.info()['sysname'] == "Linux") file <- "/dev/null"
+  quiet_excel_sheets <- purrr::quietly(readxl::excel_sheets)
+  liste_onglets <- quiet_excel_sheets(fichier) %>%
+    .[["result"]]
 
-  # capture.output Temporaire avant correction du package readxl
-  capture.output(
-    liste_onglets <- tryCatch({
-      readxl::excel_sheets(fichier)
-    }, error = function(cond) {
-        return(cond)
-      }
-    )
-    ,file = file
-  )
-
-  if (class(liste_onglets)[1] == "character") {
+  if (any(class(liste_onglets) == "character") == TRUE) {
     return(liste_onglets)
   }
 
@@ -176,31 +165,9 @@ importer_fichier_excel <- function(fichier, nom_onglet = NULL, regex_onglet = NU
 #' @keywords internal
 importer_fichier_excel_ <- function(fichier, num_onglet, ligne_debut = 1, test_champ_manquant = NULL) {
 
-  if (Sys.info()['sysname'] == "Windows") file <- "NUL"
-  else if (Sys.info()['sysname'] == "Linux") file <- "/dev/null"
-
-  options(warn = 0)
-
-  # capture.output temporaire avant correction du package readxl
-  capture.output(
-    import <- tryCatch(
-      {
-        readxl::read_excel(fichier, sheet = num_onglet, skip = ligne_debut - 1)
-      },
-      warning = function(cond) {
-        options(warn = -1)
-        import <- readxl::read_excel(fichier, sheet = num_onglet, skip = ligne_debut - 1)
-        attr(import, "warning") <- cond$message
-        return(import)
-      },
-      error = function(cond) {
-        return(cond)
-      }
-    )
-    , file = file
-  )
-
-  options(warn = 2)
+  quiet_read_excel <- purrr::quietly(readxl::read_excel)
+  import <- quiet_read_excel(fichier, sheet = num_onglet, skip = ligne_debut - 1) %>%
+    .[["result"]]
 
   if (any(class(import) == "tbl_df") == TRUE) {
 
