@@ -192,8 +192,6 @@ importer_fichier_excel_ <- function(fichier, num_onglet, ligne_debut = 1, test_c
 
   if (extension == "xls"){
 
-    #divr::message_log(paste0("Fichier ", fichier, " : Utilisation du package xlsx"), objet_log, niveaudiff_ligne_package = 1 = "warn")
-
     import <- tryCatch(
       {
         xlsx::read.xlsx(fichier, sheetIndex = num_onglet, startRow = ligne_debut, check.names = TRUE, stringsAsFactors = FALSE, encoding="UTF-8")
@@ -214,7 +212,6 @@ importer_fichier_excel_ <- function(fichier, num_onglet, ligne_debut = 1, test_c
       }
 
     } else {
-      #divr::message_log(paste0("Fichier ", fichier, " : Impossible de lire le fichier excel (package xlsx)"), niveau = "warn")
 
       import <- dplyr::tibble("erreur")
       attr(import, "erreur") <- "Impossible de lire le fichier excel"
