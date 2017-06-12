@@ -111,7 +111,7 @@ importer_table_access <- function(table, base_access = "Tables_ref.accdb"){
     importr::caracteres_vides_na()
 
   if (any(purrr::map_chr(import, class) == "character")) {
-    import <-dplyr::mutate_at(import, .cols = dplyr::vars(which(purrr::map_chr(import, class) == "character")), iconv, to = "UTF-8")
+    import <-dplyr::mutate_at(import, .vars = dplyr::vars(which(purrr::map_chr(import, class) == "character")), iconv, to = "UTF-8")
   }
 
   return(import)
