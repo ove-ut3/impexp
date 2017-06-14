@@ -89,6 +89,7 @@ liste_tables_odbc <- function(connexion_odbc, schema = NULL){
 
   if (!is.null(schema)) {
     liste_tables <- dplyr::filter_(liste_tables, paste0("table_schem == '", schema, "'"))
+    #liste_tables <- dplyr::filter(liste_tables, table_schem == '!!schema')
   }
 
   liste_tables_odbc <- liste_tables[["table_name"]]
