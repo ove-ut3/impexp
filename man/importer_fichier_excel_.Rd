@@ -5,7 +5,7 @@
 \title{Importer un fichier Excel (fonction générique).}
 \usage{
 importer_fichier_excel_(fichier, num_onglet, ligne_debut = 1,
-  test_champ_manquant = NULL)
+  col_types = NULL, test_champ_manquant = NULL)
 }
 \arguments{
 \item{fichier}{Chemin vers le fichier excel.}
@@ -13,6 +13,8 @@ importer_fichier_excel_(fichier, num_onglet, ligne_debut = 1,
 \item{num_onglet}{Numéro de l'onglet à importer.}
 
 \item{ligne_debut}{Ligne de début à partir duquel importer.}
+
+\item{col_types}{Type des champs (utilisé par \code{readxl::read_excel}.}
 
 \item{test_champ_manquant}{Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.}
 }
