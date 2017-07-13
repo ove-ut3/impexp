@@ -5,8 +5,8 @@
 \title{Importer les fichiers Excel d'un repertoire (recursif)}
 \usage{
 importer_masse_excel(regex_fichier, chemin = ".", regex_onglet = ".",
-  ligne_debut = 1, paralleliser = FALSE, archive_zip = FALSE,
-  test_champ_manquant = NULL,
+  ligne_debut = 1, col_types = NULL, paralleliser = FALSE,
+  archive_zip = FALSE, test_champ_manquant = NULL,
   archive_zip_repertoire_sortie = "import_masse_excel",
   message_import = "Import des fichiers excels:")
 }
@@ -18,6 +18,8 @@ importer_masse_excel(regex_fichier, chemin = ".", regex_onglet = ".",
 \item{regex_onglet}{Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.}
 
 \item{ligne_debut}{Ligne de début à partir duquel importer.}
+
+\item{col_types}{Type des champs (utilisé par \code{readxl::read_excel}.}
 
 \item{archive_zip}{\code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.}
 
