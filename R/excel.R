@@ -12,50 +12,16 @@
 #' @export
 liste_onglets_excel <- function(fichier) {
 
-  if (!file.exists(fichier)) {
-    stop(paste0("Le fichier \"", fichier, "\" n'existe pas"), call. = FALSE)
-  }
-
-  extension <- divr::extension_fichier(fichier)
-
-  if (!stringr::str_detect(extension, "^xls[xm]?$")) {
-    stop(paste0("Le fichier \"", fichier, "\" n'est pas un fichier excel"), call. = FALSE)
-  }
-
   quiet_excel_sheets <- purrr::quietly(readxl::excel_sheets)
   liste_onglets <- quiet_excel_sheets(fichier) %>%
     .[["result"]]
 
   if (any(class(liste_onglets) == "character") == TRUE) {
     return(liste_onglets)
-  }
-
-  if (extension == "xls") {
-
-    chargement_excel <- tryCatch( {
-      xlsx::loadWorkbook(fichier)
-      }
-      , error = function(cond) {
-      return(cond)
-      }
-    )
-
-    if (any(class(chargement_excel) == "error") == TRUE) {
-      return(NULL)
-    }
-
-    liste_onglets <- xlsx::getSheets(chargement_excel) %>%
-      names() %>%
-      iconv(from = "UTF-8") %>%
-      trimws()
-
-    return(liste_onglets)
-
   } else {
-    liste_onglets <- openxlsx::getSheetNames(fichier)
-
-    return(liste_onglets)
+    return(NULL)
   }
+
 }
 
 #' Importer un fichier Excel
@@ -90,16 +56,6 @@ liste_onglets_excel <- function(fichier) {
 #'
 #' @export
 importer_fichier_excel <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_onglet = 1, ligne_debut = 1, col_types = NULL, test_champ_manquant = NULL) {
-
-  if (!file.exists(fichier)) {
-    stop(paste0("Le fichier \"", fichier, "\" n'existe pas"), call. = FALSE)
-  }
-
-  extension <- divr::extension_fichier(fichier)
-
-  if (!stringr::str_detect(extension, "^xls[xm]?$")) {
-    stop(paste0("Le fichier \"", fichier, "\" n'est pas un fichier excel"), call. = FALSE)
-  }
 
   noms_onglets <- liste_onglets_excel(fichier)
 
@@ -182,78 +138,16 @@ importer_fichier_excel_ <- function(fichier, num_onglet, ligne_debut = 1, col_ty
       import <- importr::normaliser_nom_champs(import)
 
       if (!is.null(test_champ_manquant)) {
-        import <- import_test_champ_manquant(table = import, test_champ_manquant = test_champ_manquant, fichier = fichier, num_onglet = num_onglet, diff_ligne_package = 1, col_types = col_types)
+        import <- import_test_champ_manquant(table = import, test_champ_manquant = test_champ_manquant, fichier = fichier, num_onglet = num_onglet, col_types = col_types)
       }
     }
-
-    attr(import, "package") <- "readxl"
-
-    return(import)
-  }
-
-  extension <- divr::extension_fichier(fichier)
-
-  if (extension == "xls"){
-
-    import <- tryCatch(
-      {
-        xlsx::read.xlsx(fichier, sheetIndex = num_onglet, startRow = ligne_debut, check.names = TRUE, stringsAsFactors = FALSE, encoding="UTF-8")
-      }
-      , error = function(cond) {
-        return(cond)
-      }
-    )
-
-    if (class(import)[1] == "data.frame") {
-
-      import <- dplyr::as_tibble(import) %>%
-        normaliser_nom_champs() %>%
-        caracteres_vides_na()
-
-      if (!is.null(test_champ_manquant)) {
-        import <- import_test_champ_manquant(table = import, test_champ_manquant = test_champ_manquant, fichier = fichier, num_onglet = num_onglet, diff_ligne_package = 3, col_types = col_types)
-      }
-
-    } else {
-
-      import <- dplyr::tibble("erreur")
-      attr(import, "erreur") <- "Impossible de lire le fichier excel"
-    }
-
-    attr(import, "package") <- "xlsx"
-
-    return(import)
 
   } else {
-
-    import <- tryCatch(
-      {
-        openxlsx::read.xlsx(fichier, sheet = num_onglet, startRow = ligne_debut, check.names = TRUE)
-      }
-      , error = function(cond) {
-        return(cond)
-      }
-    )
-
-    if (any(class(import) == "data.frame") == TRUE) {
-
-      import <- dplyr::as_tibble(import) %>%
-        normaliser_nom_champs() %>%
-        caracteres_vides_na()
-
-      if (!is.null(test_champ_manquant)) {
-        import <- import_test_champ_manquant(table = import, test_champ_manquant = test_champ_manquant, fichier = fichier, num_onglet = num_onglet, diff_ligne_package = 3, col_types = col_types)
-      }
-    } else {
-      erreur <- import$message
-      import <- dplyr::tibble("erreur")
-      attr(import, "erreur") <- erreur
-    }
-
-    attr(import, "package") <- "openxlsx"
-
-    return(import)
+    import <- dplyr::tibble("erreur")
+    attr(import, "erreur") <- "Impossible de lire le fichier excel"
   }
+
+  return(import)
 
 }
 
@@ -263,14 +157,13 @@ importer_fichier_excel_ <- function(fichier, num_onglet, ligne_debut = 1, col_ty
 #' @param test_champ_manquant Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.
 #' @param fichier Chemin vers le fichier excel.
 #' @param num_onglet Numéro de l'onglet à importer.
-#' @param diff_ligne_package Correction entre packages sur le paramètre de première ligne d'import.
 #' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
 #'
 #' @return Un data frame importé à partir de la première ligne non-vide.
 #'
 #' @export
 #' @keywords internal
-import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_onglet, diff_ligne_package, col_types) {
+import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_onglet, col_types) {
 
   #Test si un champ est attendu dans l'import mais n'est pas présent
 
@@ -288,7 +181,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 
   ligne_en_tete <- dplyr::mutate_all(test, .funs = "as.character") %>%
     dplyr::mutate_all(.funs = "normaliser_char") %>%
-    dplyr::mutate(num_ligne = row_number() + diff_ligne_package)
+    dplyr::mutate(num_ligne = row_number() + 1)
 
   ligne_en_tete$paste2 <- apply(ligne_en_tete[, colnames(ligne_en_tete)], 1, caractr::paste2, collapse = "##")
   ligne_en_tete <- dplyr::select(ligne_en_tete, num_ligne, paste2) %>%
@@ -364,8 +257,7 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
 
   import_masse_xlsx <- pbapply::pblapply(fichiers$fichier %>% unique, importer_fichier_excel, regex_onglet = regex_onglet, ligne_debut = ligne_debut, col_types = col_types, test_champ_manquant = test_champ_manquant, cl = cluster) %>%
     dplyr::bind_rows() %>%
-    dplyr::mutate(package = purrr::map(import, attributes) %>% purrr::map_chr( ~ ifelse(!is.null(.$package), .$package, NA_character_)),
-                  erreur = purrr::map(import, attributes) %>% purrr::map_chr( ~ ifelse(!is.null(.$erreur), .$erreur, NA_character_)),
+    dplyr::mutate(erreur = purrr::map(import, attributes) %>% purrr::map_chr( ~ ifelse(!is.null(.$erreur), .$erreur, NA_character_)),
                   warning = purrr::map(import, attributes) %>% purrr::map_chr( ~ ifelse(!is.null(.$warning), .$warning, NA_character_)),
                   info = purrr::map(import, attributes) %>% purrr::map_chr( ~ ifelse(!is.null(.$info), .$info, NA_character_))
            )

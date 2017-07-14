@@ -15,8 +15,6 @@ Imports:
     dplyr,
     divr,
     readxl,
-    xlsx,
-    openxlsx,
     caractr,
     pbapply,
     ODB,

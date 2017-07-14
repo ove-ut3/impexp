@@ -5,7 +5,7 @@
 \title{Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide d'un champ (fonction générique).}
 \usage{
 import_test_champ_manquant(table, test_champ_manquant, fichier, num_onglet,
-  diff_ligne_package, col_types)
+  col_types)
 }
 \arguments{
 \item{table}{Table pour laquelle doit être déterminée la première ligne non-vide.}
@@ -15,8 +15,6 @@ import_test_champ_manquant(table, test_champ_manquant, fichier, num_onglet,
 \item{fichier}{Chemin vers le fichier excel.}
 
 \item{num_onglet}{Numéro de l'onglet à importer.}
-
-\item{diff_ligne_package}{Correction entre packages sur le paramètre de première ligne d'import.}
 
 \item{col_types}{Type des champs (utilisé par \code{readxl::read_excel}.}
 }
