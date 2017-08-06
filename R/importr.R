@@ -48,7 +48,7 @@ caracteres_vides_na <- function(table){
 
   if (nrow(table) != 0) {
 
-    num_champs_character <- purrr::map(table, class) %>%
+    num_champs_character <- lapply(table, class) %>%
       purrr::map_chr(1) %>%
       { which(. == "character") }
 

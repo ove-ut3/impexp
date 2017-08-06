@@ -160,7 +160,7 @@ importer_base_odbc <- function(librairie, schema = NULL, message_table = TRUE, f
 
   tables <- liste_tables_odbc(connexion_odbc, schema)
 
-  base <- purrr::map(tables, importer_table_odbc, connexion_odbc, schema, message_table = message_table)
+  base <- lapply(tables, importer_table_odbc, connexion_odbc, schema, message_table = message_table)
   names(base) <- tolower(tables)
 
   assign(librairie, base)

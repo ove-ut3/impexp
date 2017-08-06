@@ -89,7 +89,7 @@ importer_table_access <- function(table, base_access = "Tables_ref.accdb"){
       trimws() %>%
       format_col_type[.]
 
-    diff_type <- dplyr::data_frame(champ = names(import), col_type, import = purrr::map_chr(import, class)) %>%
+    diff_type <- dplyr::data_frame(champ = names(import), col_type, import = lapply(import, class)) %>%
       dplyr::filter(col_type != import)
 
     if (nrow(diff_type) >= 1) {
