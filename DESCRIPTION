@@ -9,7 +9,8 @@ License: Etalab
 Encoding: UTF-8
 LazyData: true
 Imports:
-    RODBC,
+    DBI,
+    odbc,
     stringr,
     purrr,
     dplyr,

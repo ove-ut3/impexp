@@ -1,3 +1,22 @@
+#' Se connecter a une base Access
+#'
+#' Se connecter à une base Access.
+#'
+#' @param base_access Chemin de la base Access.
+#'
+#' @return Une connexion à une base Access.
+#'
+#' @export
+#' @keywords internal
+connexion_access <- function(base_access = "Tables_ref.accdb") {
+
+  connexion <- DBI::dbConnect(odbc::odbc(),
+                              driver = "Microsoft Access Driver (*.mdb, *.accdb)",
+                              dbq = paste0(getwd(), "/", base_access),
+                              encoding = "ISO-8859-1")
+  return(connexion)
+}
+
 #' Lister les tables d'une base Access
 #'
 #' Lister les tables d'une base Access.
@@ -19,13 +38,17 @@ liste_tables_access <- function(base_access = "Tables_ref.accdb"){
   if (Sys.info()['sysname'] == "Windows"){
     #Session R 32bits necessaire
 
-    connexion <- RODBC::odbcConnectAccess2007(base_access)
-    liste_tables <- liste_tables_odbc(connexion)
+    connexion <- importr::connexion_access(base_access)
+
+    liste_tables <- DBI::dbListTables(connexion) %>%
+      stringr::str_subset("^[^(Msys)]")
+
+    DBI::dbDisconnect(connexion)
 
   } else if (Sys.info()['sysname'] == "Linux") {
 
     base_access <- stringr::str_replace_all(base_access, fixed(" "), "\\ ")
-    liste_tables <- system2("mdb-tables", base_access, stdout = T) %>%
+    liste_tables <- system2("mdb-tables", base_access, stdout = TRUE) %>%
       strsplit(" ") %>% .[[1]]
   }
 
@@ -55,17 +78,16 @@ importer_table_access <- function(table, base_access = "Tables_ref.accdb"){
   if (Sys.info()['sysname'] == "Windows"){
     #Session R 32bits necessaire
 
-    connexion <- RODBC::odbcConnectAccess2007(base_access)
-    liste_tables <- importr::liste_tables_odbc(connexion)
+    connexion <- importr::connexion_access(base_access)
 
-    if (match(table, liste_tables) %>% .[!is.na(.)] %>% length() == 0) {
+    if (match(table, DBI::dbListTables(connexion)) %>% .[!is.na(.)] %>% length() == 0) {
       stop(paste0("Table \"", table, "\" non trouvee dans la base"), call. = FALSE)
     }
 
-    import <- RODBC::sqlFetch(connexion, table, as.is = TRUE) %>%
-      dplyr::as_data_frame()
+    import <- DBI::dbReadTable(connexion, table) %>%
+      dplyr::as_tibble()
 
-    RODBC::odbcClose(connexion)
+    DBI::dbDisconnect(connexion)
 
   } else if (Sys.info()['sysname'] == "Linux") {
     base_access <- stringr::str_replace_all(base_access, stringr::fixed(" "), "\\ ")
@@ -139,20 +161,20 @@ importer_table_access <- function(table, base_access = "Tables_ref.accdb"){
 exporter_table_access <- function(table, base_access = "Tables_Ref.accdb", table_access = NULL, ecraser = TRUE){
   #Session R 32bits necessaire
 
-  if(is.null(table_access)) table_access <- deparse(substitute(table))
+  if (is.null(table_access)) {
+    table_access <- deparse(substitute(table))
+  }
 
-  connexion <- RODBC::odbcConnectAccess2007(base_access)
+  connexion <- importr::connexion_access(base_access)
 
-  liste_tables <- importr::liste_tables_odbc(connexion)
-
-  if (intersect(liste_tables, table_access) %>% length() != 0 & ecraser){
-    message("Table ", table_access, " ecrasee")
-    RODBC::sqlDrop(connexion, table_access)
+  if (intersect(DBI::dbListTables(connexion), table_access) %>% length() != 0 & ecraser){
+    message("Table ", table_access, " écrasée")
+    DBI::dbRemoveTable(connexion, table_access)
   }
 
   colnames(table) <- toupper(colnames(table))
 
-  RODBC::sqlSave(connexion, dat = table, tablename = table_access, rownames = F)
+  DBI::dbWriteTable(connexion, name = table_access, value = table)
 
-  RODBC::odbcClose(connexion)
+  DBI::dbDisconnect(connexion)
 }
