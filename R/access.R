@@ -135,12 +135,11 @@ importer_table_access <- function(table, base_access = "Tables_ref.accdb"){
     }
   }
 
-  import <- importr::normaliser_nom_champs(import) %>%
-    importr::caracteres_vides_na()
-
-  if (any(purrr::map_chr(import, class) == "character")) {
-    import <-dplyr::mutate_at(import, .vars = dplyr::vars(which(purrr::map_chr(import, class) == "character")), iconv, to = "UTF-8")
-  }
+  import <- import %>%
+    importr::normaliser_nom_champs() %>%
+    importr::caracteres_vides_na() %>%
+    dplyr::mutate_at(.vars = dplyr::vars(which(purrr::map_lgl(., ~ any(class(.) == "POSIXct")))), lubridate::as_date) %>%
+    dplyr::mutate_at(.vars = dplyr::vars(which(purrr::map_chr(., class) == "character")), iconv, to = "UTF-8")
 
   return(import)
 
