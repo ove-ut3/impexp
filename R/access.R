@@ -138,8 +138,7 @@ importer_table_access <- function(table, base_access = "Tables_ref.accdb"){
   import <- import %>%
     importr::normaliser_nom_champs() %>%
     importr::caracteres_vides_na() %>%
-    dplyr::mutate_at(.vars = dplyr::vars(which(purrr::map_lgl(., ~ any(class(.) == "POSIXct")))), lubridate::as_date) %>%
-    dplyr::mutate_at(.vars = dplyr::vars(which(purrr::map_chr(., class) == "character")), iconv, to = "UTF-8")
+    dplyr::mutate_at(.vars = dplyr::vars(which(purrr::map_lgl(., ~ any(class(.) == "POSIXct")))), lubridate::as_date)
 
   return(import)
 
