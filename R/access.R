@@ -10,9 +10,15 @@
 #' @keywords internal
 connexion_access <- function(base_access = "Tables_ref.accdb") {
 
+  if (Sys.info()['sysname'] == "Windows"){
+    if(!stringr::str_detect(base_access, "[A-Z]:\\/")) {
+      dbq <- paste0(getwd(), "/", base_access)
+    } else dbq <- base_access
+  }
+
   connexion <- DBI::dbConnect(odbc::odbc(),
                               driver = "Microsoft Access Driver (*.mdb, *.accdb)",
-                              dbq = paste0(getwd(), "/", base_access),
+                              dbq = dbq,
                               encoding = "ISO-8859-1")
   return(connexion)
 }
