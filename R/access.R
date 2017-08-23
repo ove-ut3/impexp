@@ -14,12 +14,15 @@ connexion_access <- function(base_access = "Tables_ref.accdb") {
     if(!stringr::str_detect(base_access, "[A-Z]:\\/")) {
       dbq <- paste0(getwd(), "/", base_access)
     } else dbq <- base_access
+    encoding <- "Windows-1252"
+  } else if (Sys.info()['sysname'] == "Linux") {
+    encoding <- "UTF-8"
   }
 
   connexion <- DBI::dbConnect(odbc::odbc(),
                               driver = "Microsoft Access Driver (*.mdb, *.accdb)",
                               dbq = dbq,
-                              encoding = "ISO-8859-1")
+                              encoding = encoding)
   return(connexion)
 }
 
