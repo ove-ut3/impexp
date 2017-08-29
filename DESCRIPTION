@@ -1,5 +1,5 @@
 Package: importr
-Title: Fonctions d'importation : Access, Excel, ODBC, SAS
+Title: Fonctions d'importation et exportation : Access, Excel, CSV, ODBC, SAS
 Version: 0.1
 Authors@R: person("Stéphane Le Hénanff", "Stéphane Le Hénanff", email = "github@le-henanff.fr", role = c("aut", "cre"))
 Description: Fonctions d'importation : Access, Excel, ODBC, SAS.
@@ -9,16 +9,19 @@ License: Etalab
 Encoding: UTF-8
 LazyData: true
 Imports:
-    DBI,
-    odbc,
-    stringr,
-    purrr,
-    dplyr,
-    divr,
-    readxl,
-    caractr,
-    pbapply,
-    ODB,
-    haven
+  caractr,
+  data.table,
+  DBI,
+  divr,
+  dplyr,
+  haven,
+  lubridate,
+  ODB,
+  odbc,
+  openxlsx,
+  pbapply,
+  purrr,
+  readxl,
+  stringr
 RoxygenNote: 6.0.1
 Suggests: testthat
