@@ -279,3 +279,32 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
   return(import_masse_xlsx)
 
 }
+#' Exporter un fichier excel
+#'
+#' Exporter un fichier excel.
+#'
+#' @param table data.frame ou liste de data.frame à exporter.
+#' @param nom_fichier \dots
+#' @param nom_onglet \dots
+#'
+#' @export
+exporter_fichier_excel <- function(table, nom_fichier, nom_onglet = NULL) {
+
+  if (any(class(table) == "data.frame")) {
+    tables <- list("table" = table)
+  }
+
+  if (any(purrr::map_lgl(tables, ~ !any(class(.) == "data.frame")))) {
+    stop("Au moins un des objets n'est pas un data.frame", call. = FALSE)
+  }
+
+  if (is.null(nom_onglet)) {
+    nom_onglet <- names(tables)
+  }
+
+  classeur <- openxlsx::createWorkbook()
+
+  purrr::walk2(tables, nom_onglet, ~ creer_onglet_excel(classeur, .x, .y))
+
+  openxlsx::saveWorkbook(classeur, nom_fichier, overwrite = TRUE)
+}
