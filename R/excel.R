@@ -279,6 +279,25 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
   return(import_masse_xlsx)
 
 }
+
+#' Creer un onglet dans un fichier excel
+#'
+#' Créer un onglet dans un fichier excel.
+#'
+#' @param classeur \dots
+#' @param table \dots
+#' @param nom_onglet \dots
+#'
+#' @export
+#' @keywords internal
+creer_onglet_excel <- function(classeur, table, nom_onglet) {
+
+  openxlsx::addWorksheet(classeur, sheetName = nom_onglet)
+  openxlsx::writeData(classeur, nom_onglet, table)
+  openxlsx::setColWidths(classeur, nom_onglet, cols = 1:ncol(table), widths = "auto")
+
+}
+
 #' Exporter un fichier excel
 #'
 #' Exporter un fichier excel.
