@@ -1,3 +1,23 @@
+#' Importer un fichier CSV
+#'
+#' Importer un fichier CSV.
+#'
+#' @param fichier Chemin vers le fichier CSV
+#' @param ligne_debut Ligne de début à partir duquel importer.
+#' @param encoding Encodage du fichier CSV.
+#' @param col_types Type des champs (utilisé par \code{data.table::fread}.
+#'
+#' @return Un data frame.\cr
+#'
+#' @export
+importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1", col_types = NULL) {
+
+  importer_fichier_csv <- data.table::fread(fichier, sep = ";", encoding = encoding) %>%
+    importr::normaliser_nom_champs()
+
+  return(importer_fichier_csv)
+}
+
 #' Importer les fichiers CSV d'un repertoire (recursif)
 #'
 #' Importer les fichiers CSV d'un répertoire (récursif).
