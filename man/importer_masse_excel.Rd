@@ -8,7 +8,7 @@ importer_masse_excel(regex_fichier, chemin = ".", regex_onglet = ".",
   ligne_debut = 1, col_types = NULL, paralleliser = FALSE,
   archive_zip = FALSE, test_champ_manquant = NULL,
   archive_zip_repertoire_sortie = "import_masse_excel",
-  message_import = "Import des fichiers excels:")
+  message_import = "Import des fichiers excel:")
 }
 \arguments{
 \item{regex_fichier}{Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.}
@@ -21,13 +21,15 @@ importer_masse_excel(regex_fichier, chemin = ".", regex_onglet = ".",
 
 \item{col_types}{Type des champs (utilisé par \code{readxl::read_excel}.}
 
+\item{paralleliser}{\code{TRUE}, import parallelisé des fichiers excel.}
+
 \item{archive_zip}{\code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.}
 
 \item{test_champ_manquant}{Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.}
 
-\item{message_import}{Le message à afficher pendant l'importation (par défaut : "Import des fichiers excels:")}
+\item{archive_zip_repertoire_sortie}{Nom du répertoire d'extraction des archives zip.}
 
-\item{fichier_log}{Chemin du fichier de log.}
+\item{message_import}{Le message à afficher pendant l'importation (par défaut : "Import des fichiers excels:")}
 }
 \value{
 Un data frame dont le champ "import" est la liste des data frame importés.

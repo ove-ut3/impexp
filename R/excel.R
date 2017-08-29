@@ -210,14 +210,15 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #'
 #' Importer les fichiers Excel d'un répertoire (récursif).
 #'
-#' @param chemin Chemin du répertoire à partir duquel seront importés les fichiers excel (récursif).
 #' @param regex_fichier Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.
+#' @param chemin Chemin du répertoire à partir duquel seront importés les fichiers excel (récursif).
 #' @param regex_onglet Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.
 #' @param ligne_debut Ligne de début à partir duquel importer.
 #' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
-#' @param fichier_log Chemin du fichier de log.
+#' @param paralleliser \code{TRUE}, import parallelisé des fichiers excel.
 #' @param archive_zip \code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
 #' @param test_champ_manquant Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.
+#' @param archive_zip_repertoire_sortie Nom du répertoire d'extraction des archives zip.
 #' @param message_import Le message à afficher pendant l'importation (par défaut : "Import des fichiers excels:")
 #'
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
@@ -226,7 +227,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' importr::importer_masse_xlsx(paste0(racine_packages, "importr/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "importr")
 #'
 #' @export
-importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, test_champ_manquant = NULL, archive_zip_repertoire_sortie = "import_masse_excel", message_import = "Import des fichiers excels:") {
+importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, test_champ_manquant = NULL, archive_zip_repertoire_sortie = "import_masse_excel", message_import = "Import des fichiers excel:") {
 
   fichiers <- dplyr::tibble(fichier = list.files(chemin, recursive = TRUE, full.names = TRUE) %>%
                               .[which(stringr::str_detect(., regex_fichier))])
@@ -270,7 +271,7 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
   }
 
   if (archive_zip == TRUE) {
-    import_masse_xlsx <- left_join(fichiers, import_masse_xlsx, by = "fichier") %>%
+    import_masse_xlsx <- dplyr::left_join(fichiers, import_masse_xlsx, by = "fichier") %>%
       dplyr::mutate(fichier = stringr::str_match(fichier, "/(.+)")[, 2])
 
   }
