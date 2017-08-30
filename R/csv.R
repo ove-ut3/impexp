@@ -12,7 +12,7 @@
 #' @export
 importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1", col_types = NULL) {
 
-  importer_fichier_csv <- data.table::fread(iconv(fichier, from = "UTF-8"), sep = ";", encoding = encoding) %>%
+  importer_fichier_csv <- data.table::fread(iconv(fichier, from = "UTF-8"), sep = ";", encoding = encoding, na.strings = c("NA", "", " ")) %>%
     importr::normaliser_nom_champs()
 
   return(importer_fichier_csv)
