@@ -12,6 +12,10 @@
 #' @export
 importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1", col_types = NULL) {
 
+  if (!file.exists(fichier)) {
+    stop("Le fichier \"", fichier,"\" n'existe pas.", call. = FALSE)
+  }
+
   importer_fichier_csv <- data.table::fread(iconv(fichier, from = "UTF-8"), sep = ";", encoding = encoding, na.strings = c("NA", "", " ")) %>%
     importr::normaliser_nom_champs()
 
@@ -36,6 +40,10 @@ importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1",
 #'
 #' @export
 importer_masse_csv <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, encoding = "Latin-1", col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, message_import = "Import des fichiers csv:") {
+
+  if (!dir.exists(chemin)) {
+    stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
+  }
 
   fichiers <- dplyr::tibble(fichier = list.files(chemin, recursive = TRUE, full.names = TRUE) %>%
                               .[which(stringr::str_detect(., regex_fichier))])
