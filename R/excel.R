@@ -12,6 +12,10 @@
 #' @export
 liste_onglets_excel <- function(fichier) {
 
+  if (!file.exists(fichier)) {
+    stop("Le fichier \"", fichier,"\" n'existe pas.", call. = FALSE)
+  }
+
   quiet_excel_sheets <- purrr::quietly(readxl::excel_sheets)
   liste_onglets <- quiet_excel_sheets(fichier) %>%
     .[["result"]]
@@ -56,6 +60,10 @@ liste_onglets_excel <- function(fichier) {
 #'
 #' @export
 importer_fichier_excel <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_onglet = 1, ligne_debut = 1, col_types = NULL, test_champ_manquant = NULL) {
+
+  if (!file.exists(fichier)) {
+    stop("Le fichier \"", fichier,"\" n'existe pas.", call. = FALSE)
+  }
 
   noms_onglets <- liste_onglets_excel(fichier)
 
@@ -227,6 +235,10 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #'
 #' @export
 importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, test_champ_manquant = NULL, message_import = "Import des fichiers excel:") {
+
+  if (!dir.exists(chemin)) {
+    stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
+  }
 
   fichiers <- dplyr::tibble(fichier = list.files(chemin, recursive = TRUE, full.names = TRUE) %>%
                               .[which(stringr::str_detect(., regex_fichier))])
