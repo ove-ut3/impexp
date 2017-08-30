@@ -218,7 +218,6 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' @param paralleliser \code{TRUE}, import parallelisé des fichiers excel.
 #' @param archive_zip \code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
 #' @param test_champ_manquant Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.
-#' @param archive_zip_repertoire_sortie Nom du répertoire d'extraction des archives zip.
 #' @param message_import Le message à afficher pendant l'importation (par défaut : "Import des fichiers excels:")
 #'
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
@@ -227,7 +226,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' importr::importer_masse_xlsx(paste0(racine_packages, "importr/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "importr")
 #'
 #' @export
-importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, test_champ_manquant = NULL, archive_zip_repertoire_sortie = "import_masse_excel", message_import = "Import des fichiers excel:") {
+importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, test_champ_manquant = NULL, message_import = "Import des fichiers excel:") {
 
   fichiers <- dplyr::tibble(fichier = list.files(chemin, recursive = TRUE, full.names = TRUE) %>%
                               .[which(stringr::str_detect(., regex_fichier))])
@@ -235,9 +234,7 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
   # Si l'on inclut les archives zip
   if (archive_zip == TRUE) {
 
-    divr::vider_repertoire(archive_zip_repertoire_sortie)
-
-    archives_zip <- divr::extraire_masse_zip(chemin, regex_fichier = regex_fichier, repertoire_sortie = archive_zip_repertoire_sortie, paralleliser = paralleliser)
+    archives_zip <- divr::extraire_masse_zip(chemin, regex_fichier = regex_fichier, paralleliser = paralleliser)
 
     fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
       arrange(fichier)

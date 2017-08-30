@@ -7,7 +7,6 @@
 importer_masse_excel(regex_fichier, chemin = ".", regex_onglet = ".",
   ligne_debut = 1, col_types = NULL, paralleliser = FALSE,
   archive_zip = FALSE, test_champ_manquant = NULL,
-  archive_zip_repertoire_sortie = "import_masse_excel",
   message_import = "Import des fichiers excel:")
 }
 \arguments{
@@ -26,8 +25,6 @@ importer_masse_excel(regex_fichier, chemin = ".", regex_onglet = ".",
 \item{archive_zip}{\code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.}
 
 \item{test_champ_manquant}{Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.}
-
-\item{archive_zip_repertoire_sortie}{Nom du répertoire d'extraction des archives zip.}
 
 \item{message_import}{Le message à afficher pendant l'importation (par défaut : "Import des fichiers excels:")}
 }
