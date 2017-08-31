@@ -226,7 +226,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' @param paralleliser \code{TRUE}, import parallelisé des fichiers excel.
 #' @param archive_zip \code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
 #' @param test_champ_manquant Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.
-#' @param message_import Le message à afficher pendant l'importation (par défaut : "Import des fichiers excels:")
+#' @param message_import \code{TRUE}, affichage du message d'import
 #'
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
 #'
@@ -234,7 +234,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' importr::importer_masse_xlsx(paste0(racine_packages, "importr/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "importr")
 #'
 #' @export
-importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, test_champ_manquant = NULL, message_import = "Import des fichiers excel:") {
+importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, test_champ_manquant = NULL, message_import = TRUE) {
 
   if (!dir.exists(chemin)) {
     stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
@@ -257,7 +257,7 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
     return(NULL)
   }
 
-  message(message_import)
+  if (message_import) message("Import de ", length(unique(fichiers$fichier))," fichiers excel...")
 
   if (paralleliser == TRUE) {
     cluster <- divr::initialiser_cluster()

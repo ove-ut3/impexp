@@ -6,8 +6,7 @@
 \usage{
 importer_masse_excel(regex_fichier, chemin = ".", regex_onglet = ".",
   ligne_debut = 1, col_types = NULL, paralleliser = FALSE,
-  archive_zip = FALSE, test_champ_manquant = NULL,
-  message_import = "Import des fichiers excel:")
+  archive_zip = FALSE, test_champ_manquant = NULL, message_import = TRUE)
 }
 \arguments{
 \item{regex_fichier}{Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.}
@@ -26,7 +25,7 @@ importer_masse_excel(regex_fichier, chemin = ".", regex_onglet = ".",
 
 \item{test_champ_manquant}{Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.}
 
-\item{message_import}{Le message à afficher pendant l'importation (par défaut : "Import des fichiers excels:")}
+\item{message_import}{\code{TRUE}, affichage du message d'import}
 }
 \value{
 Un data frame dont le champ "import" est la liste des data frame importés.

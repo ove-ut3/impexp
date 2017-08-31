@@ -34,12 +34,12 @@ importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1",
 #' @param col_types Type des champs (utilisé par \code{data.table::fread}.
 #' @param paralleliser \code{TRUE}, import parallelisé des fichiers excel.
 #' @param archive_zip \code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
-#' @param message_import Le message à afficher pendant l'importation (par défaut : "Import des fichiers csv:")
+#' @param message_import \code{TRUE}, affichage du message d'import
 #'
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
 #'
 #' @export
-importer_masse_csv <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, encoding = "Latin-1", col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, message_import = "Import des fichiers csv:") {
+importer_masse_csv <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, encoding = "Latin-1", col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, message_import = TRUE) {
 
   if (!dir.exists(chemin)) {
     stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
@@ -62,7 +62,7 @@ importer_masse_csv <- function(regex_fichier, chemin = ".", regex_onglet = ".", 
     return(NULL)
   }
 
-  message(message_import)
+  if (message_import) message("Import de ", length(unique(fichiers$fichier))," fichiers csv...")
 
   if (paralleliser == TRUE) {
     cluster <- divr::initialiser_cluster()

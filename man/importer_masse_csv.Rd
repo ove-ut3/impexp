@@ -6,8 +6,7 @@
 \usage{
 importer_masse_csv(regex_fichier, chemin = ".", regex_onglet = ".",
   ligne_debut = 1, encoding = "Latin-1", col_types = NULL,
-  paralleliser = FALSE, archive_zip = FALSE,
-  message_import = "Import des fichiers csv:")
+  paralleliser = FALSE, archive_zip = FALSE, message_import = TRUE)
 }
 \arguments{
 \item{regex_fichier}{Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.}
@@ -26,7 +25,7 @@ importer_masse_csv(regex_fichier, chemin = ".", regex_onglet = ".",
 
 \item{archive_zip}{\code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.}
 
-\item{message_import}{Le message à afficher pendant l'importation (par défaut : "Import des fichiers csv:")}
+\item{message_import}{\code{TRUE}, affichage du message d'import}
 }
 \value{
 Un data frame dont le champ "import" est la liste des data frame importés.
