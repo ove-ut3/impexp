@@ -319,20 +319,20 @@ creer_onglet_excel <- function(classeur, table, nom_onglet) {
 exporter_fichier_excel <- function(table, nom_fichier, nom_onglet = NULL) {
 
   if (any(class(table) == "data.frame")) {
-    tables <- list("table" = table)
+    table <- list("table" = table)
   }
 
-  if (any(purrr::map_lgl(tables, ~ !any(class(.) == "data.frame")))) {
+  if (any(purrr::map_lgl(table, ~ !any(class(.) == "data.frame")))) {
     stop("Au moins un des objets n'est pas un data.frame", call. = FALSE)
   }
 
   if (is.null(nom_onglet)) {
-    nom_onglet <- names(tables)
+    nom_onglet <- names(table)
   }
 
   classeur <- openxlsx::createWorkbook()
 
-  purrr::walk2(tables, nom_onglet, ~ creer_onglet_excel(classeur, .x, .y))
+  purrr::walk2(table, nom_onglet, ~ creer_onglet_excel(classeur, .x, .y))
 
   openxlsx::saveWorkbook(classeur, nom_fichier, overwrite = TRUE)
 }
