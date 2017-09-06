@@ -62,7 +62,7 @@ importer_masse_csv <- function(regex_fichier, chemin = ".", regex_onglet = ".", 
     return(NULL)
   }
 
-  if (message_import) message("Import de ", length(unique(fichiers$fichier))," fichiers csv...")
+  if (message_import) message("Import de ", length(unique(fichiers$fichier))," fichier(s) csv...")
 
   if (paralleliser == TRUE) {
     cluster <- divr::initialiser_cluster()
