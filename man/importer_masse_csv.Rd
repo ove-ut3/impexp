@@ -4,26 +4,24 @@
 \alias{importer_masse_csv}
 \title{Importer les fichiers CSV d'un repertoire (recursif)}
 \usage{
-importer_masse_csv(regex_fichier, chemin = ".", regex_onglet = ".",
-  ligne_debut = 1, encoding = "Latin-1", col_types = NULL,
-  paralleliser = FALSE, archive_zip = FALSE, message_import = TRUE)
+importer_masse_csv(regex_fichier, chemin = ".", ligne_debut = 1,
+  encoding = "Latin-1", col_types = NULL, paralleliser = FALSE,
+  archive_zip = FALSE, message_import = TRUE)
 }
 \arguments{
-\item{regex_fichier}{Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.}
+\item{regex_fichier}{Expression régulière à partir de laquelle les fichiers dont le nom matche sont importés.}
 
 \item{chemin}{Chemin du répertoire à partir duquel seront importés les fichiers excel (récursif).}
-
-\item{regex_onglet}{Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.}
 
 \item{ligne_debut}{Ligne de début à partir duquel importer.}
 
 \item{encoding}{Encodage des fichiers CSV.}
 
-\item{col_types}{Type des champs (utilisé par \code{data.table::fread}.}
+\item{col_types}{Type des champs (utilisé par \code{data.table::fread}).}
 
-\item{paralleliser}{\code{TRUE}, import parallelisé des fichiers excel.}
+\item{paralleliser}{\code{TRUE}, import parallelisé des fichiers CSV.}
 
-\item{archive_zip}{\code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.}
+\item{archive_zip}{\code{TRUE}, les fichiers CSV contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.}
 
 \item{message_import}{\code{TRUE}, affichage du message d'import}
 }

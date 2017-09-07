@@ -26,20 +26,19 @@ importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1",
 #'
 #' Importer les fichiers CSV d'un répertoire (récursif).
 #'
-#' @param regex_fichier Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.
+#' @param regex_fichier Expression régulière à partir de laquelle les fichiers dont le nom matche sont importés.
 #' @param chemin Chemin du répertoire à partir duquel seront importés les fichiers excel (récursif).
-#' @param regex_onglet Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.
 #' @param ligne_debut Ligne de début à partir duquel importer.
 #' @param encoding Encodage des fichiers CSV.
-#' @param col_types Type des champs (utilisé par \code{data.table::fread}.
-#' @param paralleliser \code{TRUE}, import parallelisé des fichiers excel.
-#' @param archive_zip \code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
+#' @param col_types Type des champs (utilisé par \code{data.table::fread}).
+#' @param paralleliser \code{TRUE}, import parallelisé des fichiers CSV.
+#' @param archive_zip \code{TRUE}, les fichiers CSV contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
 #' @param message_import \code{TRUE}, affichage du message d'import
 #'
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
 #'
 #' @export
-importer_masse_csv <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, encoding = "Latin-1", col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, message_import = TRUE) {
+importer_masse_csv <- function(regex_fichier, chemin = ".", ligne_debut = 1, encoding = "Latin-1", col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, message_import = TRUE) {
 
   if (!dir.exists(chemin)) {
     stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
