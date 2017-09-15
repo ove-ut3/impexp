@@ -5,7 +5,7 @@
 \title{Importer un fichier Excel}
 \usage{
 importer_fichier_excel(fichier, nom_onglet = NULL, regex_onglet = NULL,
-  num_onglet = 1, ligne_debut = 1, col_types = NULL,
+  num_onglet = 1, ligne_debut = 1, na = NULL, col_types = NULL,
   test_champ_manquant = NULL)
 }
 \arguments{
@@ -18,6 +18,8 @@ importer_fichier_excel(fichier, nom_onglet = NULL, regex_onglet = NULL,
 \item{num_onglet}{Numéro de l'onglet à importer.}
 
 \item{ligne_debut}{Ligne de début à partir duquel importer.}
+
+\item{na}{Caractères à considérer comme vide en plus de \code{c("")}.}
 
 \item{col_types}{Type des champs (utilisé par \code{readxl::read_excel}.}
 

@@ -37,6 +37,7 @@ liste_onglets_excel <- function(fichier) {
 #' @param regex_onglet Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.
 #' @param num_onglet Numéro de l'onglet à importer.
 #' @param ligne_debut Ligne de début à partir duquel importer.
+#' @param na Caractères à considérer comme vide en plus de \code{c("")}.
 #' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
 #' @param test_champ_manquant Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.
 #'
@@ -59,7 +60,7 @@ liste_onglets_excel <- function(fichier) {
 #'   regex_onglet = "^Autre")
 #'
 #' @export
-importer_fichier_excel <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_onglet = 1, ligne_debut = 1, col_types = NULL, test_champ_manquant = NULL) {
+importer_fichier_excel <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_onglet = 1, ligne_debut = 1, na = NULL, col_types = NULL, test_champ_manquant = NULL) {
 
   if (!file.exists(fichier)) {
     stop("Le fichier \"", fichier,"\" n'existe pas.", call. = FALSE)
@@ -105,6 +106,7 @@ importer_fichier_excel <- function(fichier, nom_onglet = NULL, regex_onglet = NU
                              import = lapply(num_onglet, importer_fichier_excel_,
                                fichier = fichier,
                                ligne_debut = ligne_debut,
+                               na = na,
                                col_types = col_types,
                                test_champ_manquant = test_champ_manquant)
                              )
@@ -123,6 +125,7 @@ importer_fichier_excel <- function(fichier, nom_onglet = NULL, regex_onglet = NU
 #' @param fichier Chemin vers le fichier excel.
 #' @param num_onglet Numéro de l'onglet à importer.
 #' @param ligne_debut Ligne de début à partir duquel importer.
+#' @param na Caractères à considérer comme vide en plus de \code{c("")}.
 #' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
 #' @param test_champ_manquant Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.
 #'
@@ -130,10 +133,10 @@ importer_fichier_excel <- function(fichier, nom_onglet = NULL, regex_onglet = NU
 #'
 #' @export
 #' @keywords internal
-importer_fichier_excel_ <- function(fichier, num_onglet, ligne_debut = 1, col_types = NULL, test_champ_manquant = NULL) {
+importer_fichier_excel_ <- function(fichier, num_onglet, ligne_debut = 1, na = NULL, col_types = NULL, test_champ_manquant = NULL) {
 
   quiet_read_excel <- purrr::quietly(readxl::read_excel)
-  import <- quiet_read_excel(fichier, sheet = num_onglet, skip = ligne_debut - 1, col_types = col_types) %>%
+  import <- quiet_read_excel(fichier, sheet = num_onglet, skip = ligne_debut - 1, na = c("", na), col_types = col_types) %>%
     .[["result"]]
 
   if (any(class(import) == "tbl_df") == TRUE) {
@@ -222,6 +225,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' @param chemin Chemin du répertoire à partir duquel seront importés les fichiers excel (récursif).
 #' @param regex_onglet Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.
 #' @param ligne_debut Ligne de début à partir duquel importer.
+#' @param na Caractères à considérer comme vide en plus de \code{c("")}.
 #' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
 #' @param paralleliser \code{TRUE}, import parallelisé des fichiers excel.
 #' @param archive_zip \code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
@@ -234,7 +238,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' importr::importer_masse_xlsx(paste0(racine_packages, "importr/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "importr")
 #'
 #' @export
-importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, test_champ_manquant = NULL, message_import = TRUE) {
+importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, na = NULL, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, test_champ_manquant = NULL, message_import = TRUE) {
 
   if (!dir.exists(chemin)) {
     stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
@@ -265,7 +269,7 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
     cluster <- NULL
   }
 
-  import_masse_xlsx <- pbapply::pblapply(fichiers$fichier %>% unique, importer_fichier_excel, regex_onglet = regex_onglet, ligne_debut = ligne_debut, col_types = col_types, test_champ_manquant = test_champ_manquant, cl = cluster) %>%
+  import_masse_xlsx <- pbapply::pblapply(fichiers$fichier %>% unique, importer_fichier_excel, regex_onglet = regex_onglet, ligne_debut = ligne_debut, na = na, col_types = col_types, test_champ_manquant = test_champ_manquant, cl = cluster) %>%
     dplyr::bind_rows() %>%
     dplyr::mutate(erreur = lapply(import, attributes) %>%
                     purrr::map_chr( ~ ifelse(!is.null(.$erreur), .$erreur, NA_character_)),
