@@ -5,8 +5,9 @@
 \title{Importer les fichiers CSV d'un repertoire (recursif)}
 \usage{
 importer_masse_csv(regex_fichier, chemin = ".", ligne_debut = 1,
-  encoding = "Latin-1", col_types = NULL, paralleliser = FALSE,
-  archive_zip = FALSE, message_import = TRUE)
+  encoding = "Latin-1", na = NULL, col_types = NULL,
+  paralleliser = FALSE, archive_zip = FALSE, warning_type = FALSE,
+  message_import = TRUE)
 }
 \arguments{
 \item{regex_fichier}{Expression régulière à partir de laquelle les fichiers dont le nom matche sont importés.}
@@ -17,11 +18,15 @@ importer_masse_csv(regex_fichier, chemin = ".", ligne_debut = 1,
 
 \item{encoding}{Encodage des fichiers CSV.}
 
+\item{na}{Caractères à considérer comme vide en plus de \code{c("NA", "", " ")}.}
+
 \item{col_types}{Type des champs (utilisé par \code{data.table::fread}).}
 
 \item{paralleliser}{\code{TRUE}, import parallelisé des fichiers CSV.}
 
 \item{archive_zip}{\code{TRUE}, les fichiers CSV contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.}
+
+\item{warning_type}{Affichage des warnings liés aux types des champs importés.}
 
 \item{message_import}{\code{TRUE}, affichage du message d'import}
 }
