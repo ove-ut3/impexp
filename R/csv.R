@@ -35,6 +35,7 @@ importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1",
   }
 
   importer_fichier_csv <- importer_fichier_csv %>%
+    tibble::as_tibble() %>%
     importr::normaliser_nom_champs()
 
   return(importer_fichier_csv)
