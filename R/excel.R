@@ -305,9 +305,90 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
 #' @keywords internal
 creer_onglet_excel <- function(classeur, table, nom_onglet) {
 
-  openxlsx::addWorksheet(classeur, sheetName = nom_onglet)
-  openxlsx::writeData(classeur, nom_onglet, table)
-  openxlsx::setColWidths(classeur, nom_onglet, cols = 1:ncol(table), widths = "auto")
+  openxlsx::addWorksheet(classeur, nom_onglet)
+
+  n_colonnes_lib <- length(stringr::str_subset(colnames(table), "^lib"))
+
+  if (!is.null(table[["sous_titre_"]])) {
+    num_ligne_sous_titre <- which(table$sous_titre_ == "O")
+    table <- dplyr::select(table, -sous_titre_)
+  }
+
+  if (!is.null(table[["indentation_"]])) {
+    table <- table %>%
+      dplyr::mutate(lib = paste0(purrr::map_chr(indentation_, ~ paste0(rep("   ", . - 1), collapse = "")), lib)) %>%
+      dplyr::select(-indentation_)
+  }
+
+  style_donnees <- openxlsx::createStyle(halign = "right")
+  style_titre1 <- openxlsx::createStyle(textDecoration = "bold", halign = "center")
+  style_titre2 <- openxlsx::createStyle(textDecoration = "bold", halign = "center", border = "bottom")
+  style_sous_titre <- openxlsx::createStyle(textDecoration = "bold", border = "bottom")
+  style_colonnes_bordure <- openxlsx::createStyle(border = "right")
+
+  #### Titre ####
+
+  titre_complet <- colnames(table) %>%
+    .[!stringr::str_detect(., "^lib")] %>%
+    paste0("##")
+  num_ligne_titre = 0
+
+  while(any(stringr::str_detect(titre_complet, "##"), na.rm = TRUE)) {
+
+    num_ligne_titre <- num_ligne_titre + 1
+
+    titre_ligne <- titre_complet %>%
+      stringr::str_match("^(.+?)##") %>% .[, 2] %>%
+      tibble::tibble(titre = .)
+
+    titre_complet <- titre_complet %>%
+      stringr::str_match("##(.+)") %>% .[, 2]
+
+    if (any(stringr::str_detect(titre_complet, "##"), na.rm = TRUE)) {
+      merge <- titre_ligne %>%
+        dplyr::mutate(merge = dplyr::row_number(titre) + n_colonnes_lib) %>%
+        split(x = .$merge, f = .$titre)
+      derniere_ligne_titre <- FALSE
+      style <- style_titre1
+
+      if (num_ligne_titre == 1) {
+        num_colonnes_bordure <- purrr::map_int(merge, tail, 1)
+      }
+
+    } else {
+      derniere_ligne_titre <- TRUE
+      style <- style_titre2
+    }
+
+    titre_ligne <- titre_ligne %>%
+      t() %>%
+      tibble::as_tibble()
+
+    openxlsx::writeData(classeur, nom_onglet, titre_ligne, startCol = n_colonnes_lib + 1, startRow = num_ligne_titre, colNames = FALSE)
+    openxlsx::addStyle(classeur, nom_onglet, style, rows = num_ligne_titre, 1:ncol(table), gridExpand = TRUE, stack = TRUE)
+
+    if (derniere_ligne_titre == FALSE) {
+      purrr::walk(merge, ~ openxlsx::mergeCells(classeur, nom_onglet, cols = ., rows = 1))
+    }
+
+  }
+
+  #### Corps ####
+
+  openxlsx::writeData(classeur, nom_onglet, table, startRow = num_ligne_titre + 1, colNames = FALSE)
+  openxlsx::addStyle(classeur, nom_onglet, style_donnees, rows = (num_ligne_titre + 1):(num_ligne_titre + nrow(table)), n_colonnes_lib + 1:(ncol(table) + 1), gridExpand = TRUE, stack = TRUE)
+  # openxlsx::setColWidths(classeur, nom_onglet, cols = 1:n_colonnes_lib, widths = 15)
+  # openxlsx::removeColWidths(classeur, nom_onglet, cols = 1:n_colonnes_lib)
+
+  if (exists("num_colonnes_bordure")) {
+
+    openxlsx::addStyle(classeur, nom_onglet, style_colonnes_bordure, rows = 1:(num_ligne_titre + nrow(table)), cols = num_colonnes_bordure, gridExpand = TRUE, stack = TRUE)
+  }
+
+  if (exists("num_ligne_sous_titre")) {
+
+    openxlsx::addStyle(classeur, nom_onglet, style_sous_titre, rows = num_ligne_titre + num_ligne_sous_titre, cols = 1:ncol(table), gridExpand = TRUE, stack = TRUE)
+  }
 
 }
 
