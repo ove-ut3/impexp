@@ -346,7 +346,7 @@ creer_onglet_excel <- function(classeur, table, nom_onglet) {
 
     if (any(stringr::str_detect(titre_complet, "##"), na.rm = TRUE)) {
       merge <- titre_ligne %>%
-        dplyr::mutate(merge = dplyr::row_number(titre) + n_colonnes_lib) %>%
+        dplyr::mutate(merge = row_number() + n_colonnes_lib) %>%
         split(x = .$merge, f = .$titre)
       derniere_ligne_titre <- FALSE
       style <- style_titre1
