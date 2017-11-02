@@ -300,10 +300,11 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
 #' @param classeur \dots
 #' @param table \dots
 #' @param nom_onglet \dots
+#' @param notes \dots
 #'
 #' @export
 #' @keywords internal
-creer_onglet_excel <- function(classeur, table, nom_onglet) {
+creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL) {
 
   openxlsx::addWorksheet(classeur, nom_onglet)
 
@@ -390,6 +391,15 @@ creer_onglet_excel <- function(classeur, table, nom_onglet) {
     openxlsx::addStyle(classeur, nom_onglet, style_sous_titre, rows = num_ligne_titre + num_ligne_sous_titre, cols = 1:ncol(table), gridExpand = TRUE, stack = TRUE)
   }
 
+  #### Note ####
+
+  if (!is.null(notes)) {
+    note <- tibble::tibble(note1 = "Présents à tous les examens = étudiants ayant obtenu le résultat \"Admis\", \"Ajourné\", \"Accès étape\" ou \"En attente\" à la version d'étape dans Apogée") %>%
+      t()
+
+    openxlsx::writeData(classeur, nom_onglet, note, startRow = num_ligne_titre + nrow(table) + 2, colNames = FALSE)
+  }
+
 }
 
 #' Exporter un fichier excel
@@ -399,9 +409,10 @@ creer_onglet_excel <- function(classeur, table, nom_onglet) {
 #' @param table data.frame ou liste de data.frame à exporter.
 #' @param nom_fichier \dots
 #' @param nom_onglet \dots
+#' @param notes \dots
 #'
 #' @export
-exporter_fichier_excel <- function(table, nom_fichier, nom_onglet = NULL) {
+exporter_fichier_excel <- function(table, nom_fichier, nom_onglet = NULL, notes = NULL) {
 
   if (any(class(table) == "data.frame")) {
     table <- list("table" = table)
@@ -417,7 +428,7 @@ exporter_fichier_excel <- function(table, nom_fichier, nom_onglet = NULL) {
 
   classeur <- openxlsx::createWorkbook()
 
-  purrr::walk2(table, nom_onglet, ~ creer_onglet_excel(classeur, .x, .y))
+  purrr::walk2(table, nom_onglet, ~ creer_onglet_excel(classeur, .x, .y, notes))
 
   openxlsx::saveWorkbook(classeur, nom_fichier, overwrite = TRUE)
 }
