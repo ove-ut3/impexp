@@ -394,9 +394,8 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL) {
   #### Note ####
 
   if (!is.null(notes)) {
-    note <- tibble::tibble(note1 = "Présents à tous les examens = étudiants ayant obtenu le résultat \"Admis\", \"Ajourné\", \"Accès étape\" ou \"En attente\" à la version d'étape dans Apogée") %>%
+    note <- tibble::tibble(note1 = notes) %>%
       t()
-
     openxlsx::writeData(classeur, nom_onglet, note, startRow = num_ligne_titre + nrow(table) + 2, colNames = FALSE)
   }
 
@@ -428,7 +427,11 @@ exporter_fichier_excel <- function(table, nom_fichier, nom_onglet = NULL, notes 
 
   classeur <- openxlsx::createWorkbook()
 
-  purrr::walk2(table, nom_onglet, ~ creer_onglet_excel(classeur, .x, .y, notes))
+  if (!is.null(notes) & length(notes) != length(table)) {
+    stop("Le nombre de notes doit être égale au nombre de table", call. = FALSE)
+  }
+
+  purrr::pwalk(list(table, nom_onglet, notes), creer_onglet_excel, classeur = classeur)
 
   openxlsx::saveWorkbook(classeur, nom_fichier, overwrite = TRUE)
 }
