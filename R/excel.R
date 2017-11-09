@@ -378,8 +378,7 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL) {
 
   openxlsx::writeData(classeur, nom_onglet, table, startRow = num_ligne_titre + 1, colNames = FALSE)
   openxlsx::addStyle(classeur, nom_onglet, style_donnees, rows = (num_ligne_titre + 1):(num_ligne_titre + nrow(table)), n_colonnes_lib + 1:(ncol(table) + 1), gridExpand = TRUE, stack = TRUE)
-  # openxlsx::setColWidths(classeur, nom_onglet, cols = 1:n_colonnes_lib, widths = 15)
-  # openxlsx::removeColWidths(classeur, nom_onglet, cols = 1:n_colonnes_lib)
+  openxlsx::setColWidths(classeur, nom_onglet, cols = 1:n_colonnes_lib, widths = "auto")
 
   if (exists("num_colonnes_bordure")) {
 
