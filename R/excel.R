@@ -245,7 +245,8 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
   }
 
   fichiers <- dplyr::tibble(fichier = list.files(chemin, recursive = TRUE, full.names = TRUE) %>%
-                              .[which(stringr::str_detect(., regex_fichier))])
+                              stringr::str_subset(regex_fichier) %>%
+                              iconv(from = "UTF-8"))
 
   # Si l'on inclut les archives zip
   if (archive_zip == TRUE) {
