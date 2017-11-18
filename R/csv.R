@@ -53,13 +53,14 @@ importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1",
 #' @param col_types Type des champs (utilisé par \code{data.table::fread}).
 #' @param paralleliser \code{TRUE}, import parallelisé des fichiers CSV.
 #' @param archive_zip \code{TRUE}, les fichiers CSV contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
+#' @param regex_zip Expression régulière pour filtrer les archives zip à traiter.
 #' @param warning_type Affichage des warnings liés aux types des champs importés.
 #' @param message_import \code{TRUE}, affichage du message d'import
 #'
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
 #'
 #' @export
-importer_masse_csv <- function(regex_fichier, chemin = ".", ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, warning_type = FALSE, message_import = TRUE) {
+importer_masse_csv <- function(regex_fichier, chemin = ".", ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, regex_zip = NULL, warning_type = FALSE, message_import = TRUE) {
 
   if (!dir.exists(chemin)) {
     stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
@@ -72,7 +73,7 @@ importer_masse_csv <- function(regex_fichier, chemin = ".", ligne_debut = 1, enc
   # Si l'on inclut les archives zip
   if (archive_zip == TRUE) {
 
-    archives_zip <- divr::extraire_masse_zip(chemin, regex_fichier = regex_fichier, paralleliser = paralleliser)
+    archives_zip <- divr::extraire_masse_zip(chemin, regex_fichier = regex_fichier, regex_zip = regex_zip, paralleliser = paralleliser)
 
     fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
       dplyr::arrange(fichier)

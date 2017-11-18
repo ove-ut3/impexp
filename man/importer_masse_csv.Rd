@@ -6,8 +6,8 @@
 \usage{
 importer_masse_csv(regex_fichier, chemin = ".", ligne_debut = 1,
   encoding = "Latin-1", na = NULL, col_types = NULL,
-  paralleliser = FALSE, archive_zip = FALSE, warning_type = FALSE,
-  message_import = TRUE)
+  paralleliser = FALSE, archive_zip = FALSE, regex_zip = NULL,
+  warning_type = FALSE, message_import = TRUE)
 }
 \arguments{
 \item{regex_fichier}{Expression régulière à partir de laquelle les fichiers dont le nom matche sont importés.}
@@ -25,6 +25,8 @@ importer_masse_csv(regex_fichier, chemin = ".", ligne_debut = 1,
 \item{paralleliser}{\code{TRUE}, import parallelisé des fichiers CSV.}
 
 \item{archive_zip}{\code{TRUE}, les fichiers CSV contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.}
+
+\item{regex_zip}{Expression régulière pour filtrer les archives zip à traiter.}
 
 \item{warning_type}{Affichage des warnings liés aux types des champs importés.}
 
