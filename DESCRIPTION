@@ -22,6 +22,7 @@ Imports:
   pbapply,
   purrr,
   readxl,
-  stringr
+  stringr,
+  tibble
 RoxygenNote: 6.0.1
 Suggests: testthat
