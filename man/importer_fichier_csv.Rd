@@ -5,7 +5,7 @@
 \title{Importer un fichier CSV}
 \usage{
 importer_fichier_csv(fichier, ligne_debut = 1, encoding = "Latin-1",
-  na = NULL, col_types = NULL, warning_type = TRUE)
+  na = NULL, dec = ",", col_types = NULL, warning_type = TRUE)
 }
 \arguments{
 \item{fichier}{Chemin vers le fichier CSV}
@@ -15,6 +15,8 @@ importer_fichier_csv(fichier, ligne_debut = 1, encoding = "Latin-1",
 \item{encoding}{Encodage du fichier CSV.}
 
 \item{na}{Caractères à considérer comme vide en plus de \code{c("NA", "", " ")}.}
+
+\item{dec}{Cractère de décimale, par défaut la virgule.}
 
 \item{col_types}{Type des champs (utilisé par \code{data.table::fread}.}
 

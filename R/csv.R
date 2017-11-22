@@ -6,13 +6,14 @@
 #' @param ligne_debut Ligne de début à partir duquel importer.
 #' @param encoding Encodage du fichier CSV.
 #' @param na Caractères à considérer comme vide en plus de \code{c("NA", "", " ")}.
+#' @param dec Cractère de décimale, par défaut la virgule.
 #' @param col_types Type des champs (utilisé par \code{data.table::fread}.
 #' @param warning_type Affichage des warnings liés aux types des champs importés.
 #'
 #' @return Un data frame.\cr
 #'
 #' @export
-importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL, warning_type = TRUE) {
+importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1", na = NULL, dec = ",", col_types = NULL, warning_type = TRUE) {
 
   if (!file.exists(fichier)) {
     stop("Le fichier \"", fichier,"\" n'existe pas.", call. = FALSE)
@@ -24,7 +25,7 @@ importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1",
     fonction_import <- data.table::fread
   }
 
-  importer_fichier_csv <- fonction_import(iconv(fichier, from = "UTF-8"), sep = ";", encoding = encoding, na.strings = c("NA", "", " ", na))
+  importer_fichier_csv <- fonction_import(iconv(fichier, from = "UTF-8"), sep = ";", encoding = encoding, na.strings = c("NA", "", " ", na), dec = dec, check.names = TRUE)
 
   if (warning_type == FALSE) {
     if (any(!stringr::str_detect(importer_fichier_csv$warnings, "Bumped column \\d+? to type"))) {
