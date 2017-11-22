@@ -78,6 +78,10 @@ importer_masse_csv <- function(regex_fichier, chemin = ".", ligne_debut = 1, enc
 
     fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
       dplyr::arrange(fichier)
+
+  } else {
+    fichiers <- fichiers %>%
+      dplyr::mutate(archive_zip = NA_character_)
   }
 
   if (nrow(fichiers) == 0) {
@@ -96,7 +100,9 @@ importer_masse_csv <- function(regex_fichier, chemin = ".", ligne_debut = 1, enc
   importer_masse_csv <- dplyr::tibble(fichier = unique(fichiers$fichier),
                                       import = pbapply::pblapply(unique(fichiers$fichier), importer_fichier_csv, ligne_debut = ligne_debut, encoding = encoding, na = na, col_types = col_types, warning_type = warning_type, cl = cluster))
 
-  file.remove(fichiers$fichier) %>%
+  dplyr::filter(fichiers, !is.na(archive_zip)) %>%
+    dplyr::pull(fichier) %>%
+    file.remove() %>%
     invisible()
 
   if (paralleliser == TRUE) {

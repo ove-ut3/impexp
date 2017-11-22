@@ -255,6 +255,10 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
 
     fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
       arrange(fichier)
+
+  } else {
+    fichiers <- fichiers %>%
+      dplyr::mutate(archive_zip = NA_character_)
   }
 
   if (nrow(fichiers) == 0) {
@@ -279,6 +283,11 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
                   info = lapply(import, attributes) %>%
                     purrr::map_chr( ~ ifelse(!is.null(.$info), .$info, NA_character_))
            )
+
+  dplyr::filter(fichiers, !is.na(archive_zip)) %>%
+    dplyr::pull(fichier) %>%
+    file.remove() %>%
+    invisible()
 
   if (paralleliser == TRUE) {
     divr::stopper_cluster(cluster)
