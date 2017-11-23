@@ -58,7 +58,8 @@ liste_tables_access <- function(base_access = "Tables_ref.accdb"){
 
     base_access <- stringr::str_replace_all(base_access, fixed(" "), "\\ ")
     liste_tables <- system2("mdb-tables", base_access, stdout = TRUE) %>%
-      strsplit(" ") %>% .[[1]]
+      strsplit(" ") %>%
+      dplyr::pull(1)
   }
 
   return(liste_tables)
@@ -102,7 +103,8 @@ importer_table_access <- function(table, base_access = "Tables_ref.accdb"){
     base_access <- stringr::str_replace_all(base_access, stringr::fixed(" "), "\\ ")
 
     liste_tables <- system2("mdb-tables", base_access, stdout = TRUE) %>%
-      strsplit(" ") %>% .[[1]]
+      strsplit(" ") %>%
+      dplyr::pull(1)
 
     if (match(table, liste_tables) %>% .[!is.na(.)] %>% length() == 0) {
       stop(paste0("Table \"", table, "\" non trouvée dans la base"), call. = FALSE)

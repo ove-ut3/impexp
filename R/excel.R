@@ -18,7 +18,7 @@ liste_onglets_excel <- function(fichier) {
 
   quiet_excel_sheets <- purrr::quietly(readxl::excel_sheets)
   liste_onglets <- quiet_excel_sheets(fichier) %>%
-    .[["result"]]
+    dplyr::pull(result)
 
   if (any(class(liste_onglets) == "character") == TRUE) {
     return(liste_onglets)
@@ -137,7 +137,7 @@ importer_fichier_excel_ <- function(fichier, num_onglet, ligne_debut = 1, na = N
 
   quiet_read_excel <- purrr::quietly(readxl::read_excel)
   import <- quiet_read_excel(fichier, sheet = num_onglet, skip = ligne_debut - 1, na = c("", na), col_types = col_types) %>%
-    .[["result"]]
+    dplyr::pull(result)
 
   if (any(class(import) == "tbl_df") == TRUE) {
 
