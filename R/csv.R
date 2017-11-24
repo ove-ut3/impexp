@@ -25,7 +25,7 @@ importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1",
     fonction_import <- data.table::fread
   }
 
-  importer_fichier_csv <- fonction_import(iconv(fichier, from = "UTF-8"), sep = ";", encoding = encoding, na.strings = c("NA", "", " ", na), dec = dec, check.names = TRUE)
+  importer_fichier_csv <- fonction_import(iconv(fichier, from = "UTF-8"), sep = ";", encoding = encoding, na.strings = c("NA", "", " ", na), dec = dec)
 
   if (warning_type == FALSE) {
     if (any(!stringr::str_detect(importer_fichier_csv$warnings, "Bumped column \\d+? to type"))) {
@@ -36,8 +36,8 @@ importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1",
   }
 
   importer_fichier_csv <- importer_fichier_csv %>%
-    tibble::as_tibble() %>%
-    importr::normaliser_nom_champs()
+    importr::normaliser_nom_champs() %>%
+    tibble::as_tibble()
 
   return(importer_fichier_csv)
 }
