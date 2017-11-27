@@ -327,7 +327,7 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL) {
 
   if (!is.null(table[["indentation_"]])) {
     table <- table %>%
-      dplyr::mutate(lib = paste0(purrr::map_chr(indentation_, ~ paste0(rep("   ", . - 1), collapse = "")), lib)) %>%
+      dplyr::mutate(lib = paste0(purrr::map_chr(indentation_, ~ paste0(rep("    ", . - 1), collapse = "")), lib)) %>%
       dplyr::select(-indentation_)
   }
 
