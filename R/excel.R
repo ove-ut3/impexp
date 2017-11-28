@@ -331,10 +331,22 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL) {
       dplyr::select(-indentation_)
   }
 
+  if (!is.null(table[["dont_"]])) {
+    num_ligne_dont <- which(table$dont_ == "O")
+    table <- dplyr::select(table, -dont_)
+  }
+
+  if (!is.null(table[["dont_derniere_ligne_"]])) {
+    num_ligne_dont_derniere_ligne <- which(table$dont_derniere_ligne_ == "O")
+    table <- dplyr::select(table, -dont_derniere_ligne_)
+  }
+
   style_donnees <- openxlsx::createStyle(halign = "right")
   style_titre1 <- openxlsx::createStyle(textDecoration = "bold", halign = "center")
   style_titre2 <- openxlsx::createStyle(textDecoration = "bold", halign = "center", border = "bottom")
   style_sous_titre <- openxlsx::createStyle(textDecoration = "bold", border = "bottom")
+  style_dont <- openxlsx::createStyle(textDecoration = "italic")
+  style_dont_derniere_ligne <- openxlsx::createStyle(textDecoration = "italic", border = "bottom")
   style_colonnes_bordure <- openxlsx::createStyle(border = "right")
 
   #### Titre ####
@@ -391,13 +403,23 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL) {
   openxlsx::setColWidths(classeur, nom_onglet, cols = 1:n_colonnes_lib, widths = "auto")
 
   if (exists("num_colonnes_bordure")) {
-
     openxlsx::addStyle(classeur, nom_onglet, style_colonnes_bordure, rows = 1:(num_ligne_titre + nrow(table)), cols = num_colonnes_bordure, gridExpand = TRUE, stack = TRUE)
+
   }
 
   if (exists("num_ligne_sous_titre")) {
-
     openxlsx::addStyle(classeur, nom_onglet, style_sous_titre, rows = num_ligne_titre + num_ligne_sous_titre, cols = 1:ncol(table), gridExpand = TRUE, stack = TRUE)
+
+  }
+
+  if (exists("num_ligne_dont")) {
+    openxlsx::addStyle(classeur, nom_onglet, style_dont, rows = num_ligne_titre + num_ligne_dont, cols = 1:ncol(table), gridExpand = TRUE, stack = TRUE)
+
+  }
+
+  if (exists("num_ligne_dont_derniere_ligne")) {
+    openxlsx::addStyle(classeur, nom_onglet, style_dont_derniere_ligne, rows = num_ligne_titre + num_ligne_dont_derniere_ligne, cols = 1:ncol(table), gridExpand = TRUE, stack = TRUE)
+
   }
 
   #### Note ####
@@ -440,7 +462,7 @@ exporter_fichier_excel <- function(table, nom_fichier, nom_onglet = NULL, notes 
     stop("Le nombre de notes doit être égale au nombre de table", call. = FALSE)
   }
 
-  purrr::pwalk(list(table, nom_onglet, notes), creer_onglet_excel, classeur = classeur)
+  purrr::pwalk(list(table, nom_onglet, notes), importr::creer_onglet_excel, classeur = classeur)
 
   openxlsx::saveWorkbook(classeur, nom_fichier, overwrite = TRUE)
 }
