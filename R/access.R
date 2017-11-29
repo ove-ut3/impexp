@@ -174,16 +174,29 @@ exporter_table_access <- function(table, base_access = "Tables_Ref.accdb", table
     table_access <- deparse(substitute(table))
   }
 
-  connexion <- importr::connexion_access(base_access)
+  # connexion <- importr::connexion_access(base_access)
+  #
+  # if (intersect(DBI::dbListTables(connexion), table_access) %>% length() != 0 & ecraser){
+  #   message("Table \"", table_access, "\" ecrasée")
+  #   DBI::dbRemoveTable(connexion, table_access)
+  # }
+  #
+  # colnames(table) <- toupper(colnames(table))
+  #
+  # DBI::dbWriteTable(connexion, name = table_access, value = table)
+  #
+  # DBI::dbDisconnect(connexion)
 
-  if (intersect(DBI::dbListTables(connexion), table_access) %>% length() != 0 & ecraser){
-    message("Table ", table_access, " écrasée")
-    DBI::dbRemoveTable(connexion, table_access)
+  connexion <- RODBC::odbcConnectAccess2007(base_access)
+
+  if (intersect(liste_tables, table_access) %>% length() != 0 & ecraser){
+    message("Table \"", table_access, "\" ecrasée")
+    RODBC::sqlDrop(connexion, table_access)
   }
 
   colnames(table) <- toupper(colnames(table))
 
-  DBI::dbWriteTable(connexion, name = table_access, value = table)
+  RODBC::sqlSave(connexion, dat = table, tablename = table_access, rownames = F)
 
-  DBI::dbDisconnect(connexion)
+  RODBC::odbcClose(connexion)
 }

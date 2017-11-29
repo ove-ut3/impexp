@@ -22,6 +22,7 @@ Imports:
   pbapply,
   purrr,
   readxl,
+  RODBC,
   stringr,
   tibble
 RoxygenNote: 6.0.1
