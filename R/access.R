@@ -173,6 +173,8 @@ exporter_table_access <- function(table, base_access = "Tables_Ref.accdb", table
     table_access <- deparse(substitute(table))
   }
 
+  # https://github.com/tidyverse/dbplyr/pull/36
+  #
   # connexion <- importr::connexion_access(base_access)
   #
   # if (intersect(DBI::dbListTables(connexion), table_access) %>% length() != 0 & ecraser) {
