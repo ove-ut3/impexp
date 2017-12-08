@@ -460,6 +460,9 @@ exporter_fichier_excel <- function(table, nom_fichier, nom_onglet = NULL, notes 
 
   if (!is.null(notes) & length(notes) != length(table)) {
     stop("Le nombre de notes doit être égale au nombre de table", call. = FALSE)
+
+  } else if (is.null(notes)) {
+    notes <- rep(NA_character_, length(table)) %>% as.list()
   }
 
   purrr::pwalk(list(table, nom_onglet, notes), importr::creer_onglet_excel, classeur = classeur)
