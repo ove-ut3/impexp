@@ -4,7 +4,8 @@
 \alias{exporter_fichier_excel}
 \title{Exporter un fichier excel}
 \usage{
-exporter_fichier_excel(table, nom_fichier, nom_onglet = NULL, notes = NULL)
+exporter_fichier_excel(table, nom_fichier, nom_onglet = NULL, notes = NULL,
+  n_colonnes_lib = 0)
 }
 \arguments{
 \item{table}{data.frame ou liste de data.frame à exporter.}
@@ -14,6 +15,8 @@ exporter_fichier_excel(table, nom_fichier, nom_onglet = NULL, notes = NULL)
 \item{nom_onglet}{\dots}
 
 \item{notes}{\dots}
+
+\item{n_colonnes_lib}{\dots}
 }
 \description{
 Exporter un fichier excel.

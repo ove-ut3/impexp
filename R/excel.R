@@ -311,14 +311,15 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
 #' @param table \dots
 #' @param nom_onglet \dots
 #' @param notes \dots
+#' @param n_colonnes_lib \dots
 #'
 #' @export
 #' @keywords internal
-creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL) {
+creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL, n_colonnes_lib = 0) {
 
   openxlsx::addWorksheet(classeur, nom_onglet)
 
-  n_colonnes_lib <- length(stringr::str_subset(colnames(table), "^lib"))
+  #n_colonnes_lib <- length(stringr::str_subset(colnames(table), "^lib"))
 
   if (!is.null(table[["sous_titre_"]])) {
     num_ligne_sous_titre <- which(table$sous_titre_ == "O")
@@ -352,8 +353,12 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL) {
   #### Titre ####
 
   titre_complet <- colnames(table) %>%
-    .[!stringr::str_detect(., "^lib")] %>%
     paste0("##")
+
+  if (n_colonnes_lib != 0){
+    titre_complet[1:n_colonnes_lib] <- ""
+  }
+
   num_ligne_titre = 0
 
   while(any(stringr::str_detect(titre_complet, "##"), na.rm = TRUE)) {
@@ -367,10 +372,17 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL) {
     titre_complet <- titre_complet %>%
       stringr::str_match("##(.+)") %>% .[, 2]
 
+    if (num_ligne_titre == 1) {
+      titre_complet_bck <- titre_ligne$titre
+    } else {
+      titre_complet_bck <- paste(titre_complet_bck, titre_ligne$titre, sep = "##")
+    }
+
     if (any(stringr::str_detect(titre_complet, "##"), na.rm = TRUE)) {
       merge <- titre_ligne %>%
-        dplyr::mutate(merge = row_number() + n_colonnes_lib) %>%
-        split(x = .$merge, f = .$titre)
+        dplyr::mutate(titre_complet_bck = titre_complet_bck) %>%
+        dplyr::mutate(merge = row_number()) %>%
+        split(x = .$merge, f = .$titre_complet_bck)
       derniere_ligne_titre <- FALSE
       style <- style_titre1
 
@@ -387,11 +399,12 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL) {
       t() %>%
       tibble::as_tibble()
 
-    openxlsx::writeData(classeur, nom_onglet, titre_ligne, startCol = n_colonnes_lib + 1, startRow = num_ligne_titre, colNames = FALSE)
+    # openxlsx::writeData(classeur, nom_onglet, titre_ligne, startCol = n_colonnes_lib + 1, startRow = num_ligne_titre, colNames = FALSE)
+    openxlsx::writeData(classeur, nom_onglet, titre_ligne, startCol = n_colonnes_lib, startRow = num_ligne_titre, colNames = FALSE)
     openxlsx::addStyle(classeur, nom_onglet, style, rows = num_ligne_titre, 1:ncol(table), gridExpand = TRUE, stack = TRUE)
 
     if (derniere_ligne_titre == FALSE) {
-      purrr::walk(merge, ~ openxlsx::mergeCells(classeur, nom_onglet, cols = ., rows = 1))
+      purrr::walk(merge, ~ openxlsx::mergeCells(classeur, nom_onglet, cols = ., rows = num_ligne_titre))
     }
 
   }
@@ -440,9 +453,10 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL) {
 #' @param nom_fichier \dots
 #' @param nom_onglet \dots
 #' @param notes \dots
+#' @param n_colonnes_lib \dots
 #'
 #' @export
-exporter_fichier_excel <- function(table, nom_fichier, nom_onglet = NULL, notes = NULL) {
+exporter_fichier_excel <- function(table, nom_fichier, nom_onglet = NULL, notes = NULL, n_colonnes_lib = 0) {
 
   if (any(class(table) == "data.frame")) {
     table <- list("table" = table)
@@ -465,7 +479,7 @@ exporter_fichier_excel <- function(table, nom_fichier, nom_onglet = NULL, notes 
     notes <- rep(NA_character_, length(table)) %>% as.list()
   }
 
-  purrr::pwalk(list(table, nom_onglet, notes), importr::creer_onglet_excel, classeur = classeur)
+  purrr::pwalk(list(table, nom_onglet, notes), importr::creer_onglet_excel, classeur = classeur, n_colonnes_lib = n_colonnes_lib)
 
   openxlsx::saveWorkbook(classeur, nom_fichier, overwrite = TRUE)
 }
