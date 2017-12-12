@@ -438,8 +438,7 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL, n_colo
   #### Note ####
 
   if (!is.null(notes)) {
-    note <- tibble::tibble(note1 = notes) %>%
-      t()
+    note <- tibble::tibble(note1 = notes)
     openxlsx::writeData(classeur, nom_onglet, note, startRow = num_ligne_titre + nrow(table) + 2, colNames = FALSE)
   }
 
@@ -472,7 +471,10 @@ exporter_fichier_excel <- function(table, nom_fichier, nom_onglet = NULL, notes 
 
   classeur <- openxlsx::createWorkbook()
 
-  if (!is.null(notes) & length(notes) != length(table)) {
+  if (length(notes) == 1) {
+    notes <- rep(notes, length(table)) %>% as.list()
+
+  } else if (!is.null(notes) & length(notes) != length(table)) {
     stop("Le nombre de notes doit être égale au nombre de table", call. = FALSE)
 
   } else if (is.null(notes)) {
