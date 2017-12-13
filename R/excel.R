@@ -342,7 +342,7 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL, n_colo
     table <- dplyr::select(table, -dont_derniere_ligne_)
   }
 
-  style_donnees <- openxlsx::createStyle(halign = "right")
+  style_donnees_numerique <- openxlsx::createStyle(halign = "right")
   style_titre1 <- openxlsx::createStyle(textDecoration = "bold", halign = "center")
   style_titre2 <- openxlsx::createStyle(textDecoration = "bold", halign = "center", border = "bottom")
   style_sous_titre <- openxlsx::createStyle(textDecoration = "bold", border = "bottom")
@@ -399,8 +399,9 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL, n_colo
       t() %>%
       tibble::as_tibble()
 
-    # openxlsx::writeData(classeur, nom_onglet, titre_ligne, startCol = n_colonnes_lib + 1, startRow = num_ligne_titre, colNames = FALSE)
-    openxlsx::writeData(classeur, nom_onglet, titre_ligne, startCol = n_colonnes_lib, startRow = num_ligne_titre, colNames = FALSE)
+    start_col <- ifelse(n_colonnes_lib == 0, 1, n_colonnes_lib)
+
+    openxlsx::writeData(classeur, nom_onglet, titre_ligne, startCol = start_col, startRow = num_ligne_titre, colNames = FALSE)
     openxlsx::addStyle(classeur, nom_onglet, style, rows = num_ligne_titre, 1:ncol(table), gridExpand = TRUE, stack = TRUE)
 
     if (derniere_ligne_titre == FALSE) {
@@ -412,8 +413,27 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL, n_colo
   #### Corps ####
 
   openxlsx::writeData(classeur, nom_onglet, table, startRow = num_ligne_titre + 1, colNames = FALSE)
-  openxlsx::addStyle(classeur, nom_onglet, style_donnees, rows = (num_ligne_titre + 1):(num_ligne_titre + nrow(table)), n_colonnes_lib + 1:(ncol(table) + 1), gridExpand = TRUE, stack = TRUE)
-  openxlsx::setColWidths(classeur, nom_onglet, cols = 1:n_colonnes_lib, widths = "auto")
+
+  if (n_colonnes_lib != 0) {
+    openxlsx::addStyle(classeur, nom_onglet, style_donnees_numerique, rows = (num_ligne_titre + 1):(num_ligne_titre + nrow(table)), n_colonnes_lib + 1:(ncol(table) + 1), gridExpand = TRUE, stack = TRUE)
+
+  } else {
+    champs_numeriques <- purrr::map_int(table, ~ class(.) %in% c("integer", "double")) %>%
+      { which(. != 0) }
+
+    if (length(champs_numeriques) != 0) {
+      openxlsx::addStyle(classeur, nom_onglet, style_donnees_numerique, rows = (num_ligne_titre + 1):(num_ligne_titre + nrow(table)), champs_numeriques, gridExpand = TRUE, stack = TRUE)
+    }
+
+  }
+
+
+  # Largeur de colonne auto-ajustée
+  if (n_colonnes_lib != 0) {
+    openxlsx::setColWidths(classeur, nom_onglet, cols = 1:n_colonnes_lib, widths = "auto")
+  } else {
+    openxlsx::setColWidths(classeur, nom_onglet, cols = 1:ncol(table), widths = "auto")
+  }
 
   if (exists("num_colonnes_bordure")) {
     openxlsx::addStyle(classeur, nom_onglet, style_colonnes_bordure, rows = 1:(num_ligne_titre + nrow(table)), cols = num_colonnes_bordure, gridExpand = TRUE, stack = TRUE)
@@ -438,8 +458,7 @@ creer_onglet_excel <- function(classeur, table, nom_onglet, notes = NULL, n_colo
   #### Note ####
 
   if (!is.null(notes)) {
-    note <- tibble::tibble(note1 = notes) %>%
-      t()
+    note <- tibble::tibble(note1 = notes)
     openxlsx::writeData(classeur, nom_onglet, note, startRow = num_ligne_titre + nrow(table) + 2, colNames = FALSE)
   }
 
@@ -472,7 +491,10 @@ exporter_fichier_excel <- function(table, nom_fichier, nom_onglet = NULL, notes 
 
   classeur <- openxlsx::createWorkbook()
 
-  if (!is.null(notes) & length(notes) != length(table)) {
+  if (length(notes) == 1) {
+    notes <- rep(notes, length(table)) %>% as.list()
+
+  } else if (!is.null(notes) & length(notes) != length(table)) {
     stop("Le nombre de notes doit être égale au nombre de table", call. = FALSE)
 
   } else if (is.null(notes)) {
