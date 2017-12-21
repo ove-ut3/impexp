@@ -9,7 +9,7 @@ exporter_table_sqlite(table, base_sqlite, nom_table = NULL, ecraser = TRUE)
 \arguments{
 \item{table}{Table à exporter}
 
-\item{base_sqlite}{Chemin vers la bse SQLite.}
+\item{base_sqlite}{Chemin de la base SQLite.}
 
 \item{nom_table}{Nom de la table à créer dans la base SQLite.}
 

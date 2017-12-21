@@ -9,7 +9,7 @@ importer_table_sqlite(table, base_sqlite)
 \arguments{
 \item{table}{Nom de la table à importer.}
 
-\item{base_sqlite}{Chemin vers la bse SQLite.}
+\item{base_sqlite}{Chemin de la base SQLite.}
 }
 \value{
 Un tibble.
