@@ -100,3 +100,26 @@ ajouter_lignes_sqlite <- function(table_ajout, table, base_sqlite) {
 
   DBI::dbDisconnect(connexion)
 }
+
+#' Executer des commandes SQL dans une base SQLite
+#'
+#' Exécuter des commandes SQL dans une base SQLite
+#'
+#' @param liste_sql Un vecteur de commandes SQL au format chaîne de caractères.
+#' @param base_sqlite Chemin de la base SQLite.
+#'
+#' @export
+executer_sql_sqlite <- function(liste_sql, base_sqlite) {
+
+  connexion <- DBI::dbConnect(RSQLite::SQLite(), dbname = base_sqlite)
+
+  if (!file.exists(base_sqlite)) {
+    stop("La base SQLite \"", base_sqlite,"\" n'existe pas...", call. = FALSE)
+  }
+
+  if (length(liste_sql) != 0) {
+    purrr::walk(liste_sql, ~ DBI::dbExecute(connexion, .))
+  }
+
+  DBI::dbDisconnect(connexion)
+}
