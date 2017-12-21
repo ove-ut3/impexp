@@ -89,7 +89,12 @@ importer_masse_csv <- function(regex_fichier, chemin = ".", ligne_debut = 1, enc
     return(NULL)
   }
 
-  if (message_import) message("Import de ", length(unique(fichiers$fichier))," fichier(s) csv...")
+  if (message_import == TRUE) {
+    message("Import de ", length(unique(fichiers$fichier))," fichier(s) csv...")
+    pbapply::pboptions(type = "timer")
+  } else {
+    pbapply::pboptions(type = "none")
+  }
 
   if (paralleliser == TRUE) {
     cluster <- divr::initialiser_cluster()

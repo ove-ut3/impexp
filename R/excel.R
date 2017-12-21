@@ -266,7 +266,12 @@ importer_masse_excel <- function(regex_fichier, chemin = ".", regex_onglet = "."
     return(NULL)
   }
 
-  if (message_import) message("Import de ", length(unique(fichiers$fichier))," fichiers excel...")
+  if (message_import == TRUE) {
+    message("Import de ", length(unique(fichiers$fichier))," fichiers excel...")
+    pbapply::pboptions(type = "timer")
+  } else {
+    pbapply::pboptions(type = "none")
+  }
 
   if (paralleliser == TRUE) {
     cluster <- divr::initialiser_cluster()
