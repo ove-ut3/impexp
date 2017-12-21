@@ -8,19 +8,16 @@
 #' @return Un tibble.
 #'
 #' @export
-importer_table_sqlite <- function(table, base_sqlite, na_if = NULL) {
+importer_table_sqlite <- function(table, base_sqlite) {
 
   connexion <- DBI::dbConnect(RSQLite::SQLite(), dbname = base_sqlite)
 
   table <- DBI::dbReadTable(connexion, table) %>%
     tibble::as_tibble()
 
-  if (!is.null(na_if)) {
-    table <- table %>%
-      dplyr::mutate_if(is.character, ~ dplyr::na_if(., na_if))
-  }
-
   DBI::dbDisconnect(connexion)
+
+  return(table)
 }
 
 #' Exporter une table vers une base SQLite

@@ -4,7 +4,7 @@
 \alias{importer_table_sqlite}
 \title{Importer une table d'une base SQLite}
 \usage{
-importer_table_sqlite(table, base_sqlite, na_if = NULL)
+importer_table_sqlite(table, base_sqlite)
 }
 \arguments{
 \item{table}{Nom de la table à importer.}
