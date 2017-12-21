@@ -63,12 +63,12 @@ exporter_table_sqlite <- function(table, base_sqlite, nom_table = NULL, ecraser 
 #'
 #' Ajouter des lignes à une table SQLite
 #'
-#' @param table Table initiale.
 #' @param table_ajout Table à concaténer.
+#' @param table Table initiale.
 #' @param base_sqlite Chemin de la base SQLite.
 #'
 #' @export
-ajouter_lignes_sqlite <- function(table, table_ajout, base_sqlite) {
+ajouter_lignes_sqlite <- function(table_ajout, table, base_sqlite) {
 
   if (!file.exists(base_sqlite)) {
     stop("La base SQLite \"", base_sqlite,"\" n'existe pas...", call. = FALSE)

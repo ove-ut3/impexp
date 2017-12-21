@@ -4,12 +4,12 @@
 \alias{ajouter_lignes_sqlite}
 \title{Ajouter des lignes a une table SQLite}
 \usage{
-ajouter_lignes_sqlite(table, table_ajout, base_sqlite)
+ajouter_lignes_sqlite(table_ajout, table, base_sqlite)
 }
 \arguments{
-\item{table}{Table initiale.}
-
 \item{table_ajout}{Table à concaténer.}
+
+\item{table}{Table initiale.}
 
 \item{base_sqlite}{Chemin de la base SQLite.}
 }
