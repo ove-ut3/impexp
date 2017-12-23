@@ -7,14 +7,14 @@
 #' @return Un data frame correspondant à la table SAS.
 #'
 #' @examples
-#' importr::importer_table_sas(paste0(racine_packages, "importr/inst/extdata/importr.sas7bdat"))
+#' importr::sas_importer(paste0(racine_packages, "importr/inst/extdata/importr.sas7bdat"))
 #'
 #' @export
-importer_table_sas <- function(fichier) {
+sas_importer <- function(fichier) {
 
-  importer_table_sas <- haven::read_sas(fichier) %>%
+  sas_importer <- haven::read_sas(fichier) %>%
     normaliser_nom_champs() %>%
     caracteres_vides_na()
 
-  return(importer_table_sas)
+  return(sas_importer)
 }
