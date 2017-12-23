@@ -1,4 +1,4 @@
-Package: importr
+Package: impexp
 Title: Fonctions d'importation et exportation : Access, Excel, CSV, ODBC, SAS
 Version: 0.1
 Authors@R: person("Stéphane Le Hénanff", "Stéphane Le Hénanff", email = "github@le-henanff.fr", role = c("aut", "cre"))
