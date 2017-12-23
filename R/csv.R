@@ -13,7 +13,7 @@
 #' @return Un data frame.\cr
 #'
 #' @export
-importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1", na = NULL, dec = ",", col_types = NULL, warning_type = TRUE) {
+csv_importer <- function(fichier, ligne_debut = 1, encoding = "Latin-1", na = NULL, dec = ",", col_types = NULL, warning_type = TRUE) {
 
   if (!file.exists(fichier)) {
     stop("Le fichier \"", fichier,"\" n'existe pas.", call. = FALSE)
@@ -25,21 +25,21 @@ importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1",
     fonction_import <- data.table::fread
   }
 
-  importer_fichier_csv <- fonction_import(iconv(fichier, from = "UTF-8"), sep = ";", encoding = encoding, na.strings = c("NA", "", " ", na), dec = dec)
+  csv_importer <- fonction_import(iconv(fichier, from = "UTF-8"), sep = ";", encoding = encoding, na.strings = c("NA", "", " ", na), dec = dec)
 
   if (warning_type == FALSE) {
-    if (any(!stringr::str_detect(importer_fichier_csv$warnings, "Bumped column \\d+? to type"))) {
-      warnings <- importer_fichier_csv$warnings[!stringr::str_detect(importer_fichier_csv$warnings, "Bumped column \\d+? to type")]
+    if (any(!stringr::str_detect(csv_importer$warnings, "Bumped column \\d+? to type"))) {
+      warnings <- csv_importer$warnings[!stringr::str_detect(csv_importer$warnings, "Bumped column \\d+? to type")]
       purrr::walk(warnings, message)
     }
-    importer_fichier_csv <- importer_fichier_csv[["result"]]
+    csv_importer <- csv_importer[["result"]]
   }
 
-  importer_fichier_csv <- importer_fichier_csv %>%
+  csv_importer <- csv_importer %>%
     importr::normaliser_nom_champs() %>%
     tibble::as_tibble()
 
-  return(importer_fichier_csv)
+  return(csv_importer)
 }
 
 #' Importer les fichiers CSV d'un repertoire (recursif)
@@ -61,7 +61,7 @@ importer_fichier_csv <- function(fichier, ligne_debut = 1, encoding = "Latin-1",
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
 #'
 #' @export
-importer_masse_csv <- function(regex_fichier, chemin = ".", ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, regex_zip = NULL, warning_type = FALSE, message_import = TRUE) {
+csv_importer_masse <- function(regex_fichier, chemin = ".", ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, regex_zip = NULL, warning_type = FALSE, message_import = TRUE) {
 
   if (!dir.exists(chemin)) {
     stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
@@ -102,8 +102,8 @@ importer_masse_csv <- function(regex_fichier, chemin = ".", ligne_debut = 1, enc
     cluster <- NULL
   }
 
-  importer_masse_csv <- dplyr::tibble(fichier = unique(fichiers$fichier),
-                                      import = pbapply::pblapply(unique(fichiers$fichier), importer_fichier_csv, ligne_debut = ligne_debut, encoding = encoding, na = na, col_types = col_types, warning_type = warning_type, cl = cluster))
+  csv_importer_masse <- dplyr::tibble(fichier = unique(fichiers$fichier),
+                                      import = pbapply::pblapply(unique(fichiers$fichier), csv_importer, ligne_debut = ligne_debut, encoding = encoding, na = na, col_types = col_types, warning_type = warning_type, cl = cluster))
 
   dplyr::filter(fichiers, !is.na(archive_zip)) %>%
     dplyr::pull(fichier) %>%
@@ -115,13 +115,12 @@ importer_masse_csv <- function(regex_fichier, chemin = ".", ligne_debut = 1, enc
   }
 
   if (archive_zip == TRUE) {
-    importer_masse_csv <- fichiers %>%
+    csv_importer_masse <- fichiers %>%
       dplyr::select(-repertoire_sortie) %>%
-      dplyr::left_join(importer_masse_csv, by = "fichier") %>%
+      dplyr::left_join(csv_importer_masse, by = "fichier") %>%
       dplyr::mutate(fichier = stringr::str_match(fichier, "/(.+)")[, 2])
 
   }
 
-  return(importer_masse_csv)
-
+  return(csv_importer_masse)
 }
