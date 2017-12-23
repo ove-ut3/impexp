@@ -8,7 +8,7 @@
 #'
 #' @export
 #' @keywords internal
-connexion_access <- function(base_access = "Tables_ref.accdb") {
+access_connexion <- function(base_access = "Tables_ref.accdb") {
 
   if(!stringr::str_detect(base_access, "[A-Z]:\\/")) {
     dbq <- paste0(getwd(), "/", base_access)
@@ -32,16 +32,16 @@ connexion_access <- function(base_access = "Tables_ref.accdb") {
 #' @return un vecteur de type caractère contenant les noms des tables de la base Access.
 #'
 #' @examples
-#' importr::liste_tables_access(paste0(racine_packages, "importr/inst/extdata/importr.accdb"))
+#' importr::access_liste_tables(paste0(racine_packages, "importr/inst/extdata/importr.accdb"))
 #'
 #' @export
-liste_tables_access <- function(base_access = "Tables_ref.accdb"){
+access_liste_tables <- function(base_access = "Tables_ref.accdb"){
 
   if (!file.exists(base_access)) {
     stop(paste0("La base Access \"", base_access, "\" n'existe pas"), call. = FALSE)
   }
 
-  connexion <- importr::connexion_access(base_access)
+  connexion <- importr::access_connexion(base_access)
 
   liste_tables <- DBI::dbListTables(connexion) %>%
     stringr::str_subset("^[^(Msys)]")
@@ -61,17 +61,17 @@ liste_tables_access <- function(base_access = "Tables_ref.accdb"){
 #' @return Un data frame correspondant à la table Access.
 #'
 #' @examples
-#' importr::importer_table_access("Table_importr",
+#' importr::access_importer("Table_importr",
 #'   base_access = paste0(racine_packages, "importr/inst/extdata/importr.accdb"))
 #'
 #' @export
-importer_table_access <- function(table, base_access = "Tables_ref.accdb"){
+access_importer <- function(table, base_access = "Tables_ref.accdb"){
 
   if (!file.exists(base_access)) {
     stop(paste0("La base Access \"", base_access, "\" n'existe pas"), call. = FALSE)
   }
 
-  connexion <- importr::connexion_access(base_access)
+  connexion <- importr::access_connexion(base_access)
 
   if (match(table, DBI::dbListTables(connexion)) %>% .[!is.na(.)] %>% length() == 0) {
     stop(paste0("Table \"", table, "\" non trouvee dans la base"), call. = FALSE)
@@ -101,14 +101,14 @@ importer_table_access <- function(table, base_access = "Tables_ref.accdb"){
 #'
 #' @examples
 #' # Export d'un data frame dont le nom dans Access sera "data_frame"
-#' importr::exporter_table_access(data_frame, base_access = "Chemin/vers/une/base/Access.accdb")
+#' importr::access_exporter(data_frame, base_access = "Chemin/vers/une/base/Access.accdb")
 #'
 #' # Export d'un data frame dont le nom dans Access sera "export"
-#' importr::exporter_table_access(data_frame, base_access = "Chemin/vers/une/base/Access.accdb",
+#' importr::access_exporter(data_frame, base_access = "Chemin/vers/une/base/Access.accdb",
 #'   table_access = "export")
 #'
 #' @export
-exporter_table_access <- function(table, base_access = "Tables_Ref.accdb", table_access = NULL, ecraser = TRUE){
+access_exporter <- function(table, base_access = "Tables_Ref.accdb", table_access = NULL, ecraser = TRUE){
 
   if (is.null(table_access)) {
     table_access <- deparse(substitute(table))
@@ -116,7 +116,7 @@ exporter_table_access <- function(table, base_access = "Tables_Ref.accdb", table
 
   # https://github.com/tidyverse/dbplyr/pull/36
   #
-  # connexion <- importr::connexion_access(base_access)
+  # connexion <- importr::access_connexion(base_access)
   #
   # if (intersect(DBI::dbListTables(connexion), table_access) %>% length() != 0 & ecraser) {
   #   message("Table \"", table_access, "\" ecrasée")
@@ -130,7 +130,7 @@ exporter_table_access <- function(table, base_access = "Tables_Ref.accdb", table
   # DBI::dbDisconnect(connexion)
 
   connexion <- RODBC::odbcConnectAccess2007(base_access)
-  connexion_dbi <- importr::connexion_access(base_access)
+  connexion_dbi <- importr::access_connexion(base_access)
 
   if (intersect(DBI::dbListTables(connexion_dbi), table_access) %>% length() != 0 & ecraser) {
     message("Table \"", table_access, "\" ecrasée")
