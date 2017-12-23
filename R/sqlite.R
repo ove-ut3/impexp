@@ -8,7 +8,7 @@
 #' @return Un tibble.
 #'
 #' @export
-importer_table_sqlite <- function(table, base_sqlite) {
+sqlite_importer <- function(table, base_sqlite) {
 
   if (!file.exists(base_sqlite)) {
     stop("La base SQLite \"", base_sqlite,"\" n'existe pas...", call. = FALSE)
@@ -38,7 +38,7 @@ importer_table_sqlite <- function(table, base_sqlite) {
 #' @param ecraser Ecraser une table du même nom.
 #'
 #' @export
-exporter_table_sqlite <- function(table, base_sqlite, nom_table = NULL, ecraser = TRUE) {
+sqlite_exporter <- function(table, base_sqlite, nom_table = NULL, ecraser = TRUE) {
 
   if (!file.exists(base_sqlite)) {
     stop("La base SQLite \"", base_sqlite,"\" n'existe pas...", call. = FALSE)
@@ -68,7 +68,7 @@ exporter_table_sqlite <- function(table, base_sqlite, nom_table = NULL, ecraser 
 #' @param base_sqlite Chemin de la base SQLite.
 #'
 #' @export
-ajouter_lignes_sqlite <- function(table_ajout, table, base_sqlite) {
+sqlite_ajouter_lignes <- function(table_ajout, table, base_sqlite) {
 
   if (!file.exists(base_sqlite)) {
     stop("La base SQLite \"", base_sqlite,"\" n'existe pas...", call. = FALSE)
@@ -80,6 +80,7 @@ ajouter_lignes_sqlite <- function(table_ajout, table, base_sqlite) {
     stop("La table \"", table,"\" n'existe pas...", call. = FALSE)
   }
 
+  nom_table <- table
   table <- DBI::dbReadTable(connexion, table) %>%
     tibble::as_tibble()
 
@@ -94,7 +95,7 @@ ajouter_lignes_sqlite <- function(table_ajout, table, base_sqlite) {
     dplyr::summarise(valeur = paste(valeur, collapse = "', '")) %>%
     dplyr::pull(valeur) %>%
     paste(collapse = "'), ('") %>%
-    { paste0("INSERT INTO coordonnees VALUES ('", ., "');") }
+    { paste0("INSERT INTO ", nom_table, " VALUES ('", ., "');") }
 
   DBI::dbExecute(connexion, sql)
 
@@ -109,7 +110,7 @@ ajouter_lignes_sqlite <- function(table_ajout, table, base_sqlite) {
 #' @param base_sqlite Chemin de la base SQLite.
 #'
 #' @export
-executer_sql_sqlite <- function(liste_sql, base_sqlite) {
+sqlite_executer_sql <- function(liste_sql, base_sqlite) {
 
   connexion <- DBI::dbConnect(RSQLite::SQLite(), dbname = base_sqlite)
 
