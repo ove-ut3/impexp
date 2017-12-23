@@ -21,10 +21,10 @@ Exporter une table vers une base Access.
 }
 \examples{
 # Export d'un data frame dont le nom dans Access sera "data_frame"
-importr::access_exporter(data_frame, base_access = "Chemin/vers/une/base/Access.accdb")
+impexp::access_exporter(data_frame, base_access = "Chemin/vers/une/base/Access.accdb")
 
 # Export d'un data frame dont le nom dans Access sera "export"
-importr::access_exporter(data_frame, base_access = "Chemin/vers/une/base/Access.accdb",
+impexp::access_exporter(data_frame, base_access = "Chemin/vers/une/base/Access.accdb",
   table_access = "export")
 
 }

@@ -13,7 +13,7 @@
 #'   "Type d'unité Sirus : entreprise profilée ou unité légale" = NA_character_,
 #'   "Nic du siège"= NA_character_
 #' )
-#' importr::normaliser_nom_champs(table)
+#' impexp::normaliser_nom_champs(table)
 #'
 #' @export
 normaliser_nom_champs <- function(table){
@@ -41,7 +41,7 @@ normaliser_nom_champs <- function(table){
 #'   champ_1 = "",
 #'   champ_2 = ""
 #' )
-#' importr::caracteres_vides_na(table)
+#' impexp::caracteres_vides_na(table)
 #'
 #' @export
 caracteres_vides_na <- function(table){

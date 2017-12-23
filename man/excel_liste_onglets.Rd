@@ -16,6 +16,6 @@ un vecteur de type caractère contenant les noms des onglets du fichier excel.
 Lister les onglets d'un fichier excel.
 }
 \examples{
-importr::excel_liste_onglets(paste0(racine_packages, "importr/inst/extdata/importr.xlsx"))
+impexp::excel_liste_onglets(paste0(racine_packages, "impexp/inst/extdata/impexp.xlsx"))
 
 }

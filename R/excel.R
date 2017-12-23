@@ -7,7 +7,7 @@
 #' @return un vecteur de type caractère contenant les noms des onglets du fichier excel.
 #'
 #' @examples
-#' importr::excel_liste_onglets(paste0(racine_packages, "importr/inst/extdata/importr.xlsx"))
+#' impexp::excel_liste_onglets(paste0(racine_packages, "impexp/inst/extdata/impexp.xlsx"))
 #'
 #' @export
 excel_liste_onglets <- function(fichier) {
@@ -49,14 +49,14 @@ excel_liste_onglets <- function(fichier) {
 #'
 #' @examples
 #' # Import du premier onglet
-#' importr::excel_importer(paste0(racine_packages, "importr/inst/extdata/importr.xlsx"))
+#' impexp::excel_importer(paste0(racine_packages, "impexp/inst/extdata/impexp.xlsx"))
 #'
 #' # Import de l'onglet "Onglet 2"
-#' importr::excel_importer(paste0(racine_packages, "importr/inst/extdata/importr.xlsx"),
+#' impexp::excel_importer(paste0(racine_packages, "impexp/inst/extdata/impexp.xlsx"),
 #'   nom_onglet = "Onglet 2")
 #'
 #' # Import des onglets comprenant le mot "Autre" en début de chaine
-#' importr::excel_importer(paste0(racine_packages, "importr/inst/extdata/importr.xlsx"),
+#' impexp::excel_importer(paste0(racine_packages, "impexp/inst/extdata/impexp.xlsx"),
 #'   regex_onglet = "^Autre")
 #'
 #' @export
@@ -114,7 +114,7 @@ excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_
     return(import)
   }
 
-  import <- importr::excel_importer_(fichier, num_onglet, ligne_debut, col_types, test_champ_manquant)
+  import <- impexp::excel_importer_(fichier, num_onglet, ligne_debut, col_types, test_champ_manquant)
 
   return(import)
 
@@ -146,7 +146,7 @@ excel_importer_ <- function(fichier, num_onglet, ligne_debut = 1, na = NULL, col
       attr(import, "warning") <- "Pas de ligne dans l'onglet"
     } else {
 
-      import <- importr::normaliser_nom_champs(import)
+      import <- impexp::normaliser_nom_champs(import)
 
       if (!is.null(test_champ_manquant)) {
         import <- import_test_champ_manquant(table = import, test_champ_manquant = test_champ_manquant, fichier = fichier, num_onglet = num_onglet, col_types = col_types)
@@ -185,7 +185,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
     return(table)
   }
 
-  test <- importr::excel_importer_(fichier, num_onglet, ligne_debut = 1, col_types)
+  test <- impexp::excel_importer_(fichier, num_onglet, ligne_debut = 1, col_types)
   colnames(test) <- paste0("champ_", as.character(1:ncol(test)))
 
   normaliser_char <- caractr::normaliser_char
@@ -208,9 +208,9 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
     return(import)
   }
 
-  import <- importr::excel_importer_(fichier, num_onglet, ligne_debut = ligne_en_tete, col_types) %>%
-    importr::normaliser_nom_champs() %>%
-    importr::caracteres_vides_na()
+  import <- impexp::excel_importer_(fichier, num_onglet, ligne_debut = ligne_en_tete, col_types) %>%
+    impexp::normaliser_nom_champs() %>%
+    impexp::caracteres_vides_na()
 
   attr(import, "info") <- paste0("Fichier ", fichier, " / Onglet ", num_onglet, " : Nouvel import a partir de la ligne ", ligne_en_tete)
 
@@ -235,7 +235,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
 #'
 #' @examples
-#' importr::importer_masse_xlsx(paste0(racine_packages, "importr/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "importr")
+#' impexp::importer_masse_xlsx(paste0(racine_packages, "impexp/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "impexp")
 #'
 #' @export
 excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, na = NULL, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, test_champ_manquant = NULL, message_import = TRUE) {
@@ -506,7 +506,7 @@ excel_exporter <- function(table, nom_fichier, nom_onglet = NULL, notes = NULL, 
     notes <- rep(NA_character_, length(table)) %>% as.list()
   }
 
-  purrr::pwalk(list(table, nom_onglet, notes), importr::excel_onglet, classeur = classeur, n_colonnes_lib = n_colonnes_lib)
+  purrr::pwalk(list(table, nom_onglet, notes), impexp::excel_onglet, classeur = classeur, n_colonnes_lib = n_colonnes_lib)
 
   openxlsx::saveWorkbook(classeur, nom_fichier, overwrite = TRUE)
 }

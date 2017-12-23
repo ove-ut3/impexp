@@ -18,7 +18,7 @@ Un data frame correspondant à la table Access.
 Importer une table Access.
 }
 \examples{
-importr::access_importer("Table_importr",
-  base_access = paste0(racine_packages, "importr/inst/extdata/importr.accdb"))
+impexp::access_importer("Table_impexp",
+  base_access = paste0(racine_packages, "impexp/inst/extdata/impexp.accdb"))
 
 }

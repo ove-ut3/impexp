@@ -20,6 +20,6 @@ table <- dplyr::data_frame(
   champ_1 = "",
   champ_2 = ""
 )
-importr::caracteres_vides_na(table)
+impexp::caracteres_vides_na(table)
 
 }

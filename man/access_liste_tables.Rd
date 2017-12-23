@@ -16,6 +16,6 @@ un vecteur de type caractère contenant les noms des tables de la base Access.
 Lister les tables d'une base Access.
 }
 \examples{
-importr::access_liste_tables(paste0(racine_packages, "importr/inst/extdata/importr.accdb"))
+impexp::access_liste_tables(paste0(racine_packages, "impexp/inst/extdata/impexp.accdb"))
 
 }

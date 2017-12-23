@@ -1,4 +1,4 @@
 library(testthat)
-library(importr)
+library(impexp)
 
-test_check("importr")
+test_check("impexp")

@@ -36,6 +36,6 @@ Un data frame dont le champ "import" est la liste des data frame importés.
 Importer les fichiers Excel d'un répertoire (récursif).
 }
 \examples{
-importr::importer_masse_xlsx(paste0(racine_packages, "importr/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "importr")
+impexp::importer_masse_xlsx(paste0(racine_packages, "impexp/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "impexp")
 
 }

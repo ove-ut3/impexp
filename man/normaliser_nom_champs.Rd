@@ -22,6 +22,6 @@ table <- dplyr::data_frame(
   "Type d'unité Sirus : entreprise profilée ou unité légale" = NA_character_,
   "Nic du siège"= NA_character_
 )
-importr::normaliser_nom_champs(table)
+impexp::normaliser_nom_champs(table)
 
 }
