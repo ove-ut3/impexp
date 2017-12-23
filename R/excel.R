@@ -372,7 +372,7 @@ excel_onglet <- function(classeur, table, nom_onglet, notes = NULL, n_colonnes_l
 
     titre_ligne <- titre_complet %>%
       stringr::str_match("^(.+?)##") %>% .[, 2] %>%
-      tibble::tibble(titre = .)
+      dplyr::tibble(titre = .)
 
     titre_complet <- titre_complet %>%
       stringr::str_match("##(.+)") %>% .[, 2]
@@ -402,7 +402,7 @@ excel_onglet <- function(classeur, table, nom_onglet, notes = NULL, n_colonnes_l
 
     titre_ligne <- titre_ligne %>%
       t() %>%
-      tibble::as_tibble()
+      dplyr::as_tibble()
 
     start_col <- ifelse(n_colonnes_lib == 0, 1, n_colonnes_lib)
 
@@ -463,7 +463,7 @@ excel_onglet <- function(classeur, table, nom_onglet, notes = NULL, n_colonnes_l
   #### Note ####
 
   if (!is.null(notes)) {
-    note <- tibble::tibble(note1 = notes)
+    note <- dplyr::tibble(note1 = notes)
     openxlsx::writeData(classeur, nom_onglet, note, startRow = num_ligne_titre + nrow(table) + 2, colNames = FALSE)
   }
 

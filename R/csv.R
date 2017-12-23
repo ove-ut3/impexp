@@ -37,7 +37,7 @@ csv_importer <- function(fichier, ligne_debut = 1, encoding = "Latin-1", na = NU
 
   csv_importer <- csv_importer %>%
     impexp::normaliser_nom_champs() %>%
-    tibble::as_tibble()
+    dplyr::as_tibble()
 
   return(csv_importer)
 }

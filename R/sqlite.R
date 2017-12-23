@@ -21,7 +21,7 @@ sqlite_importer <- function(table, base_sqlite) {
   }
 
   table <- DBI::dbReadTable(connexion, table) %>%
-    tibble::as_tibble()
+    dplyr::as_tibble()
 
   DBI::dbDisconnect(connexion)
 
@@ -82,7 +82,7 @@ sqlite_ajouter_lignes <- function(table_ajout, table, base_sqlite) {
 
   nom_table <- table
   table <- DBI::dbReadTable(connexion, table) %>%
-    tibble::as_tibble()
+    dplyr::as_tibble()
 
   if (ncol(table) != ncol(table_ajout)) {
     stop("Le nombre de colonnes de la table initiale et celle à concaténer doit être identique", call. = FALSE)
