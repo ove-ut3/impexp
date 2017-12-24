@@ -1,33 +1,3 @@
-#' Lister les onglets d'un fichier excel
-#'
-#' Lister les onglets d'un fichier excel.
-#'
-#' @param fichier Chemin vers le fichier excel.
-#'
-#' @return un vecteur de type caractère contenant les noms des onglets du fichier excel.
-#'
-#' @examples
-#' impexp::excel_liste_onglets(paste0(racine_packages, "impexp/inst/extdata/impexp.xlsx"))
-#'
-#' @export
-excel_liste_onglets <- function(fichier) {
-
-  if (!file.exists(fichier)) {
-    stop("Le fichier \"", fichier,"\" n'existe pas.", call. = FALSE)
-  }
-
-  quiet_excel_sheets <- purrr::quietly(readxl::excel_sheets)
-  liste_onglets <- quiet_excel_sheets(fichier) %>%
-    .[["result"]]
-
-  if (any(class(liste_onglets) == "character") == TRUE) {
-    return(liste_onglets)
-  } else {
-    return(NULL)
-  }
-
-}
-
 #' Importer un fichier Excel
 #'
 #' Importer un fichier Excel.
@@ -66,7 +36,7 @@ excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_
     stop("Le fichier \"", fichier,"\" n'existe pas.", call. = FALSE)
   }
 
-  noms_onglets <- excel_liste_onglets(fichier)
+  noms_onglets <- readxl::excel_sheets(fichier)
 
   if (is.null(noms_onglets)) {
     if (!is.null(regex_onglet)) {
