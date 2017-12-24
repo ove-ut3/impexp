@@ -103,15 +103,13 @@ sqlite_ajouter_lignes <- function(table_ajout, table, base_sqlite) {
 #' @export
 sqlite_executer_sql <- function(liste_sql, base_sqlite) {
 
-  connexion <- DBI::dbConnect(RSQLite::SQLite(), dbname = base_sqlite)
-
   if (!file.exists(base_sqlite)) {
     stop("La base SQLite \"", base_sqlite,"\" n'existe pas...", call. = FALSE)
   }
 
-  if (length(liste_sql) != 0) {
-    purrr::walk(liste_sql, ~ DBI::dbExecute(connexion, .))
-  }
+  connexion <- DBI::dbConnect(RSQLite::SQLite(), dbname = base_sqlite)
+
+  purrr::walk(liste_sql, ~ DBI::dbExecute(connexion, .))
 
   DBI::dbDisconnect(connexion)
 }
