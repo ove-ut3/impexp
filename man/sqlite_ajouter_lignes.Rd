@@ -16,3 +16,6 @@ sqlite_ajouter_lignes(table_ajout, table, base_sqlite)
 \description{
 Ajouter des lignes à une table SQLite
 }
+\details{
+L'ordre des champs de la table à ajouter doit suivre celui de la table initiale
+}

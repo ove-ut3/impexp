@@ -67,26 +67,17 @@ sqlite_exporter <- function(table, base_sqlite, nom_table = NULL, ecraser = TRUE
 #' @param table Table initiale.
 #' @param base_sqlite Chemin de la base SQLite.
 #'
+#' @details
+#' L'ordre des champs de la table à ajouter doit suivre celui de la table initiale
+#'
 #' @export
 sqlite_ajouter_lignes <- function(table_ajout, table, base_sqlite) {
 
-  if (!file.exists(base_sqlite)) {
-    stop("La base SQLite \"", base_sqlite,"\" n'existe pas...", call. = FALSE)
+  if (ncol(impexp::sqlite_importer(table, base_sqlite)) != ncol(table_ajout)) {
+    stop("Le nombre de colonnes de la table initiale et celle à concaténer doit être identique", call. = FALSE)
   }
 
   connexion <- DBI::dbConnect(RSQLite::SQLite(), dbname = base_sqlite)
-
-  if (!table %in% DBI::dbListTables(connexion)) {
-    stop("La table \"", table,"\" n'existe pas...", call. = FALSE)
-  }
-
-  nom_table <- table
-  table <- DBI::dbReadTable(connexion, table) %>%
-    dplyr::as_tibble()
-
-  if (ncol(table) != ncol(table_ajout)) {
-    stop("Le nombre de colonnes de la table initiale et celle à concaténer doit être identique", call. = FALSE)
-  }
 
   sql <- table_ajout %>%
     dplyr::mutate(id = row_number()) %>%
