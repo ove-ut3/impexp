@@ -86,7 +86,7 @@ sqlite_ajouter_lignes <- function(table_ajout, table, base_sqlite) {
     dplyr::summarise(valeur = paste(valeur, collapse = "', '")) %>%
     dplyr::pull(valeur) %>%
     paste(collapse = "'), ('") %>%
-    { paste0("INSERT INTO ", nom_table, " VALUES ('", ., "');") }
+    { paste0("INSERT INTO ", table, " VALUES ('", ., "');") }
 
   DBI::dbExecute(connexion, sql)
 
