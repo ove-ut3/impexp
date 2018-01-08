@@ -38,7 +38,7 @@ sqlite_importer <- function(table, base_sqlite) {
 #' @param ecraser Ecraser une table du même nom.
 #'
 #' @export
-sqlite_exporter <- function(table, base_sqlite, nom_table = NULL, ecraser = TRUE) {
+sqlite_exporter <- function(table, base_sqlite, nom_table = NULL, ecraser = FALSE) {
 
   if (!file.exists(base_sqlite)) {
     stop("La base SQLite \"", base_sqlite,"\" n'existe pas...", call. = FALSE)
