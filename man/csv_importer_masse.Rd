@@ -5,8 +5,8 @@
 \title{Importer les fichiers CSV d'un repertoire (recursif)}
 \usage{
 csv_importer_masse(regex_fichier, chemin = ".", ligne_debut = 1,
-  encoding = "Latin-1", na = NULL, col_types = NULL,
-  paralleliser = FALSE, archive_zip = FALSE, regex_zip = NULL,
+  encoding = "Latin-1", na = NULL, col_types = NULL, n_csv = Inf,
+  paralleliser = FALSE, archive_zip = FALSE, regex_zip = "\\\\.zip$",
   warning_type = FALSE, message_import = TRUE)
 }
 \arguments{
@@ -21,6 +21,8 @@ csv_importer_masse(regex_fichier, chemin = ".", ligne_debut = 1,
 \item{na}{Caractères à considérer comme vide en plus de \code{c("NA", "", " ")}.}
 
 \item{col_types}{Type des champs (utilisé par \code{data.table::fread}).}
+
+\item{n_csv}{Nombre de CSV à importer. Une valeur négative correspond au nombre de CSV à partir de la fin dans la liste.}
 
 \item{paralleliser}{\code{TRUE}, import parallelisé des fichiers CSV.}
 

@@ -52,6 +52,7 @@ csv_importer <- function(fichier, ligne_debut = 1, encoding = "Latin-1", na = NU
 #' @param encoding Encodage des fichiers CSV.
 #' @param na Caractères à considérer comme vide en plus de \code{c("NA", "", " ")}.
 #' @param col_types Type des champs (utilisé par \code{data.table::fread}).
+#' @param n_csv Nombre de CSV à importer. Une valeur négative correspond au nombre de CSV à partir de la fin dans la liste.
 #' @param paralleliser \code{TRUE}, import parallelisé des fichiers CSV.
 #' @param archive_zip \code{TRUE}, les fichiers CSV contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
 #' @param regex_zip Expression régulière pour filtrer les archives zip à traiter.
@@ -61,7 +62,7 @@ csv_importer <- function(fichier, ligne_debut = 1, encoding = "Latin-1", na = NU
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
 #'
 #' @export
-csv_importer_masse <- function(regex_fichier, chemin = ".", ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, regex_zip = NULL, warning_type = FALSE, message_import = TRUE) {
+csv_importer_masse <- function(regex_fichier, chemin = ".", ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL, n_csv = Inf, paralleliser = FALSE, archive_zip = FALSE, regex_zip = "\\.zip$", warning_type = FALSE, message_import = TRUE) {
 
   if (!dir.exists(chemin)) {
     stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
@@ -69,19 +70,32 @@ csv_importer_masse <- function(regex_fichier, chemin = ".", ligne_debut = 1, enc
 
   fichiers <- dplyr::tibble(fichier = list.files(chemin, recursive = TRUE, full.names = TRUE) %>%
                               stringr::str_subset(regex_fichier) %>%
-                              iconv(from = "UTF-8"))
+                              iconv(from = "UTF-8"),
+                            archive_zip = NA_character_)
 
-  # Si l'on inclut les archives zip
-  if (archive_zip == TRUE) {
+  if (nrow(fichiers) > abs(n_csv)) {
 
-    archives_zip <- divr::extraire_masse_zip(chemin, regex_fichier = regex_fichier, regex_zip = regex_zip, paralleliser = paralleliser)
-
-    fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
-      dplyr::arrange(fichier)
+    if (n_csv > 0) {
+      fichiers <- dplyr::filter(fichiers, row_number() <= n_csv)
+    } else if (n_csv < 0) {
+      fichiers <- fichiers %>%
+        dplyr::filter(row_number() > n() + n_csv)
+    }
 
   } else {
-    fichiers <- fichiers %>%
-      dplyr::mutate(archive_zip = NA_character_)
+
+    # Si l'on inclut les archives zip
+    if (archive_zip == TRUE) {
+
+      n_csv <- n_csv - nrow(fichiers)
+
+      archives_zip <- divr::extraire_masse_zip(chemin, regex_fichier = regex_fichier, regex_zip = regex_zip, n_fichiers = n_csv, paralleliser = paralleliser)
+
+      fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
+        dplyr::arrange(fichier)
+
+    }
+
   }
 
   if (nrow(fichiers) == 0) {
@@ -105,10 +119,9 @@ csv_importer_masse <- function(regex_fichier, chemin = ".", ligne_debut = 1, enc
   csv_importer_masse <- dplyr::tibble(fichier = unique(fichiers$fichier),
                                       import = pbapply::pblapply(unique(fichiers$fichier), csv_importer, ligne_debut = ligne_debut, encoding = encoding, na = na, col_types = col_types, warning_type = warning_type, cl = cluster))
 
-  dplyr::filter(fichiers, !is.na(archive_zip)) %>%
+  suppression <- dplyr::filter(fichiers, !is.na(archive_zip)) %>%
     dplyr::pull(fichier) %>%
-    file.remove() %>%
-    invisible()
+    file.remove()
 
   if (paralleliser == TRUE) {
     divr::stopper_cluster(cluster)
