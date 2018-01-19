@@ -18,7 +18,7 @@ access_connexion <- function(base_access = "Tables_ref.accdb") {
 
   connexion <- DBI::dbConnect(odbc::odbc(),
                               driver = "Microsoft Access Driver (*.mdb, *.accdb)",
-                              dbq = iconv(dbq, from = "UTF-8"),
+                              dbq = iconv(dbq, to = "Windows-1252"),
                               encoding = "Windows-1252")
   return(connexion)
 }
