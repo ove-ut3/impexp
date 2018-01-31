@@ -50,7 +50,7 @@ sqlite_exporter <- function(table, base_sqlite, nom_table = NULL, ecraser = FALS
     nom_table <- deparse(substitute(table))
   }
 
-  if (nom_table %in% DBI::dbListTables(connexion)) {
+  if (nom_table %in% DBI::dbListTables(connexion) & ecraser == TRUE) {
     message("La table \"", nom_table,"\" est écrasée...")
   }
 
