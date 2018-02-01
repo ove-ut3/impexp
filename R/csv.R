@@ -73,6 +73,16 @@ csv_importer_masse <- function(regex_fichier, chemin = ".", ligne_debut = 1, enc
                               iconv(from = "UTF-8"),
                             archive_zip = NA_character_)
 
+  # Si l'on inclut les archives zip
+  if (archive_zip == TRUE) {
+
+    archives_zip <- divr::extraire_masse_zip(chemin, regex_fichier = regex_fichier, regex_zip = regex_zip, n_fichiers = n_csv, paralleliser = paralleliser)
+
+    fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
+      dplyr::arrange(fichier)
+
+  }
+
   if (nrow(fichiers) > abs(n_csv)) {
 
     if (n_csv > 0) {
@@ -80,20 +90,6 @@ csv_importer_masse <- function(regex_fichier, chemin = ".", ligne_debut = 1, enc
     } else if (n_csv < 0) {
       fichiers <- fichiers %>%
         dplyr::filter(row_number() > n() + n_csv)
-    }
-
-  } else {
-
-    # Si l'on inclut les archives zip
-    if (archive_zip == TRUE) {
-
-      n_csv <- n_csv - nrow(fichiers)
-
-      archives_zip <- divr::extraire_masse_zip(chemin, regex_fichier = regex_fichier, regex_zip = regex_zip, n_fichiers = n_csv, paralleliser = paralleliser)
-
-      fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
-        dplyr::arrange(fichier)
-
     }
 
   }
