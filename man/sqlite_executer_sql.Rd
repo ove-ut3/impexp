@@ -4,12 +4,14 @@
 \alias{sqlite_executer_sql}
 \title{Executer des commandes SQL dans une base SQLite}
 \usage{
-sqlite_executer_sql(liste_sql, base_sqlite)
+sqlite_executer_sql(liste_sql, base_sqlite, attente_verrou = TRUE)
 }
 \arguments{
 \item{liste_sql}{Un vecteur de commandes SQL au format chaîne de caractères.}
 
 \item{base_sqlite}{Chemin de la base SQLite.}
+
+\item{attente_verrou}{Tentatives répétées jusqu'à ce que le verrou soit libéré.}
 }
 \description{
 Exécuter des commandes SQL dans une base SQLite

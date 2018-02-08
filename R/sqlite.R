@@ -66,12 +66,13 @@ sqlite_exporter <- function(table, base_sqlite, nom_table = NULL, ecraser = FALS
 #' @param table_ajout Table à concaténer.
 #' @param table Table initiale.
 #' @param base_sqlite Chemin de la base SQLite.
+#' @param attente_verrou Tentatives répétées jusqu'à ce que le verrou soit libéré.
 #'
 #' @details
 #' L'ordre des champs de la table à ajouter doit suivre celui de la table initiale
 #'
 #' @export
-sqlite_ajouter_lignes <- function(table_ajout, table, base_sqlite) {
+sqlite_ajouter_lignes <- function(table_ajout, table, base_sqlite, attente_verrou = TRUE) {
 
   if (ncol(impexp::sqlite_importer(table, base_sqlite)) != ncol(table_ajout)) {
     stop("Le nombre de colonnes de la table initiale et celle à concaténer doit être identique", call. = FALSE)
@@ -88,7 +89,7 @@ sqlite_ajouter_lignes <- function(table_ajout, table, base_sqlite) {
     paste(collapse = "'), ('") %>%
     { paste0("INSERT INTO ", table, " VALUES ('", ., "');") }
 
-  DBI::dbExecute(connexion, sql)
+  impexp::sqlite_executer_sql(sql, base_sqlite, attente_verrou)
 
   DBI::dbDisconnect(connexion)
 }
@@ -99,9 +100,10 @@ sqlite_ajouter_lignes <- function(table_ajout, table, base_sqlite) {
 #'
 #' @param liste_sql Un vecteur de commandes SQL au format chaîne de caractères.
 #' @param base_sqlite Chemin de la base SQLite.
+#' @param attente_verrou Tentatives répétées jusqu'à ce que le verrou soit libéré.
 #'
 #' @export
-sqlite_executer_sql <- function(liste_sql, base_sqlite) {
+sqlite_executer_sql <- function(liste_sql, base_sqlite, attente_verrou = TRUE) {
 
   if (!file.exists(base_sqlite)) {
     stop("La base SQLite \"", base_sqlite,"\" n'existe pas...", call. = FALSE)
@@ -109,7 +111,25 @@ sqlite_executer_sql <- function(liste_sql, base_sqlite) {
 
   connexion <- DBI::dbConnect(RSQLite::SQLite(), dbname = base_sqlite)
 
-  purrr::walk(liste_sql, ~ DBI::dbExecute(connexion, .))
+  if (attente_verrou == FALSE) {
+    purrr::walk(liste_sql, ~ DBI::dbExecute(connexion, .))
+
+  } else {
+    execute_sql_safe <- purrr::safely(DBI::dbExecute)
+
+    execute_sql <- purrr::map(liste_sql, ~ execute_sql_safe(connexion, .))
+
+    temoin_erreur <- purrr::map_lgl(execute_sql, ~ !is.null(.$error))
+    liste_sql <- liste_sql[temoin_erreur]
+
+    while(any(temoin_erreur)) {
+
+      execute_sql <- purrr::map(liste_sql, ~ execute_sql_safe(connexion, .))
+
+      temoin_erreur <- purrr::map_lgl(execute_sql, ~ !is.null(.$error))
+      liste_sql <- liste_sql[temoin_erreur]
+    }
+  }
 
   DBI::dbDisconnect(connexion)
 }
