@@ -120,14 +120,14 @@ sqlite_executer_sql <- function(liste_sql, base_sqlite, attente_verrou = TRUE) {
     execute_sql <- purrr::map(liste_sql, ~ execute_sql_safe(connexion, .))
 
     temoin_erreur <- purrr::map_lgl(execute_sql, ~ !is.null(.$error))
-    liste_sql <- liste_sql[temoin_erreur]
 
     while(any(temoin_erreur)) {
+
+      liste_sql <- liste_sql[temoin_erreur]
 
       execute_sql <- purrr::map(liste_sql, ~ execute_sql_safe(connexion, .))
 
       temoin_erreur <- purrr::map_lgl(execute_sql, ~ !is.null(.$error))
-      liste_sql <- liste_sql[temoin_erreur]
     }
   }
 
