@@ -1,3 +1,16 @@
+#' Creer une base SQLite vide
+#'
+#' Créer une base SQLite vide
+#'
+#' @param base_sqlite Chemin de la base SQLite.
+#'
+#' @export
+sqlite_creer <- function(base_sqlite) {
+
+  creation <- DBI::dbConnect(RSQLite::SQLite(), dbname = base_sqlite)
+
+}
+
 #' Importer une table d'une base SQLite
 #'
 #' Importer une table d'une base SQLite
