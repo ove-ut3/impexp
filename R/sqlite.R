@@ -49,9 +49,10 @@ sqlite_importer <- function(table, base_sqlite) {
 #' @param base_sqlite Chemin de la base SQLite.
 #' @param nom_table Nom de la table à créer dans la base SQLite.
 #' @param ecraser Ecraser une table du même nom.
+#' @param message Message lors d'un écrasemetn de table.
 #'
 #' @export
-sqlite_exporter <- function(table, base_sqlite, nom_table = NULL, ecraser = FALSE) {
+sqlite_exporter <- function(table, base_sqlite, nom_table = NULL, ecraser = FALSE, message = TRUE) {
 
   if (!file.exists(base_sqlite)) {
     stop("La base SQLite \"", base_sqlite,"\" n'existe pas...", call. = FALSE)
@@ -63,7 +64,7 @@ sqlite_exporter <- function(table, base_sqlite, nom_table = NULL, ecraser = FALS
     nom_table <- deparse(substitute(table))
   }
 
-  if (nom_table %in% DBI::dbListTables(connexion) & ecraser == TRUE) {
+  if (nom_table %in% DBI::dbListTables(connexion) & ecraser == TRUE & message == TRUE) {
     message("La table \"", nom_table,"\" est écrasée...")
   }
 

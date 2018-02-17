@@ -4,7 +4,8 @@
 \alias{sqlite_exporter}
 \title{Exporter une table vers une base SQLite}
 \usage{
-sqlite_exporter(table, base_sqlite, nom_table = NULL, ecraser = FALSE)
+sqlite_exporter(table, base_sqlite, nom_table = NULL, ecraser = FALSE,
+  message = TRUE)
 }
 \arguments{
 \item{table}{Table à exporter}
@@ -14,6 +15,8 @@ sqlite_exporter(table, base_sqlite, nom_table = NULL, ecraser = FALSE)
 \item{nom_table}{Nom de la table à créer dans la base SQLite.}
 
 \item{ecraser}{Ecraser une table du même nom.}
+
+\item{message}{Message lors d'un écrasemetn de table.}
 }
 \description{
 Exporter une table vers une base SQLite
