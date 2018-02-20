@@ -11,6 +11,28 @@ sqlite_creer <- function(base_sqlite) {
 
 }
 
+#' Liste les tables d'une base SQLite
+#'
+#' Liste les tables d'une base SQLite
+#'
+#' @param base_sqlite Chemin de la base SQLite.
+#'
+#' @export
+sqlite_liste_tables <- function(base_sqlite) {
+
+  if (!file.exists(base_sqlite)) {
+    stop("La base SQLite \"", base_sqlite,"\" n'existe pas...", call. = FALSE)
+  }
+
+  connexion <- DBI::dbConnect(RSQLite::SQLite(), dbname = base_sqlite)
+
+  sqlite_liste_tables <- DBI::dbListTables(connexion)
+
+  DBI::dbDisconnect(connexion)
+
+  return(sqlite_liste_tables)
+}
+
 #' Importer une table d'une base SQLite
 #'
 #' Importer une table d'une base SQLite
