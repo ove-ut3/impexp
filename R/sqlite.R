@@ -8,6 +8,7 @@
 sqlite_creer <- function(base_sqlite) {
 
   creation <- DBI::dbConnect(RSQLite::SQLite(), dbname = base_sqlite)
+  DBI::dbDisconnect(creation)
 
 }
 
