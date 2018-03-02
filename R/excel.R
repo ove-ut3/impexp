@@ -259,10 +259,9 @@ excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = "."
                     purrr::map_chr( ~ ifelse(!is.null(.$info), .$info, NA_character_))
            )
 
-  dplyr::filter(fichiers, !is.na(archive_zip)) %>%
+  suppression <- dplyr::filter(fichiers, !is.na(archive_zip)) %>%
     dplyr::pull(fichier) %>%
-    file.remove() %>%
-    invisible()
+    file.remove()
 
   if (paralleliser == TRUE) {
     divr::stopper_cluster(cluster)
