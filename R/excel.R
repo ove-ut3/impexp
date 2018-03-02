@@ -233,7 +233,8 @@ excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = "."
 
   if (nrow(fichiers) == 0) {
     message("Aucun fichier ne correspond aux paramètres saisis")
-    return(NULL)
+
+    return(fichiers)
   }
 
   if (message_import == TRUE) {
