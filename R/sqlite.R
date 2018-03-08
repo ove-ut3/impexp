@@ -53,6 +53,7 @@ sqlite_importer <- function(table, base_sqlite) {
   connexion <- DBI::dbConnect(RSQLite::SQLite(), dbname = base_sqlite)
 
   if (!table %in% DBI::dbListTables(connexion)) {
+    DBI::dbDisconnect(connexion)
     stop("La table \"", table,"\" n'existe pas...", call. = FALSE)
   }
 
