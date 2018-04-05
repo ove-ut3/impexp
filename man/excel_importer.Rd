@@ -5,8 +5,7 @@
 \title{Importer un fichier Excel}
 \usage{
 excel_importer(fichier, nom_onglet = NULL, regex_onglet = NULL,
-  num_onglet = 1, ligne_debut = 1, na = NULL, col_types = NULL,
-  test_champ_manquant = NULL)
+  num_onglet = 1, ligne_debut = 1, na = NULL, col_types = NULL)
 }
 \arguments{
 \item{fichier}{Chemin vers le fichier excel.}
@@ -22,8 +21,6 @@ excel_importer(fichier, nom_onglet = NULL, regex_onglet = NULL,
 \item{na}{Caractères à considérer comme vide en plus de \code{c("")}.}
 
 \item{col_types}{Type des champs (utilisé par \code{readxl::read_excel}.}
-
-\item{test_champ_manquant}{Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.}
 }
 \value{
 Un data frame ou une liste de data frames.\cr

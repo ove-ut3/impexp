@@ -9,7 +9,6 @@
 #' @param ligne_debut Ligne de début à partir duquel importer.
 #' @param na Caractères à considérer comme vide en plus de \code{c("")}.
 #' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
-#' @param test_champ_manquant Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.
 #'
 #' @return Un data frame ou une liste de data frames.\cr
 #'
@@ -30,7 +29,7 @@
 #'   regex_onglet = "^Autre")
 #'
 #' @export
-excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_onglet = 1, ligne_debut = 1, na = NULL, col_types = NULL, test_champ_manquant = NULL) {
+excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_onglet = 1, ligne_debut = 1, na = NULL, col_types = NULL) {
 
   if (!file.exists(fichier)) {
     stop("Le fichier \"", fichier,"\" n'existe pas.", call. = FALSE)
@@ -77,14 +76,13 @@ excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_
                                fichier = fichier,
                                ligne_debut = ligne_debut,
                                na = na,
-                               col_types = col_types,
-                               test_champ_manquant = test_champ_manquant)
+                               col_types = col_types)
                              )
 
     return(import)
   }
 
-  import <- impexp::excel_importer_(fichier, num_onglet, ligne_debut, col_types, test_champ_manquant)
+  import <- impexp::excel_importer_(fichier, num_onglet, ligne_debut, col_types)
 
   return(import)
 
@@ -97,13 +95,12 @@ excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_
 #' @param ligne_debut Ligne de début à partir duquel importer.
 #' @param na Caractères à considérer comme vide en plus de \code{c("")}.
 #' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
-#' @param test_champ_manquant Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.
 #'
 #' @return Un data frame correspondant à la feuille excel.
 #'
 #' @export
 #' @keywords internal
-excel_importer_ <- function(fichier, num_onglet, ligne_debut = 1, na = NULL, col_types = NULL, test_champ_manquant = NULL) {
+excel_importer_ <- function(fichier, num_onglet, ligne_debut = 1, na = NULL, col_types = NULL) {
 
   quiet_read_excel <- purrr::quietly(readxl::read_excel)
   import <- quiet_read_excel(fichier, sheet = num_onglet, skip = ligne_debut - 1, na = c("", na), col_types = col_types) %>%
@@ -114,77 +111,20 @@ excel_importer_ <- function(fichier, num_onglet, ligne_debut = 1, na = NULL, col
     if (nrow(import) == 0) {
       import <- dplyr::tibble("warning")
       attr(import, "warning") <- "Pas de ligne dans l'onglet"
-    } else {
 
+    } else {
       import <- impexp::normaliser_nom_champs(import)
 
-      if (!is.null(test_champ_manquant)) {
-        import <- import_test_champ_manquant(table = import, test_champ_manquant = test_champ_manquant, fichier = fichier, num_onglet = num_onglet, col_types = col_types)
-      }
     }
 
   } else {
     import <- dplyr::tibble("erreur")
     attr(import, "erreur") <- "Impossible de lire le fichier excel"
+
   }
 
   return(import)
 
-}
-
-#' Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide d'un champ (fonction générique).
-#'
-#' @param table Table pour laquelle doit être déterminée la première ligne non-vide.
-#' @param test_champ_manquant Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.
-#' @param fichier Chemin vers le fichier excel.
-#' @param num_onglet Numéro de l'onglet à importer.
-#' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
-#'
-#' @return Un data frame importé à partir de la première ligne non-vide.
-#'
-#' @export
-#' @keywords internal
-import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_onglet, col_types) {
-
-  #Test si un champ est attendu dans l'import mais n'est pas présent
-
-  test_champ_manquant <- caractr::normaliser_char(test_champ_manquant)
-
-  if (intersect(colnames(table), test_champ_manquant) %>% length() == 1) {
-    # Le champ est trouvé
-    return(table)
-  }
-
-  test <- impexp::excel_importer_(fichier, num_onglet, ligne_debut = 1, col_types)
-  colnames(test) <- paste0("champ_", as.character(1:ncol(test)))
-
-  normaliser_char <- caractr::normaliser_char
-
-  ligne_en_tete <- dplyr::mutate_all(test, .funs = "as.character") %>%
-    dplyr::mutate_all(.funs = "normaliser_char") %>%
-    dplyr::mutate(num_ligne = row_number() + 1)
-
-  ligne_en_tete$paste2 <- apply(ligne_en_tete[, colnames(ligne_en_tete)], 1, caractr::paste2, collapse = "##")
-  ligne_en_tete <- dplyr::select(ligne_en_tete, num_ligne, paste2) %>%
-    dplyr::mutate(paste2 = paste0("##", paste2, "##")) %>%
-    dplyr::filter(stringr::str_detect(paste2, fixed(paste0("##", test_champ_manquant, "##")))) %>%
-    .$num_ligne
-
-  if (length(ligne_en_tete) != 1) {
-
-    import <- dplyr::tibble("erreur")
-    attr(import, "erreur") <- paste0("Fichier ", fichier, " / Onglet ", num_onglet, " : Tentative de nouvel import mais la valeur '", test_champ_manquant, "' n'a pas ete trouvée dans la première colonne")
-
-    return(import)
-  }
-
-  import <- impexp::excel_importer_(fichier, num_onglet, ligne_debut = ligne_en_tete, col_types) %>%
-    impexp::normaliser_nom_champs() %>%
-    impexp::caracteres_vides_na()
-
-  attr(import, "info") <- paste0("Fichier ", fichier, " / Onglet ", num_onglet, " : Nouvel import a partir de la ligne ", ligne_en_tete)
-
-  return(import)
 }
 
 #' Importer les fichiers Excel d'un repertoire (recursif)
@@ -199,7 +139,6 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
 #' @param paralleliser \code{TRUE}, import parallelisé des fichiers excel.
 #' @param archive_zip \code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
-#' @param test_champ_manquant Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.
 #' @param message_import \code{TRUE}, affichage du message d'import
 #'
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
@@ -208,7 +147,7 @@ import_test_champ_manquant <- function(table, test_champ_manquant, fichier, num_
 #' impexp::importer_masse_xlsx(paste0(racine_packages, "impexp/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "impexp")
 #'
 #' @export
-excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, na = NULL, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, test_champ_manquant = NULL, message_import = TRUE) {
+excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, na = NULL, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, message_import = TRUE) {
 
   if (!dir.exists(chemin)) {
     stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
@@ -250,7 +189,7 @@ excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = "."
     cluster <- NULL
   }
 
-  import_masse_xlsx <- pbapply::pblapply(fichiers$fichier %>% unique, excel_importer, regex_onglet = regex_onglet, ligne_debut = ligne_debut, na = na, col_types = col_types, test_champ_manquant = test_champ_manquant, cl = cluster) %>%
+  import_masse_xlsx <- pbapply::pblapply(fichiers$fichier %>% unique, excel_importer, regex_onglet = regex_onglet, ligne_debut = ligne_debut, na = na, col_types = col_types, cl = cluster) %>%
     dplyr::bind_rows() %>%
     dplyr::mutate(erreur = lapply(import, attributes) %>%
                     purrr::map_chr( ~ ifelse(!is.null(.$erreur), .$erreur, NA_character_)),

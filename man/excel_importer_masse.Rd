@@ -6,7 +6,7 @@
 \usage{
 excel_importer_masse(regex_fichier, chemin = ".", regex_onglet = ".",
   ligne_debut = 1, na = NULL, col_types = NULL, paralleliser = FALSE,
-  archive_zip = FALSE, test_champ_manquant = NULL, message_import = TRUE)
+  archive_zip = FALSE, message_import = TRUE)
 }
 \arguments{
 \item{regex_fichier}{Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.}
@@ -24,8 +24,6 @@ excel_importer_masse(regex_fichier, chemin = ".", regex_onglet = ".",
 \item{paralleliser}{\code{TRUE}, import parallelisé des fichiers excel.}
 
 \item{archive_zip}{\code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.}
-
-\item{test_champ_manquant}{Un nom de champ du fichier. Importer un fichier Excel sans connaitre la ligne de début, mais à partir de la première ligne non-vide du champ.}
 
 \item{message_import}{\code{TRUE}, affichage du message d'import}
 }
