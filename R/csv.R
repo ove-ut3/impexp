@@ -13,6 +13,7 @@
 #' @return Un data frame.\cr
 #'
 #' @export
+#' @keywords internal
 csv_importer <- function(fichier, ligne_debut = 1, encoding = "Latin-1", na = NULL, dec = ",", col_types = NULL, warning_type = TRUE) {
 
   if (!file.exists(fichier)) {
@@ -114,7 +115,7 @@ csv_importer_masse <- function(regex_fichier, chemin = ".", ligne_debut = 1, enc
   }
 
   csv_importer_masse <- dplyr::tibble(fichier = unique(fichiers$fichier),
-                                      import = pbapply::pblapply(unique(fichiers$fichier), csv_importer, ligne_debut = ligne_debut, encoding = encoding, na = na, col_types = col_types, warning_type = warning_type, cl = cluster))
+                                      import = pbapply::pblapply(unique(fichiers$fichier), impexp::csv_importer, ligne_debut = ligne_debut, encoding = encoding, na = na, col_types = col_types, warning_type = warning_type, cl = cluster))
 
   suppression <- dplyr::filter(fichiers, !is.na(archive_zip)) %>%
     dplyr::pull(fichier) %>%

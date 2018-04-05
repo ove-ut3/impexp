@@ -28,3 +28,4 @@ Un data frame.\cr
 \description{
 Importer un fichier CSV.
 }
+\keyword{internal}
