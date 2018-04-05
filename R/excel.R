@@ -82,26 +82,6 @@ excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_
     return(import)
   }
 
-  import <- impexp::excel_importer_(fichier, num_onglet, ligne_debut, col_types)
-
-  return(import)
-
-}
-
-#' Importer un fichier Excel (fonction générique).
-#'
-#' @param fichier Chemin vers le fichier excel.
-#' @param num_onglet Numéro de l'onglet à importer.
-#' @param ligne_debut Ligne de début à partir duquel importer.
-#' @param na Caractères à considérer comme vide en plus de \code{c("")}.
-#' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
-#'
-#' @return Un data frame correspondant à la feuille excel.
-#'
-#' @export
-#' @keywords internal
-excel_importer_ <- function(fichier, num_onglet, ligne_debut = 1, na = NULL, col_types = NULL) {
-
   quiet_read_excel <- purrr::quietly(readxl::read_excel)
   import <- quiet_read_excel(fichier, sheet = num_onglet, skip = ligne_debut - 1, na = c("", na), col_types = col_types) %>%
     .[["result"]]
