@@ -3,6 +3,7 @@
 #' Importer un fichier CSV.
 #'
 #' @param fichier Chemin vers le fichier CSV
+#' @param fonction Fonction à utiliser pour l'import CSV..
 #' @param ligne_debut Ligne de début à partir duquel importer.
 #' @param encoding Encodage du fichier CSV.
 #' @param na Caractères à considérer comme vide en plus de \code{c("NA", "", " ")}.
@@ -14,26 +15,34 @@
 #'
 #' @export
 #' @keywords internal
-csv_importer <- function(fichier, ligne_debut = 1, encoding = "Latin-1", na = NULL, dec = ",", col_types = NULL, warning_type = TRUE) {
+csv_importer <- function(fichier, fonction = "read.csv2", ligne_debut = 1, encoding = "Latin-1", na = NULL, dec = ",", col_types = NULL, warning_type = TRUE) {
 
   if (!file.exists(fichier)) {
     stop("Le fichier \"", fichier,"\" n'existe pas.", call. = FALSE)
   }
 
-  if (warning_type == FALSE) {
-    fonction_import <- purrr::quietly(data.table::fread)
-  } else {
-    fonction_import <- data.table::fread
-  }
+  if (fonction == "read.csv2") {
+    encoding <- dplyr::recode(encoding, "Latin-1" = "Windows-1252")
+    csv_importer <- read.csv2(iconv(fichier, from = "UTF-8"), na.strings = c("NA", "", " ", na), fileEncoding = encoding, check.names = FALSE)
 
-  csv_importer <- fonction_import(iconv(fichier, from = "UTF-8"), sep = ";", encoding = encoding, na.strings = c("NA", "", " ", na), dec = dec)
+  } else if (fonction == "fread") {
 
-  if (warning_type == FALSE) {
-    if (any(!stringr::str_detect(csv_importer$warnings, "Bumped column \\d+? to type"))) {
-      warnings <- csv_importer$warnings[!stringr::str_detect(csv_importer$warnings, "Bumped column \\d+? to type")]
-      purrr::walk(warnings, message)
+    if (warning_type == FALSE) {
+      fonction_import <- purrr::quietly(data.table::fread)
+    } else {
+      fonction_import <- data.table::fread
     }
-    csv_importer <- csv_importer[["result"]]
+
+    csv_importer <- fonction_import(iconv(fichier, from = "UTF-8"), sep = ";", encoding = encoding, na.strings = c("NA", "", " ", na), dec = dec)
+
+    if (warning_type == FALSE) {
+      if (any(!stringr::str_detect(csv_importer$warnings, "Bumped column \\d+? to type"))) {
+        warnings <- csv_importer$warnings[!stringr::str_detect(csv_importer$warnings, "Bumped column \\d+? to type")]
+        purrr::walk(warnings, message)
+      }
+      csv_importer <- csv_importer[["result"]]
+    }
+
   }
 
   csv_importer <- csv_importer %>%

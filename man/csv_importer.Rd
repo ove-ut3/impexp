@@ -4,11 +4,14 @@
 \alias{csv_importer}
 \title{Importer un fichier CSV}
 \usage{
-csv_importer(fichier, ligne_debut = 1, encoding = "Latin-1", na = NULL,
-  dec = ",", col_types = NULL, warning_type = TRUE)
+csv_importer(fichier, fonction = "read.csv2", ligne_debut = 1,
+  encoding = "Latin-1", na = NULL, dec = ",", col_types = NULL,
+  warning_type = TRUE)
 }
 \arguments{
 \item{fichier}{Chemin vers le fichier CSV}
+
+\item{fonction}{Fonction à utiliser pour l'import CSV..}
 
 \item{ligne_debut}{Ligne de début à partir duquel importer.}
 
