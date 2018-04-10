@@ -364,12 +364,13 @@ excel_onglet <- function(classeur, table, nom_onglet, notes = NULL, n_colonnes_l
 #'
 #' @param table data.frame ou liste de data.frame à exporter.
 #' @param nom_fichier \dots
+#' @param creer_repertoire \dots
 #' @param nom_onglet \dots
 #' @param notes \dots
 #' @param n_colonnes_lib \dots
 #'
 #' @export
-excel_exporter <- function(table, nom_fichier, nom_onglet = NULL, notes = NULL, n_colonnes_lib = 0) {
+excel_exporter <- function(table, nom_fichier, creer_repertoire = FALSE, nom_onglet = NULL, notes = NULL, n_colonnes_lib = 0) {
 
   if (any(class(table) == "data.frame")) {
     table <- list("table" = table)
@@ -397,5 +398,12 @@ excel_exporter <- function(table, nom_fichier, nom_onglet = NULL, notes = NULL, 
 
   purrr::pwalk(list(table, nom_onglet, notes), impexp::excel_onglet, classeur = classeur, n_colonnes_lib = n_colonnes_lib)
 
+  if (creer_repertoire == TRUE) {
+    stringr::str_match(nom_fichier, "(.+)/[^/]+?$")[, 2] %>%
+      divr::creer_repertoire()
+  }
+
   openxlsx::saveWorkbook(classeur, nom_fichier, overwrite = TRUE)
+
+  return(nom_fichier)
 }
