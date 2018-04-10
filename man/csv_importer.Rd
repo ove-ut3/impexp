@@ -11,7 +11,7 @@ csv_importer(fichier, fonction = "read.csv2", ligne_debut = 1,
 \arguments{
 \item{fichier}{Chemin vers le fichier CSV}
 
-\item{fonction}{Fonction à utiliser pour l'import CSV..}
+\item{fonction}{Fonction à utiliser pour l'import CSV.}
 
 \item{ligne_debut}{Ligne de début à partir duquel importer.}
 

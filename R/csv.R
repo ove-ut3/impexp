@@ -3,7 +3,7 @@
 #' Importer un fichier CSV.
 #'
 #' @param fichier Chemin vers le fichier CSV
-#' @param fonction Fonction à utiliser pour l'import CSV..
+#' @param fonction Fonction à utiliser pour l'import CSV.
 #' @param ligne_debut Ligne de début à partir duquel importer.
 #' @param encoding Encodage du fichier CSV.
 #' @param na Caractères à considérer comme vide en plus de \code{c("NA", "", " ")}.
