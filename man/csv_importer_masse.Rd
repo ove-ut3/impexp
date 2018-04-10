@@ -4,15 +4,17 @@
 \alias{csv_importer_masse}
 \title{Importer les fichiers CSV d'un repertoire (recursif)}
 \usage{
-csv_importer_masse(regex_fichier, chemin = ".", ligne_debut = 1,
-  encoding = "Latin-1", na = NULL, col_types = NULL, n_csv = Inf,
-  paralleliser = FALSE, archive_zip = FALSE, regex_zip = "\\\\.zip$",
-  warning_type = FALSE, message_import = TRUE)
+csv_importer_masse(regex_fichier, chemin = ".", fonction = "read.csv2",
+  ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL,
+  n_csv = Inf, paralleliser = FALSE, archive_zip = FALSE,
+  regex_zip = "\\\\.zip$", warning_type = FALSE, message_import = TRUE)
 }
 \arguments{
 \item{regex_fichier}{Expression régulière à partir de laquelle les fichiers dont le nom matche sont importés.}
 
 \item{chemin}{Chemin du répertoire à partir duquel seront importés les fichiers excel (récursif).}
+
+\item{fonction}{Fonction à utiliser pour l'import CSV.}
 
 \item{ligne_debut}{Ligne de début à partir duquel importer.}
 

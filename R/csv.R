@@ -58,6 +58,7 @@ csv_importer <- function(fichier, fonction = "read.csv2", ligne_debut = 1, encod
 #'
 #' @param regex_fichier Expression régulière à partir de laquelle les fichiers dont le nom matche sont importés.
 #' @param chemin Chemin du répertoire à partir duquel seront importés les fichiers excel (récursif).
+#' @param fonction Fonction à utiliser pour l'import CSV.
 #' @param ligne_debut Ligne de début à partir duquel importer.
 #' @param encoding Encodage des fichiers CSV.
 #' @param na Caractères à considérer comme vide en plus de \code{c("NA", "", " ")}.
@@ -72,7 +73,7 @@ csv_importer <- function(fichier, fonction = "read.csv2", ligne_debut = 1, encod
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
 #'
 #' @export
-csv_importer_masse <- function(regex_fichier, chemin = ".", ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL, n_csv = Inf, paralleliser = FALSE, archive_zip = FALSE, regex_zip = "\\.zip$", warning_type = FALSE, message_import = TRUE) {
+csv_importer_masse <- function(regex_fichier, chemin = ".", fonction = "read.csv2", ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL, n_csv = Inf, paralleliser = FALSE, archive_zip = FALSE, regex_zip = "\\.zip$", warning_type = FALSE, message_import = TRUE) {
 
   if (!dir.exists(chemin)) {
     stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
@@ -124,7 +125,7 @@ csv_importer_masse <- function(regex_fichier, chemin = ".", ligne_debut = 1, enc
   }
 
   csv_importer_masse <- dplyr::tibble(fichier = unique(fichiers$fichier),
-                                      import = pbapply::pblapply(unique(fichiers$fichier), impexp::csv_importer, ligne_debut = ligne_debut, encoding = encoding, na = na, col_types = col_types, warning_type = warning_type, cl = cluster))
+                                      import = pbapply::pblapply(unique(fichiers$fichier), impexp::csv_importer, fonction = fonction, ligne_debut = ligne_debut, encoding = encoding, na = na, col_types = col_types, warning_type = warning_type, cl = cluster))
 
   suppression <- dplyr::filter(fichiers, !is.na(archive_zip)) %>%
     dplyr::pull(fichier) %>%
