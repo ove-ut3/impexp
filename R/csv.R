@@ -9,13 +9,14 @@
 #' @param na Caractères à considérer comme vide en plus de \code{c("NA", "", " ")}.
 #' @param dec Cractère de décimale, par défaut la virgule.
 #' @param col_types Type des champs (utilisé par \code{data.table::fread}.
+#' @param normaliser Normaliser les noms de champ de table.
 #' @param warning_type Affichage des warnings liés aux types des champs importés.
 #'
 #' @return Un data frame.\cr
 #'
 #' @export
 #' @keywords internal
-csv_importer <- function(fichier, fonction = "read.csv2", ligne_debut = 1, encoding = "Latin-1", na = NULL, dec = ",", col_types = NULL, warning_type = TRUE) {
+csv_importer <- function(fichier, fonction = "read.csv2", ligne_debut = 1, encoding = "Latin-1", na = NULL, dec = ",", col_types = NULL, normaliser = TRUE, warning_type = TRUE) {
 
   if (!file.exists(fichier)) {
     stop("Le fichier \"", fichier,"\" n'existe pas.", call. = FALSE)
@@ -45,9 +46,11 @@ csv_importer <- function(fichier, fonction = "read.csv2", ligne_debut = 1, encod
 
   }
 
-  csv_importer <- csv_importer %>%
-    impexp::normaliser_nom_champs() %>%
-    dplyr::as_tibble()
+  if (normaliser == TRUE) {
+    csv_importer <- impexp::normaliser_nom_champs(csv_importer)
+  }
+
+  csv_importer <- dplyr::as_tibble(csv_importer)
 
   return(csv_importer)
 }
@@ -63,6 +66,7 @@ csv_importer <- function(fichier, fonction = "read.csv2", ligne_debut = 1, encod
 #' @param encoding Encodage des fichiers CSV.
 #' @param na Caractères à considérer comme vide en plus de \code{c("NA", "", " ")}.
 #' @param col_types Type des champs (utilisé par \code{data.table::fread}).
+#' @param normaliser Normaliser les noms de champ de table.
 #' @param n_csv Nombre de CSV à importer. Une valeur négative correspond au nombre de CSV à partir de la fin dans la liste.
 #' @param paralleliser \code{TRUE}, import parallelisé des fichiers CSV.
 #' @param archive_zip \code{TRUE}, les fichiers CSV contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
@@ -73,7 +77,7 @@ csv_importer <- function(fichier, fonction = "read.csv2", ligne_debut = 1, encod
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
 #'
 #' @export
-csv_importer_masse <- function(regex_fichier, chemin = ".", fonction = "read.csv2", ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL, n_csv = Inf, paralleliser = FALSE, archive_zip = FALSE, regex_zip = "\\.zip$", warning_type = FALSE, message_import = TRUE) {
+csv_importer_masse <- function(regex_fichier, chemin = ".", fonction = "read.csv2", ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL, normaliser = TRUE, n_csv = Inf, paralleliser = FALSE, archive_zip = FALSE, regex_zip = "\\.zip$", warning_type = FALSE, message_import = TRUE) {
 
   if (!dir.exists(chemin)) {
     stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
@@ -125,7 +129,7 @@ csv_importer_masse <- function(regex_fichier, chemin = ".", fonction = "read.csv
   }
 
   csv_importer_masse <- dplyr::tibble(fichier = unique(fichiers$fichier),
-                                      import = pbapply::pblapply(unique(fichiers$fichier), impexp::csv_importer, fonction = fonction, ligne_debut = ligne_debut, encoding = encoding, na = na, col_types = col_types, warning_type = warning_type, cl = cluster))
+                                      import = pbapply::pblapply(unique(fichiers$fichier), impexp::csv_importer, fonction = fonction, ligne_debut = ligne_debut, encoding = encoding, na = na, col_types = col_types, normaliser = normaliser, warning_type = warning_type, cl = cluster))
 
   suppression <- dplyr::filter(fichiers, !is.na(archive_zip)) %>%
     dplyr::pull(fichier) %>%

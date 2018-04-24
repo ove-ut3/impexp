@@ -6,7 +6,7 @@
 \usage{
 csv_importer(fichier, fonction = "read.csv2", ligne_debut = 1,
   encoding = "Latin-1", na = NULL, dec = ",", col_types = NULL,
-  warning_type = TRUE)
+  normaliser = TRUE, warning_type = TRUE)
 }
 \arguments{
 \item{fichier}{Chemin vers le fichier CSV}
@@ -22,6 +22,8 @@ csv_importer(fichier, fonction = "read.csv2", ligne_debut = 1,
 \item{dec}{Cractère de décimale, par défaut la virgule.}
 
 \item{col_types}{Type des champs (utilisé par \code{data.table::fread}.}
+
+\item{normaliser}{Normaliser les noms de champ de table.}
 
 \item{warning_type}{Affichage des warnings liés aux types des champs importés.}
 }

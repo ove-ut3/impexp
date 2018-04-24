@@ -5,7 +5,8 @@
 \title{Importer un fichier Excel}
 \usage{
 excel_importer(fichier, nom_onglet = NULL, regex_onglet = NULL,
-  num_onglet = 1, ligne_debut = 1, na = NULL, col_types = NULL)
+  num_onglet = 1, ligne_debut = 1, na = NULL, col_types = NULL,
+  normaliser = TRUE)
 }
 \arguments{
 \item{fichier}{Chemin vers le fichier excel.}
@@ -21,6 +22,8 @@ excel_importer(fichier, nom_onglet = NULL, regex_onglet = NULL,
 \item{na}{Caractères à considérer comme vide en plus de \code{c("")}.}
 
 \item{col_types}{Type des champs (utilisé par \code{readxl::read_excel}.}
+
+\item{normaliser}{Normaliser les noms de champ de table.}
 }
 \value{
 Un data frame ou une liste de data frames.\cr

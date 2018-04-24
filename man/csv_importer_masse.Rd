@@ -6,8 +6,9 @@
 \usage{
 csv_importer_masse(regex_fichier, chemin = ".", fonction = "read.csv2",
   ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL,
-  n_csv = Inf, paralleliser = FALSE, archive_zip = FALSE,
-  regex_zip = "\\\\.zip$", warning_type = FALSE, message_import = TRUE)
+  normaliser = TRUE, n_csv = Inf, paralleliser = FALSE,
+  archive_zip = FALSE, regex_zip = "\\\\.zip$", warning_type = FALSE,
+  message_import = TRUE)
 }
 \arguments{
 \item{regex_fichier}{Expression régulière à partir de laquelle les fichiers dont le nom matche sont importés.}
@@ -23,6 +24,8 @@ csv_importer_masse(regex_fichier, chemin = ".", fonction = "read.csv2",
 \item{na}{Caractères à considérer comme vide en plus de \code{c("NA", "", " ")}.}
 
 \item{col_types}{Type des champs (utilisé par \code{data.table::fread}).}
+
+\item{normaliser}{Normaliser les noms de champ de table.}
 
 \item{n_csv}{Nombre de CSV à importer. Une valeur négative correspond au nombre de CSV à partir de la fin dans la liste.}
 

@@ -9,6 +9,7 @@
 #' @param ligne_debut Ligne de début à partir duquel importer.
 #' @param na Caractères à considérer comme vide en plus de \code{c("")}.
 #' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
+#' @param normaliser Normaliser les noms de champ de table.
 #'
 #' @return Un data frame ou une liste de data frames.\cr
 #'
@@ -29,7 +30,7 @@
 #'   regex_onglet = "^Autre")
 #'
 #' @export
-excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_onglet = 1, ligne_debut = 1, na = NULL, col_types = NULL) {
+excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_onglet = 1, ligne_debut = 1, na = NULL, col_types = NULL, normaliser = TRUE) {
 
   if (!file.exists(fichier)) {
     stop("Le fichier \"", fichier,"\" n'existe pas.", call. = FALSE)
@@ -79,7 +80,8 @@ excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_
                             fichier = fichier,
                             ligne_debut = ligne_debut,
                             na = na,
-                            col_types = col_types)
+                            col_types = col_types,
+                            normaliser = normaliser)
 
   } else {
 
@@ -87,7 +89,8 @@ excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_
                                       num_onglet = num_onglet,
                                       ligne_debut = ligne_debut,
                                       na = na,
-                                      col_types = col_types)
+                                      col_types = col_types,
+                                      normaliser = normaliser)
   }
 
   return(import)
@@ -102,12 +105,13 @@ excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_
 #' @param ligne_debut Ligne de début à partir duquel importer.
 #' @param na Caractères à considérer comme vide en plus de \code{c("")}.
 #' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
+#' @param normaliser Normaliser les noms de champ de table.
 #'
 #' @return Un data frame ou une liste de data frames.\cr
 #'
 #' @export
 #' @keywords internal
-excel_importer_ <- function(fichier, num_onglet = 1, ligne_debut = 1, na = NULL, col_types = NULL) {
+excel_importer_ <- function(fichier, num_onglet = 1, ligne_debut = 1, na = NULL, col_types = NULL, normaliser = TRUE) {
 
   quiet_read_excel <- purrr::quietly(readxl::read_excel)
 
@@ -120,9 +124,10 @@ excel_importer_ <- function(fichier, num_onglet = 1, ligne_debut = 1, na = NULL,
       import <- dplyr::tibble("warning")
       attr(import, "warning") <- "Pas de ligne dans l'onglet"
 
-    } else {
-      import <- impexp::normaliser_nom_champs(import)
+    }
 
+    if (normaliser == TRUE) {
+      import <- impexp::normaliser_nom_champs(import)
     }
 
   } else {
@@ -144,6 +149,7 @@ excel_importer_ <- function(fichier, num_onglet = 1, ligne_debut = 1, na = NULL,
 #' @param ligne_debut Ligne de début à partir duquel importer.
 #' @param na Caractères à considérer comme vide en plus de \code{c("")}.
 #' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
+#' @param normaliser Normaliser les noms de champ de table.
 #' @param paralleliser \code{TRUE}, import parallelisé des fichiers excel.
 #' @param archive_zip \code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
 #' @param message_import \code{TRUE}, affichage du message d'import
@@ -154,7 +160,7 @@ excel_importer_ <- function(fichier, num_onglet = 1, ligne_debut = 1, na = NULL,
 #' impexp::importer_masse_xlsx(paste0(racine_packages, "impexp/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "impexp")
 #'
 #' @export
-excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, na = NULL, col_types = NULL, paralleliser = FALSE, archive_zip = FALSE, message_import = TRUE) {
+excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, na = NULL, col_types = NULL, normaliser = TRUE, paralleliser = FALSE, archive_zip = FALSE, message_import = TRUE) {
 
   if (!dir.exists(chemin)) {
     stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
@@ -196,7 +202,7 @@ excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = "."
     cluster <- NULL
   }
 
-  import_masse_xlsx <- pbapply::pblapply(fichiers$fichier %>% unique, excel_importer, regex_onglet = regex_onglet, ligne_debut = ligne_debut, na = na, col_types = col_types, cl = cluster) %>%
+  import_masse_xlsx <- pbapply::pblapply(fichiers$fichier %>% unique, excel_importer, regex_onglet = regex_onglet, ligne_debut = ligne_debut, na = na, col_types = col_types, normaliser = normaliser, cl = cluster) %>%
     dplyr::bind_rows() %>%
     dplyr::mutate(erreur = lapply(import, attributes) %>%
                     purrr::map_chr( ~ ifelse(!is.null(.$erreur), .$erreur, NA_character_)),

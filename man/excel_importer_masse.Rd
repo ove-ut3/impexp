@@ -5,8 +5,8 @@
 \title{Importer les fichiers Excel d'un repertoire (recursif)}
 \usage{
 excel_importer_masse(regex_fichier, chemin = ".", regex_onglet = ".",
-  ligne_debut = 1, na = NULL, col_types = NULL, paralleliser = FALSE,
-  archive_zip = FALSE, message_import = TRUE)
+  ligne_debut = 1, na = NULL, col_types = NULL, normaliser = TRUE,
+  paralleliser = FALSE, archive_zip = FALSE, message_import = TRUE)
 }
 \arguments{
 \item{regex_fichier}{Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.}
@@ -20,6 +20,8 @@ excel_importer_masse(regex_fichier, chemin = ".", regex_onglet = ".",
 \item{na}{Caractères à considérer comme vide en plus de \code{c("")}.}
 
 \item{col_types}{Type des champs (utilisé par \code{readxl::read_excel}.}
+
+\item{normaliser}{Normaliser les noms de champ de table.}
 
 \item{paralleliser}{\code{TRUE}, import parallelisé des fichiers excel.}
 
