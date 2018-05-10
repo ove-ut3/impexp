@@ -16,7 +16,6 @@ Imports:
   dplyr,
   haven,
   lubridate,
-  magrittr,
   odbc,
   openxlsx,
   pbapply,
