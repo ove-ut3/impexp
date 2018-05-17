@@ -34,7 +34,7 @@ csv_importer <- function(fichier, fonction = "read.csv2", ligne_debut = 1, encod
       fonction_import <- data.table::fread
     }
 
-    csv_importer <- fonction_import(iconv(fichier, from = "UTF-8"), sep = ";", encoding = encoding, na.strings = c("NA", "", " ", na), dec = dec)
+    csv_importer <- fonction_import(iconv(fichier, from = "UTF-8"), sep = ";", encoding = encoding, na.strings = c("NA", "", na), dec = dec)
 
     if (warning_type == FALSE) {
       if (any(!stringr::str_detect(csv_importer$warnings, "Bumped column \\d+? to type"))) {
