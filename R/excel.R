@@ -308,7 +308,7 @@ excel_onglet <- function(classeur, table, nom_onglet, notes = NULL, n_colonnes_l
     if (any(stringr::str_detect(titre_complet, "##"), na.rm = TRUE)) {
       merge <- titre_ligne %>%
         dplyr::mutate(titre_complet_bck = titre_complet_bck) %>%
-        dplyr::mutate(merge = row_number()) %>%
+        dplyr::mutate(merge = dplyr::row_number()) %>%
         split(x = .$merge, f = .$titre_complet_bck)
       derniere_ligne_titre <- FALSE
       style <- style_titre1

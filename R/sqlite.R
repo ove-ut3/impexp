@@ -119,7 +119,7 @@ sqlite_ajouter_lignes <- function(table_ajout, table, base_sqlite, attente_verro
   connexion <- DBI::dbConnect(RSQLite::SQLite(), dbname = base_sqlite)
 
   sql <- table_ajout %>%
-    dplyr::mutate(id = row_number()) %>%
+    dplyr::mutate(id = dplyr::row_number()) %>%
     tidyr::gather("champ", "valeur", -id) %>%
     dplyr::group_by(id) %>%
     dplyr::summarise(valeur = paste(valeur, collapse = "', '")) %>%

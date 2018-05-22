@@ -101,10 +101,10 @@ csv_importer_masse <- function(regex_fichier, chemin = ".", fonction = "read.csv
   if (nrow(fichiers) > abs(n_csv)) {
 
     if (n_csv > 0) {
-      fichiers <- dplyr::filter(fichiers, row_number() <= n_csv)
+      fichiers <- dplyr::filter(fichiers, dplyr::row_number() <= n_csv)
     } else if (n_csv < 0) {
       fichiers <- fichiers %>%
-        dplyr::filter(row_number() > n() + n_csv)
+        dplyr::filter(dplyr::row_number() > n() + n_csv)
     }
 
   }
