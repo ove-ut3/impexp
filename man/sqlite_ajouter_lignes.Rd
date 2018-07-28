@@ -4,7 +4,8 @@
 \alias{sqlite_ajouter_lignes}
 \title{Ajouter des lignes a une table SQLite}
 \usage{
-sqlite_ajouter_lignes(table_ajout, table, base_sqlite, attente_verrou = TRUE)
+sqlite_ajouter_lignes(table_ajout, table, base_sqlite,
+  attente_verrou = TRUE)
 }
 \arguments{
 \item{table_ajout}{Table à concaténer.}

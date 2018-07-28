@@ -4,7 +4,8 @@
 \alias{excel_onglet}
 \title{Creer un onglet dans un fichier excel}
 \usage{
-excel_onglet(classeur, table, nom_onglet, notes = NULL, n_colonnes_lib = 0)
+excel_onglet(classeur, table, nom_onglet, notes = NULL,
+  n_colonnes_lib = 0)
 }
 \arguments{
 \item{classeur}{\dots}
