@@ -6,7 +6,7 @@
 #'
 #' @return Un data frame avec les noms de champ sont normalisés.\cr
 #'
-#' La fonction \code{caractr::normaliser_char()} est appliquée sur chacun des noms de champ.
+#' La fonction \code{caractr::str_normalise_field()} est appliquée sur chacun des noms de champ.
 #'
 #' @examples
 #' table <- dplyr::data_frame(
@@ -19,7 +19,7 @@
 normaliser_nom_champs <- function(table){
 
   colnames(table) <- colnames(table) %>%
-    caractr::normaliser_char()
+    caractr::str_normalise_field()
 
   if(length(names(table)) != length(unique(names(table)))) {
     names(table) <- make.unique(names(table), sep = "_")
