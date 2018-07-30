@@ -197,7 +197,7 @@ excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = "."
   }
 
   if (paralleliser == TRUE) {
-    cluster <- divr::initialiser_cluster()
+    cluster <- divr::initialise_cluster()
   } else {
     cluster <- NULL
   }
