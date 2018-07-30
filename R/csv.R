@@ -123,7 +123,7 @@ csv_importer_masse <- function(regex_fichier, chemin = ".", fonction = "read.csv
   }
 
   if (paralleliser == TRUE) {
-    cluster <- divr::initialise_cluster()
+    cluster <- divr::cl_initialise()
   } else {
     cluster <- NULL
   }
@@ -136,7 +136,7 @@ csv_importer_masse <- function(regex_fichier, chemin = ".", fonction = "read.csv
     file.remove()
 
   if (paralleliser == TRUE) {
-    divr::stop_cluster(cluster)
+    divr::cl_stop(cluster)
   }
 
   if (archive_zip == TRUE) {
