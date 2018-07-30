@@ -433,7 +433,7 @@ excel_exporter <- function(table, nom_fichier, creer_repertoire = FALSE, nom_ong
 
   if (creer_repertoire == TRUE) {
     stringr::str_match(nom_fichier, "(.+)/[^/]+?$")[, 2] %>%
-      divr::creer_repertoire()
+      dir.create(showWarnings = FALSE, recursive = TRUE)
   }
 
   openxlsx::saveWorkbook(classeur, nom_fichier, overwrite = TRUE)
