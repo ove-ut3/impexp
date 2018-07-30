@@ -217,7 +217,7 @@ excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = "."
     file.remove()
 
   if (paralleliser == TRUE) {
-    divr::stopper_cluster(cluster)
+    divr::stop_cluster(cluster)
   }
 
   if (archive_zip == TRUE) {
