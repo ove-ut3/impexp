@@ -91,7 +91,7 @@ csv_importer_masse <- function(regex_fichier, chemin = ".", fonction = "read.csv
   # Si l'on inclut les archives zip
   if (archive_zip == TRUE) {
 
-    archives_zip <- divr::extraire_masse_zip(chemin, regex_fichier = regex_fichier, regex_zip = regex_zip, n_fichiers = n_csv, paralleliser = paralleliser)
+    archives_zip <- divr::zip_extract_path(chemin, regex_fichier = regex_fichier, regex_zip = regex_zip, n_fichiers = n_csv, paralleliser = paralleliser)
 
     fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
       dplyr::arrange(fichier)
