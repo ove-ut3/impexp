@@ -53,12 +53,6 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
     stop("The path \"", path,"\" does not exist", call. = FALSE)
   }
 
-  if (parallel == TRUE) {
-    clusters <- divr::cl_initialise()
-  } else {
-    clusters <- NULL
-  }
-
   zip_files <- dplyr::tibble(zip_file = list.files(path, recursive = TRUE, full.names = TRUE) %>%
                                stringr::str_subset(pattern_zip))
 
@@ -89,16 +83,22 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
 
   message("Extraction from ", length(zip_files$zip_file), " zip file(s)...")
 
+  if (parallel == TRUE) {
+    cluster <- parallel::makeCluster(parallel::detectCores())
+  } else {
+    cluster <- NULL
+  }
+
   decompression <- zip_files %>%
     split(1:nrow(.)) %>%
     pbapply::pblapply(function(ligne) {
 
       impexp::zip_extract(ligne$zip_file, pattern = pattern)
 
-    }, cl = clusters)
+    }, cl = cluster)
 
   if (parallel == TRUE) {
-    divr::cl_stop(clusters)
+    parallel::stopCluster(cluster)
   }
 
   zip_files <- zip_files %>%

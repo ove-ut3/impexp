@@ -41,7 +41,7 @@ excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_
   if (is.null(noms_onglets)) {
     if (!is.null(regex_onglet)) {
       import <- dplyr::tibble(fichier = fichier,
-                                import = list(NULL))
+                              import = list(NULL))
       attr(import, "erreur") <- "Chargement des onglets impossibles"
       return(import)
     } else {
@@ -60,7 +60,7 @@ excel_importer <- function(fichier, nom_onglet = NULL, regex_onglet = NULL, num_
   if (length(num_onglet) == 0) {
     if (!is.null(regex_onglet)) {
       import <- dplyr::tibble(fichier = fichier,
-                                import = list(NULL))
+                              import = list(NULL))
       attr(import, "erreur") <- paste0("Pas d'onglet matchant le pattern: ", regex_onglet[1])
       return(import)
     } else {
@@ -173,7 +173,7 @@ excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = "."
   # Si l'on inclut les archives zip
   if (archive_zip == TRUE) {
 
-    archives_zip <- impexp::zip_extract_path(chemin, regex_fichier = regex_fichier, paralleliser = paralleliser)
+    archives_zip <- divr::zip_extract_path(chemin, regex_fichier = regex_fichier, paralleliser = paralleliser)
 
     fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
       arrange(fichier)
@@ -197,7 +197,7 @@ excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = "."
   }
 
   if (paralleliser == TRUE) {
-    cluster <- divr::cl_initialise()
+    cluster <- parallel::makeCluster(parallel::detectCores())
   } else {
     cluster <- NULL
   }
@@ -210,14 +210,14 @@ excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = "."
                     purrr::map_chr( ~ ifelse(!is.null(.$warning), .$warning, NA_character_)),
                   info = lapply(import, attributes) %>%
                     purrr::map_chr( ~ ifelse(!is.null(.$info), .$info, NA_character_))
-           )
+    )
 
   suppression <- dplyr::filter(fichiers, !is.na(archive_zip)) %>%
     dplyr::pull(fichier) %>%
     file.remove()
 
   if (paralleliser == TRUE) {
-    divr::cl_stop(cluster)
+    parallel::stopCluster(cluster)
   }
 
   if (archive_zip == TRUE) {
@@ -346,7 +346,7 @@ excel_onglet <- function(classeur, table, nom_onglet, notes = NULL, n_colonnes_l
 
   } else {
     champs_numeriques <- purrr::map_int(table, ~ class(.) %in% c("integer", "double")) %>%
-      { which(. != 0) }
+    { which(. != 0) }
 
     if (length(champs_numeriques) != 0) {
       openxlsx::addStyle(classeur, nom_onglet, style_donnees_numerique, rows = (num_ligne_titre + 1):(num_ligne_titre + nrow(table)), champs_numeriques, gridExpand = TRUE, stack = TRUE)
