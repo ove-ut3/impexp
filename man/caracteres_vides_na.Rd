@@ -23,3 +23,4 @@ table <- dplyr::data_frame(
 impexp::caracteres_vides_na(table)
 
 }
+\keyword{internal}

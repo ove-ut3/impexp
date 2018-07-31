@@ -44,6 +44,7 @@ normaliser_nom_champs <- function(table){
 #' impexp::caracteres_vides_na(table)
 #'
 #' @export
+#' @keywords internal
 caracteres_vides_na <- function(table){
 
   if (nrow(table) != 0) {
