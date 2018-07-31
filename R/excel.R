@@ -173,7 +173,7 @@ excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = "."
   # Si l'on inclut les archives zip
   if (archive_zip == TRUE) {
 
-    archives_zip <- divr::zip_extract_path(chemin, regex_fichier = regex_fichier, paralleliser = paralleliser)
+    archives_zip <- impexp::zip_extract_path(chemin, regex_fichier = regex_fichier, paralleliser = paralleliser)
 
     fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
       arrange(fichier)

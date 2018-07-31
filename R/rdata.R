@@ -7,8 +7,8 @@
 #' Otherwise, only the object specified is loaded.
 #'
 #' @examples
-#' divr::rdata_import(paste0(racine_packages, "divr/data/rdata_import.RData"))
-#' divr::rdata_import(paste0(racine_packages, "divr/data/rdata_import.RData"), "lib_num_mois")
+#' impexp::rdata_import(paste0(racine_packages, "divr/data/rdata_import.RData"))
+#' impexp::rdata_import(paste0(racine_packages, "divr/data/rdata_import.RData"), "lib_num_mois")
 #'
 #' @export
 rdata_import <- function(rdata, object = NULL){

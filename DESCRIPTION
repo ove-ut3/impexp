@@ -12,7 +12,6 @@ Imports:
   caractr,
   data.table,
   DBI,
-  divr,
   dplyr,
   haven,
   lubridate,
