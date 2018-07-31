@@ -12,7 +12,7 @@ normaliser_nom_champs(table)
 \value{
 Un data frame avec les noms de champ sont normalisés.\cr
 
-La fonction \code{caractr::str_normalise()} est appliquée sur chacun des noms de champ.
+La fonction \code{caractr::str_normalise_field()} est appliquée sur chacun des noms de champ.
 }
 \description{
 Normaliser les noms des champs d'une table importée.
