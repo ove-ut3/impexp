@@ -19,7 +19,7 @@
 normaliser_nom_champs <- function(table){
 
   colnames(table) <- colnames(table) %>%
-    caractr::str_normalise_field()
+    caractr::str_normalise_colnames()
 
   if(length(names(table)) != length(unique(names(table)))) {
     names(table) <- make.unique(names(table), sep = "_")
