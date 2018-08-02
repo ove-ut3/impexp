@@ -25,36 +25,30 @@ access_connect <- function(path) {
   return(connection)
 }
 
-#' Importer une table Access
+#' Import a Microsoft Access database table.
 #'
-#' Importer une table Access.
+#' @param table Name of the table to import as a character.
+#' @param path Path to the Access database.
 #'
-#' @param table Nom de la table à importer.
-#' @param base_access Chemin de la base Access.
-#'
-#' @return Un data frame correspondant à la table Access.
+#' @return A data frame.
 #'
 #' @examples
-#' impexp::access_importer("Table_impexp",
-#'   base_access = paste0(racine_packages, "impexp/inst/extdata/impexp.accdb"))
+#' impexp::access_import("Table_impexp",
+#'   path = paste0(racine_packages, "impexp/inst/extdata/impexp.accdb"))
 #'
 #' @export
-access_importer <- function(table, base_access = "Tables_ref.accdb"){
+access_import <- function(table, path){
 
-  if (!file.exists(base_access)) {
-    stop(paste0("La base Access \"", base_access, "\" n'existe pas"), call. = FALSE)
+  connection <- impexp::access_connect(path)
+
+  if (match(table, DBI::dbListTables(connection)) %>% .[!is.na(.)] %>% length() == 0) {
+    stop(paste0("Table \"", table, "\" not found in the database"), call. = FALSE)
   }
 
-  connexion <- impexp::access_connect(base_access)
-
-  if (match(table, DBI::dbListTables(connexion)) %>% .[!is.na(.)] %>% length() == 0) {
-    stop(paste0("Table \"", table, "\" non trouvee dans la base"), call. = FALSE)
-  }
-
-  import <- DBI::dbReadTable(connexion, table) %>%
+  import <- DBI::dbReadTable(connection, table) %>%
     dplyr::as_tibble()
 
-  DBI::dbDisconnect(connexion)
+  DBI::dbDisconnect(connection)
 
   import <- import %>%
     impexp::normaliser_nom_champs() %>%
