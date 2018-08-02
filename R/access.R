@@ -21,34 +21,6 @@ access_connect <- function(path) {
   return(connection)
 }
 
-#' Lister les tables d'une base Access
-#'
-#' Lister les tables d'une base Access.
-#'
-#' @param base_access Chemin de la base Access.
-#'
-#' @return un vecteur de type caractère contenant les noms des tables de la base Access.
-#'
-#' @examples
-#' impexp::access_liste_tables(paste0(racine_packages, "impexp/inst/extdata/impexp.accdb"))
-#'
-#' @export
-access_liste_tables <- function(base_access = "Tables_ref.accdb"){
-
-  if (!file.exists(base_access)) {
-    stop(paste0("La base Access \"", base_access, "\" n'existe pas"), call. = FALSE)
-  }
-
-  connexion <- impexp::access_connect(base_access)
-
-  liste_tables <- DBI::dbListTables(connexion) %>%
-    stringr::str_subset("^[^(Msys)]")
-
-  DBI::dbDisconnect(connexion)
-
-  return(liste_tables)
-}
-
 #' Importer une table Access
 #'
 #' Importer une table Access.
