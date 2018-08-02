@@ -1,26 +1,24 @@
-#' Se connecter a une base Access
+#' Connect to a Microsoft Access database.
 #'
-#' Se connecter à une base Access.
+#' @param path Path to the Access database.
 #'
-#' @param base_access Chemin de la base Access.
-#'
-#' @return Une connexion à une base Access.
+#' @return A DBI connection.
 #'
 #' @export
 #' @keywords internal
-access_connexion <- function(base_access = "Tables_ref.accdb") {
+access_connect <- function(path) {
 
-  if(!stringr::str_detect(base_access, "[A-Z]:\\/")) {
-    dbq <- paste0(getwd(), "/", base_access)
+  if(!stringr::str_detect(path, "[A-Z]:\\/")) {
+    dbq <- paste0(getwd(), "/", path)
   } else {
-    dbq <- base_access
+    dbq <- path
   }
 
-  connexion <- DBI::dbConnect(odbc::odbc(),
-                              driver = "Microsoft Access Driver (*.mdb, *.accdb)",
-                              dbq = iconv(dbq, to = "Windows-1252"),
-                              encoding = "Windows-1252")
-  return(connexion)
+  connection <- DBI::dbConnect(odbc::odbc(),
+                               driver = "Microsoft Access Driver (*.mdb, *.accdb)",
+                               dbq = iconv(dbq, to = "Windows-1252"),
+                               encoding = "Windows-1252")
+  return(connection)
 }
 
 #' Lister les tables d'une base Access
@@ -41,7 +39,7 @@ access_liste_tables <- function(base_access = "Tables_ref.accdb"){
     stop(paste0("La base Access \"", base_access, "\" n'existe pas"), call. = FALSE)
   }
 
-  connexion <- impexp::access_connexion(base_access)
+  connexion <- impexp::access_connect(base_access)
 
   liste_tables <- DBI::dbListTables(connexion) %>%
     stringr::str_subset("^[^(Msys)]")
@@ -71,7 +69,7 @@ access_importer <- function(table, base_access = "Tables_ref.accdb"){
     stop(paste0("La base Access \"", base_access, "\" n'existe pas"), call. = FALSE)
   }
 
-  connexion <- impexp::access_connexion(base_access)
+  connexion <- impexp::access_connect(base_access)
 
   if (match(table, DBI::dbListTables(connexion)) %>% .[!is.na(.)] %>% length() == 0) {
     stop(paste0("Table \"", table, "\" non trouvee dans la base"), call. = FALSE)
@@ -116,7 +114,7 @@ access_exporter <- function(table, base_access = "Tables_Ref.accdb", table_acces
 
   # https://github.com/tidyverse/dbplyr/pull/36
   #
-  # connexion <- impexp::access_connexion(base_access)
+  # connexion <- impexp::access_connect(base_access)
   #
   # if (intersect(DBI::dbListTables(connexion), table_access) %>% length() != 0 & ecraser) {
   #   message("Table \"", table_access, "\" ecrasée")
@@ -130,7 +128,7 @@ access_exporter <- function(table, base_access = "Tables_Ref.accdb", table_acces
   # DBI::dbDisconnect(connexion)
 
   connexion <- RODBC::odbcConnectAccess2007(base_access)
-  connexion_dbi <- impexp::access_connexion(base_access)
+  connexion_dbi <- impexp::access_connect(base_access)
 
   if (intersect(DBI::dbListTables(connexion_dbi), table_access) %>% length() != 0 & ecraser) {
     message("Table \"", table_access, "\" ecrasée")
@@ -159,7 +157,7 @@ access_executer_sql <- function(liste_sql, base_access = "Tables_Ref.accdb") {
     stop("La base Access \"", base_access,"\" n'existe pas...", call. = FALSE)
   }
 
-  connexion <- impexp::access_connexion(base_access)
+  connexion <- impexp::access_connect(base_access)
 
   purrr::walk(liste_sql, ~ DBI::dbExecute(connexion, .))
 
