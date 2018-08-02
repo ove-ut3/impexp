@@ -8,6 +8,10 @@
 #' @keywords internal
 access_connect <- function(path) {
 
+  if (!file.exists(path)) {
+    stop(paste0("The Access database\"", path, "\" does not exist"), call. = FALSE)
+  }
+
   if(!stringr::str_detect(path, "[A-Z]:\\/")) {
     dbq <- paste0(getwd(), "/", path)
   } else {
