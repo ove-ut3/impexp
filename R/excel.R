@@ -143,7 +143,7 @@ excel_importer_ <- function(fichier, num_onglet = 1, ligne_debut = 1, na = NULL,
 #'
 #' @param pattern A regular expression. Only file names matching the regular expression will be imported.
 #' @param path Path where the excel files are located (recursive).
-#' @param pattern_tab A regular expression. Only tab names in excel files matching the regular expression will be imported.
+#' @param pattern_sheet A regular expression. Only sheet names in excel files matching the regular expression will be imported.
 #' @param skip Inherits from \code{readxl::read_excel}.
 #' @param na Inherits from \code{readxl::read_excel}.
 #' @param col_types Inherits from \code{readxl::read_excel}.
@@ -154,40 +154,42 @@ excel_importer_ <- function(fichier, num_onglet = 1, ligne_debut = 1, na = NULL,
 #' @return A data frame whith a column-list "import" containing all tibbles.
 #'
 #' @examples
-#' impexp::excel_import_path(paste0(find.package("impexp"), "/extdata"), pattern = "xlsx$", pattern_tab = "impexp")
+#' impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp")
+#' impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", zip = TRUE)
 #'
 #' @export
-excel_import_path <- function(pattern, path = ".", pattern_tab = ".", skip = 0, na = NULL, col_types = NULL, parallel = FALSE, zip = FALSE, message = TRUE) {
+excel_import_path <- function(pattern = "\\.xlsx?$", path = ".", pattern_sheet = ".", skip = 0, na = "", col_types = NULL, parallel = FALSE, zip = FALSE, message = TRUE) {
 
   if (!dir.exists(path)) {
     stop("The path \"", path,"\" does not exist", call. = FALSE)
   }
 
-  fichiers <- dplyr::tibble(fichier = list.files(path, recursive = TRUE, full.names = TRUE) %>%
-                              stringr::str_subset(pattern) %>%
-                              iconv(from = "UTF-8"))
+  files <- dplyr::tibble(file = list.files(path, recursive = TRUE, full.names = TRUE) %>%
+                           stringr::str_subset(pattern) %>%
+                           iconv(from = "UTF-8"))
 
   # If zip files are included
   if (zip == TRUE) {
 
-    archives_zip <- impexp::zip_extract_path(path, pattern = pattern, parallel = parallel)
+    zip_files <- impexp::zip_extract_path(path, pattern = pattern, parallel = parallel) %>%
+      dplyr::select(-exdir)
 
-    fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
-      arrange(fichier)
+    files <- dplyr::bind_rows(zip_files, files) %>%
+      dplyr::arrange(file)
 
   } else {
-    fichiers <- fichiers %>%
-      dplyr::mutate(zip = NA_character_)
+    files <- files %>%
+      dplyr::mutate(zip_file = NA_character_)
   }
 
-  if (nrow(fichiers) == 0) {
-    message("No files matches the paramters")
+  if (nrow(files) == 0) {
+    message("No files matches the parameters")
 
-    return(fichiers)
+    return(files)
   }
 
   if (message == TRUE) {
-    message(length(unique(fichiers$fichier))," Excel files imported...")
+    message(length(unique(files$file))," Excel files imported...")
     pbapply::pboptions(type = "timer")
   } else {
     pbapply::pboptions(type = "none")
@@ -199,18 +201,16 @@ excel_import_path <- function(pattern, path = ".", pattern_tab = ".", skip = 0, 
     cluster <- NULL
   }
 
-  excel_import_path <- pbapply::pblapply(fichiers$fichier %>% unique, excel_importer, pattern_tab = pattern_tab, skip = skip, na = na, col_types = col_types, normaliser = normaliser, cl = cluster) %>%
-    dplyr::bind_rows() %>%
-    dplyr::mutate(erreur = lapply(import, attributes) %>%
-                    purrr::map_chr( ~ ifelse(!is.null(.$erreur), .$erreur, NA_character_)),
-                  warning = lapply(import, attributes) %>%
-                    purrr::map_chr( ~ ifelse(!is.null(.$warning), .$warning, NA_character_)),
-                  info = lapply(import, attributes) %>%
-                    purrr::map_chr( ~ ifelse(!is.null(.$info), .$info, NA_character_))
-    )
+  excel_import_path <- files %>%
+    dplyr::mutate(sheet = purrr::map(file, readxl::excel_sheets)) %>%
+    tidyr::unnest() %>%
+    dplyr::filter(stringr::str_detect(sheet, pattern_sheet)) %>%
+    dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
+      readxl::read_excel(import$file, import$sheet, skip = skip, na = na, col_types = col_types)
+    }, cl = cluster))
 
-  suppression <- dplyr::filter(fichiers, !is.na(archive_zip)) %>%
-    dplyr::pull(fichier) %>%
+  suppression <- dplyr::filter(files, !is.na(zip_file)) %>%
+    dplyr::pull(file) %>%
     file.remove()
 
   if (parallel == TRUE) {
@@ -218,13 +218,12 @@ excel_import_path <- function(pattern, path = ".", pattern_tab = ".", skip = 0, 
   }
 
   if (zip == TRUE) {
-    excel_import_path <- dplyr::left_join(fichiers, excel_import_path, by = "fichier") %>%
-      dplyr::mutate(fichier = stringr::str_match(fichier, "/(.+)")[, 2])
+    excel_import_path <- dplyr::left_join(files, excel_import_path, by = c("zip_file", "file")) %>%
+      dplyr::mutate(file = stringr::str_match(file, "/(.+)")[, 2])
 
   }
 
   return(excel_import_path)
-
 }
 
 #' Creer un onglet dans un fichier excel

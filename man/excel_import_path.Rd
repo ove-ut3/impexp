@@ -4,16 +4,16 @@
 \alias{excel_import_path}
 \title{Import Microsoft Excel files located in a path.}
 \usage{
-excel_import_path(pattern, path = ".", pattern_tab = ".", skip = 0,
-  na = NULL, col_types = NULL, parallel = FALSE, zip = FALSE,
-  message = TRUE)
+excel_import_path(pattern = "\\\\.xlsx?$", path = ".",
+  pattern_sheet = ".", skip = 0, na = "", col_types = NULL,
+  parallel = FALSE, zip = FALSE, message = TRUE)
 }
 \arguments{
 \item{pattern}{A regular expression. Only file names matching the regular expression will be imported.}
 
 \item{path}{Path where the excel files are located (recursive).}
 
-\item{pattern_tab}{A regular expression. Only tab names in excel files matching the regular expression will be imported.}
+\item{pattern_sheet}{A regular expression. Only sheet names in excel files matching the regular expression will be imported.}
 
 \item{skip}{Inherits from \code{readxl::read_excel}.}
 
@@ -34,6 +34,6 @@ A data frame whith a column-list "import" containing all tibbles.
 Import Microsoft Excel files located in a path.
 }
 \examples{
-impexp::excel_import_path(paste0(find.package("impexp"), "/extdata"), pattern = "xlsx$", pattern_tab = "impexp")
+impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp")
 
 }
