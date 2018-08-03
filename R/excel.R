@@ -246,52 +246,50 @@ excel_onglet <- function(classeur, table, nom_onglet, notes = NULL, n_colonnes_l
 
 }
 
-#' Exporter un fichier excel
+#' Export a Microsoft Excel file.
 #'
-#' Exporter un fichier excel.
-#'
-#' @param table data.frame ou liste de data.frame à exporter.
-#' @param nom_fichier \dots
-#' @param creer_repertoire \dots
-#' @param nom_onglet \dots
-#' @param notes \dots
-#' @param n_colonnes_lib \dots
+#' @param data A data frame or a named list of data frames that will be sheets in the Excel file.
+#' @param path Path to the created Excel file.
+#' @param create_dir if \code{TRUE} then the directory containing the Excel file is created.
+#' @param sheet Sheet name if data is a data frame, or overrides list names.
+#' @param footer Footer notes to place beneath tables in sheets.
+#' @param n_cols_rowname Number of columns containg row names. These columns usualy don't need header.
 #'
 #' @export
-excel_exporter <- function(table, nom_fichier, creer_repertoire = FALSE, nom_onglet = NULL, notes = NULL, n_colonnes_lib = 0) {
+excel_export <- function(data, path, create_dir = FALSE, sheet = NULL, footer = NULL, n_cols_rowname = 0) {
 
-  if (any(class(table) == "data.frame")) {
-    table <- list("table" = table)
+  if (any(class(data) == "data.frame")) {
+    data <- list("data" = data)
   }
 
-  if (any(purrr::map_lgl(table, ~ !any(class(.) == "data.frame")))) {
-    stop("Au moins un des objets n'est pas un data.frame", call. = FALSE)
+  if (any(purrr::map_lgl(data, ~ !any(class(.) == "data.frame")))) {
+    stop("At least one of the objects is not a data frame", call. = FALSE)
   }
 
-  if (is.null(nom_onglet)) {
-    nom_onglet <- names(table)
+  if (is.null(sheet)) {
+    sheet <- names(data)
   }
 
-  classeur <- openxlsx::createWorkbook()
+  workbook <- openxlsx::createWorkbook()
 
-  if (length(notes) == 1) {
-    notes <- rep(notes, length(table)) %>% as.list()
+  if (length(footer) == 1) {
+    footer <- rep(footer, length(data)) %>% as.list()
 
-  } else if (!is.null(notes) & length(notes) != length(table)) {
-    stop("Le nombre de notes doit être égale au nombre de table", call. = FALSE)
+  } else if (!is.null(footer) & length(footer) != length(data)) {
+    stop("Length of footer must be equal to the length of data", call. = FALSE)
 
-  } else if (is.null(notes)) {
-    notes <- rep(NA_character_, length(table)) %>% as.list()
+  } else if (is.null(footer)) {
+    footer <- rep(NA_character_, length(data)) %>% as.list()
   }
 
-  purrr::pwalk(list(table, nom_onglet, notes), impexp::excel_onglet, classeur = classeur, n_colonnes_lib = n_colonnes_lib)
+  purrr::pwalk(list(data, sheet, footer), impexp::excel_onglet, workbook = workbook, n_cols_rowname = n_cols_rowname)
 
-  if (creer_repertoire == TRUE) {
-    stringr::str_match(nom_fichier, "(.+)/[^/]+?$")[, 2] %>%
+  if (create_dir == TRUE) {
+    stringr::str_match(path, "(.+)/[^/]+?$")[, 2] %>%
       dir.create(showWarnings = FALSE, recursive = TRUE)
   }
 
-  openxlsx::saveWorkbook(classeur, nom_fichier, overwrite = TRUE)
+  openxlsx::saveWorkbook(workbook, path, overwrite = TRUE)
 
-  return(nom_fichier)
+  return(path)
 }
