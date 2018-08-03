@@ -16,6 +16,6 @@ Un data frame correspondant à la table SAS.
 Importer une table SAS
 }
 \examples{
-impexp::sas_importer(paste0(racine_packages, "impexp/inst/extdata/impexp.sas7bdat"))
+impexp::sas_importer(paste0(find.package("impexp"), "/extdata/impexp.sas7bdat"))
 
 }

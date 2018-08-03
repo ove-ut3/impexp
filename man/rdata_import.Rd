@@ -19,7 +19,7 @@ Otherwise, only the object specified is loaded.
 Import an objet from a RData file.
 }
 \examples{
-impexp::rdata_import(paste0(racine_packages, "divr/data/rdata_import.RData"))
-impexp::rdata_import(paste0(racine_packages, "divr/data/rdata_import.RData"), "lib_num_mois")
+impexp::rdata_import(paste0(find.package("impexp"), "/extdata/impexp.RData"))
+impexp::rdata_import(paste0(find.package("impexp"), "/extdata/impexp.RData"), "data")
 
 }

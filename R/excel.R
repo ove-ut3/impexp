@@ -19,14 +19,14 @@
 #'
 #' @examples
 #' # Import du premier onglet
-#' impexp::excel_importer(paste0(racine_packages, "impexp/inst/extdata/impexp.xlsx"))
+#' impexp::excel_importer(paste0(find.package("impexp"), "/extdata/impexp.xlsx"))
 #'
 #' # Import de l'onglet "Onglet 2"
-#' impexp::excel_importer(paste0(racine_packages, "impexp/inst/extdata/impexp.xlsx"),
+#' impexp::excel_importer(paste0(find.package("impexp"), "/extdata/impexp.xlsx"),
 #'   nom_onglet = "Onglet 2")
 #'
 #' # Import des onglets comprenant le mot "Autre" en début de chaine
-#' impexp::excel_importer(paste0(racine_packages, "impexp/inst/extdata/impexp.xlsx"),
+#' impexp::excel_importer(paste0(find.package("impexp"), "/extdata/impexp.xlsx"),
 #'   regex_onglet = "^Autre")
 #'
 #' @export
@@ -157,7 +157,7 @@ excel_importer_ <- function(fichier, num_onglet = 1, ligne_debut = 1, na = NULL,
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
 #'
 #' @examples
-#' impexp::importer_masse_xlsx(paste0(racine_packages, "impexp/inst/extdata"), regex_fichier = "xlsx$", regex_onglet = "impexp")
+#' impexp::importer_masse_xlsx(paste0(find.package("impexp"), "/extdata"), regex_fichier = "xlsx$", regex_onglet = "impexp")
 #'
 #' @export
 excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, na = NULL, col_types = NULL, normaliser = TRUE, paralleliser = FALSE, archive_zip = FALSE, message_import = TRUE) {

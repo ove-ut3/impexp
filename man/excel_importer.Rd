@@ -37,14 +37,14 @@ Importer un fichier Excel.
 }
 \examples{
 # Import du premier onglet
-impexp::excel_importer(paste0(racine_packages, "impexp/inst/extdata/impexp.xlsx"))
+impexp::excel_importer(paste0(find.package("impexp"), "/extdata/impexp.xlsx"))
 
 # Import de l'onglet "Onglet 2"
-impexp::excel_importer(paste0(racine_packages, "impexp/inst/extdata/impexp.xlsx"),
+impexp::excel_importer(paste0(find.package("impexp"), "/extdata/impexp.xlsx"),
   nom_onglet = "Onglet 2")
 
 # Import des onglets comprenant le mot "Autre" en début de chaine
-impexp::excel_importer(paste0(racine_packages, "impexp/inst/extdata/impexp.xlsx"),
+impexp::excel_importer(paste0(find.package("impexp"), "/extdata/impexp.xlsx"),
   regex_onglet = "^Autre")
 
 }

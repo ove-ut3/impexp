@@ -34,7 +34,7 @@ access_connect <- function(path) {
 #'
 #' @examples
 #' impexp::access_import("Table_impexp",
-#'   path = paste0(racine_packages, "impexp/inst/extdata/impexp.accdb"))
+#'   path = paste0(path.package("impexp"), "/extdata/impexp.accdb"))
 #'
 #' @export
 access_import <- function(table, path){

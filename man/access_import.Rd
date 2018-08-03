@@ -19,6 +19,6 @@ Import a Microsoft Access database table.
 }
 \examples{
 impexp::access_import("Table_impexp",
-  path = paste0(racine_packages, "impexp/inst/extdata/impexp.accdb"))
+  path = paste0(path.package("impexp"), "/extdata/impexp.accdb"))
 
 }
