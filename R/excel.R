@@ -85,163 +85,160 @@ excel_import_path <- function(pattern = "\\.xlsx?$", path = ".", pattern_sheet =
   return(excel_import_path)
 }
 
-#' Creer un onglet dans un fichier excel
+#' Create a sheet in a Microsoft Excel file.
 #'
-#' Créer un onglet dans un fichier excel.
-#'
-#' @param classeur \dots
-#' @param table \dots
-#' @param nom_onglet \dots
-#' @param notes \dots
-#' @param n_colonnes_lib \dots
+#' @param workbook An \code{openxlsx} worbook object.
+#' @param data A data frame.
+#' @param sheet A sheet name.
+#' @param footer Footer notes to place beneath tables in sheet.
+#' @param n_cols_rowname Number of columns containg row names. These columns usualy don't need header.
 #'
 #' @export
 #' @keywords internal
-excel_onglet <- function(classeur, table, nom_onglet, notes = NULL, n_colonnes_lib = 0) {
+excel_sheet <- function(workbook, data, sheet, footer = NULL, n_cols_rowname = 0) {
 
-  openxlsx::addWorksheet(classeur, nom_onglet)
+  openxlsx::addWorksheet(workbook, sheet)
 
-  #n_colonnes_lib <- length(stringr::str_subset(colnames(table), "^lib"))
+  #n_cols_rowname <- length(stringr::str_subset(colnames(data), "^lib"))
 
-  if (!is.null(table[["sous_titre_"]])) {
-    num_ligne_sous_titre <- which(table$sous_titre_ == "O")
-    table <- dplyr::select(table, -sous_titre_)
+  if (!is.null(data[["sous_titre_"]])) {
+    line_subtitle <- which(data$sous_titre_ == "O")
+    data <- dplyr::select(data, -sous_titre_)
   }
 
-  if (!is.null(table[["indentation_"]])) {
-    table <- table %>%
+  if (!is.null(data[["indentation_"]])) {
+    data <- data %>%
       dplyr::mutate(lib = paste0(purrr::map_chr(indentation_, ~ paste0(rep("    ", . - 1), collapse = "")), lib)) %>%
       dplyr::select(-indentation_)
   }
 
-  if (!is.null(table[["dont_"]])) {
-    num_ligne_dont <- which(table$dont_ == "O")
-    table <- dplyr::select(table, -dont_)
+  if (!is.null(data[["dont_"]])) {
+    line_subtotal <- which(data$dont_ == "O")
+    data <- dplyr::select(data, -dont_)
   }
 
-  if (!is.null(table[["dont_derniere_ligne_"]])) {
-    num_ligne_dont_derniere_ligne <- which(table$dont_derniere_ligne_ == "O")
-    table <- dplyr::select(table, -dont_derniere_ligne_)
+  if (!is.null(data[["dont_derniere_ligne_"]])) {
+    line_subtotal_last <- which(data$dont_derniere_ligne_ == "O")
+    data <- dplyr::select(data, -dont_derniere_ligne_)
   }
 
-  style_donnees_numerique <- openxlsx::createStyle(halign = "right")
-  style_titre1 <- openxlsx::createStyle(textDecoration = "bold", halign = "center")
-  style_titre2 <- openxlsx::createStyle(textDecoration = "bold", halign = "center", border = "bottom")
-  style_sous_titre <- openxlsx::createStyle(textDecoration = "bold", border = "bottom")
-  style_dont <- openxlsx::createStyle(textDecoration = "italic")
-  style_dont_derniere_ligne <- openxlsx::createStyle(textDecoration = "italic", border = "bottom")
-  style_colonnes_bordure <- openxlsx::createStyle(border = "right")
+  style_figures <- openxlsx::createStyle(halign = "right")
+  style_title1 <- openxlsx::createStyle(textDecoration = "bold", halign = "center")
+  style_title2 <- openxlsx::createStyle(textDecoration = "bold", halign = "center", border = "bottom")
+  style_subtitle <- openxlsx::createStyle(textDecoration = "bold", border = "bottom")
+  style_subtotal <- openxlsx::createStyle(textDecoration = "italic")
+  style_subtotal_last <- openxlsx::createStyle(textDecoration = "italic", border = "bottom")
+  style_col_border <- openxlsx::createStyle(border = "right")
 
-  #### Titre ####
+  #### Title ####
 
-  titre_complet <- colnames(table) %>%
+  full_title <- colnames(data) %>%
     paste0("##")
 
-  if (n_colonnes_lib != 0){
-    titre_complet[1:n_colonnes_lib] <- ""
+  if (n_cols_rowname != 0){
+    full_title[1:n_cols_rowname] <- ""
   }
 
-  num_ligne_titre = 0
+  line_title = 0
 
-  while(any(stringr::str_detect(titre_complet, "##"), na.rm = TRUE)) {
+  while(any(stringr::str_detect(full_title, "##"), na.rm = TRUE)) {
 
-    num_ligne_titre <- num_ligne_titre + 1
+    line_title <- line_title + 1
 
-    titre_ligne <- titre_complet %>%
+    title <- full_title %>%
       stringr::str_match("^(.+?)##") %>% .[, 2] %>%
-      dplyr::tibble(titre = .)
+      dplyr::tibble(title = .)
 
-    titre_complet <- titre_complet %>%
+    full_title <- full_title %>%
       stringr::str_match("##(.+)") %>% .[, 2]
 
-    if (num_ligne_titre == 1) {
-      titre_complet_bck <- titre_ligne$titre
+    if (line_title == 1) {
+      full_title_bck <- title$title
     } else {
-      titre_complet_bck <- paste(titre_complet_bck, titre_ligne$titre, sep = "##")
+      full_title_bck <- paste(full_title_bck, title$title, sep = "##")
     }
 
-    if (any(stringr::str_detect(titre_complet, "##"), na.rm = TRUE)) {
-      merge <- titre_ligne %>%
-        dplyr::mutate(titre_complet_bck = titre_complet_bck) %>%
+    if (any(stringr::str_detect(full_title, "##"), na.rm = TRUE)) {
+      merge <- title %>%
+        dplyr::mutate(full_title_bck = full_title_bck) %>%
         dplyr::mutate(merge = dplyr::row_number()) %>%
-        split(x = .$merge, f = .$titre_complet_bck)
-      derniere_ligne_titre <- FALSE
-      style <- style_titre1
+        split(x = .$merge, f = .$full_title_bck)
+      line_title_last <- FALSE
+      style <- style_title1
 
-      if (num_ligne_titre == 1) {
-        num_colonnes_bordure <- purrr::map_int(merge, tail, 1)
+      if (line_title == 1) {
+        col_border <- purrr::map_int(merge, tail, 1)
       }
 
     } else {
-      derniere_ligne_titre <- TRUE
-      style <- style_titre2
+      line_title_last <- TRUE
+      style <- style_title2
     }
 
-    titre_ligne <- titre_ligne %>%
+    title <- title %>%
       t() %>%
       dplyr::as_tibble()
 
-    start_col <- ifelse(n_colonnes_lib == 0, 1, n_colonnes_lib)
+    start_col <- ifelse(n_cols_rowname == 0, 1, n_cols_rowname)
 
-    openxlsx::writeData(classeur, nom_onglet, titre_ligne, startCol = start_col, startRow = num_ligne_titre, colNames = FALSE)
-    openxlsx::addStyle(classeur, nom_onglet, style, rows = num_ligne_titre, 1:ncol(table), gridExpand = TRUE, stack = TRUE)
+    openxlsx::writeData(workbook, sheet, title, startCol = start_col, startRow = line_title, colNames = FALSE)
+    openxlsx::addStyle(workbook, sheet, style, rows = line_title, 1:ncol(data), gridExpand = TRUE, stack = TRUE)
 
-    if (derniere_ligne_titre == FALSE) {
-      purrr::walk(merge, ~ openxlsx::mergeCells(classeur, nom_onglet, cols = ., rows = num_ligne_titre))
+    if (line_title_last == FALSE) {
+      purrr::walk(merge, ~ openxlsx::mergeCells(workbook, sheet, cols = ., rows = line_title))
     }
 
   }
 
-  #### Corps ####
+  #### Body ####
 
-  openxlsx::writeData(classeur, nom_onglet, table, startRow = num_ligne_titre + 1, colNames = FALSE)
+  openxlsx::writeData(workbook, sheet, data, startRow = line_title + 1, colNames = FALSE)
 
-  if (n_colonnes_lib != 0) {
-    openxlsx::addStyle(classeur, nom_onglet, style_donnees_numerique, rows = (num_ligne_titre + 1):(num_ligne_titre + nrow(table)), n_colonnes_lib + 1:(ncol(table) + 1), gridExpand = TRUE, stack = TRUE)
+  if (n_cols_rowname != 0) {
+    openxlsx::addStyle(workbook, sheet, style_figures, rows = (line_title + 1):(line_title + nrow(data)), n_cols_rowname + 1:(ncol(data) + 1), gridExpand = TRUE, stack = TRUE)
 
   } else {
-    champs_numeriques <- purrr::map_int(table, ~ class(.) %in% c("integer", "double")) %>%
+    col_figures <- purrr::map_int(data, ~ class(.) %in% c("integer", "double")) %>%
     { which(. != 0) }
 
-    if (length(champs_numeriques) != 0) {
-      openxlsx::addStyle(classeur, nom_onglet, style_donnees_numerique, rows = (num_ligne_titre + 1):(num_ligne_titre + nrow(table)), champs_numeriques, gridExpand = TRUE, stack = TRUE)
+    if (length(col_figures) != 0) {
+      openxlsx::addStyle(workbook, sheet, style_figures, rows = (line_title + 1):(line_title + nrow(data)), col_figures, gridExpand = TRUE, stack = TRUE)
     }
 
   }
 
-
-  # Largeur de colonne auto-ajustée
-  if (n_colonnes_lib != 0) {
-    openxlsx::setColWidths(classeur, nom_onglet, cols = 1:n_colonnes_lib, widths = "auto")
+  # Auto-adjust column width
+  if (n_cols_rowname != 0) {
+    openxlsx::setColWidths(workbook, sheet, cols = 1:n_cols_rowname, widths = "auto")
   } else {
-    openxlsx::setColWidths(classeur, nom_onglet, cols = 1:ncol(table), widths = "auto")
+    openxlsx::setColWidths(workbook, sheet, cols = 1:ncol(data), widths = "auto")
   }
 
-  if (exists("num_colonnes_bordure")) {
-    openxlsx::addStyle(classeur, nom_onglet, style_colonnes_bordure, rows = 1:(num_ligne_titre + nrow(table)), cols = num_colonnes_bordure, gridExpand = TRUE, stack = TRUE)
-
-  }
-
-  if (exists("num_ligne_sous_titre")) {
-    openxlsx::addStyle(classeur, nom_onglet, style_sous_titre, rows = num_ligne_titre + num_ligne_sous_titre, cols = 1:ncol(table), gridExpand = TRUE, stack = TRUE)
+  if (exists("col_border")) {
+    openxlsx::addStyle(workbook, sheet, style_col_border, rows = 1:(line_title + nrow(data)), cols = col_border, gridExpand = TRUE, stack = TRUE)
 
   }
 
-  if (exists("num_ligne_dont")) {
-    openxlsx::addStyle(classeur, nom_onglet, style_dont, rows = num_ligne_titre + num_ligne_dont, cols = 1:ncol(table), gridExpand = TRUE, stack = TRUE)
+  if (exists("line_subtitle")) {
+    openxlsx::addStyle(workbook, sheet, style_subtitle, rows = line_title + line_subtitle, cols = 1:ncol(data), gridExpand = TRUE, stack = TRUE)
 
   }
 
-  if (exists("num_ligne_dont_derniere_ligne")) {
-    openxlsx::addStyle(classeur, nom_onglet, style_dont_derniere_ligne, rows = num_ligne_titre + num_ligne_dont_derniere_ligne, cols = 1:ncol(table), gridExpand = TRUE, stack = TRUE)
+  if (exists("line_subtotal")) {
+    openxlsx::addStyle(workbook, sheet, style_subtotal, rows = line_title + line_subtotal, cols = 1:ncol(data), gridExpand = TRUE, stack = TRUE)
 
   }
 
-  #### Note ####
+  if (exists("line_subtotal_last")) {
+    openxlsx::addStyle(workbook, sheet, style_subtotal_last, rows = line_title + line_subtotal_last, cols = 1:ncol(data), gridExpand = TRUE, stack = TRUE)
 
-  if (!is.null(notes)) {
-    note <- dplyr::tibble(note1 = notes)
-    openxlsx::writeData(classeur, nom_onglet, note, startRow = num_ligne_titre + nrow(table) + 2, colNames = FALSE)
+  }
+
+  #### Footer ####
+
+  if (!is.null(footer)) {
+    note <- dplyr::tibble(note1 = footer)
+    openxlsx::writeData(workbook, sheet, note, startRow = line_title + nrow(data) + 2, colNames = FALSE)
   }
 
 }
@@ -282,7 +279,7 @@ excel_export <- function(data, path, create_dir = FALSE, sheet = NULL, footer = 
     footer <- rep(NA_character_, length(data)) %>% as.list()
   }
 
-  purrr::pwalk(list(data, sheet, footer), impexp::excel_onglet, workbook = workbook, n_cols_rowname = n_cols_rowname)
+  purrr::pwalk(list(data, sheet, footer), impexp::excel_sheet, workbook = workbook, n_cols_rowname = n_cols_rowname)
 
   if (create_dir == TRUE) {
     stringr::str_match(path, "(.+)/[^/]+?$")[, 2] %>%
