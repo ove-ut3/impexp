@@ -1,33 +1,3 @@
-#' Normaliser les noms des champs d'une table importee
-#'
-#' Normaliser les noms des champs d'une table importée.
-#'
-#' @param table Un data frame.
-#'
-#' @return Un data frame avec les noms de champ sont normalisés.\cr
-#'
-#' La fonction \code{caractr::str_normalise_field()} est appliquée sur chacun des noms de champ.
-#'
-#' @examples
-#' table <- dplyr::data_frame(
-#'   "Type d'unité Sirus : entreprise profilée ou unité légale" = NA_character_,
-#'   "Nic du siège"= NA_character_
-#' )
-#' impexp::normaliser_nom_champs(table)
-#'
-#' @export
-normaliser_nom_champs <- function(table){
-
-  colnames(table) <- colnames(table) %>%
-    caractr::str_normalise_colnames()
-
-  if(length(names(table)) != length(unique(names(table)))) {
-    names(table) <- make.unique(names(table), sep = "_")
-  }
-
-  return(table)
-}
-
 #' Remplacer les NA par des caracteres vides
 #'
 #' Remplacer les NA par des caractères vides.
