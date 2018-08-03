@@ -10,7 +10,7 @@ zip_extract_path(path, pattern, pattern_zip = "\\\\.zip$",
 \arguments{
 \item{path}{Path where the zip files are located (recursive).}
 
-\item{pattern}{an optional regular expression. Only file names which match the regular expression will be extracted.}
+\item{pattern}{an optional regular expression. Only file names matching the regular expression will be extracted.}
 
 \item{pattern_zip}{an optional regular expression. Only zip file names which match the regular expression will be unziped.}
 

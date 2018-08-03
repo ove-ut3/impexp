@@ -37,7 +37,7 @@ zip_extract <- function(zip_file, pattern = NULL, exdir = NULL, remove_zip = FAL
 #' Extract files from zip located in a path.
 #'
 #' @param path Path where the zip files are located (recursive).
-#' @param pattern an optional regular expression. Only file names which match the regular expression will be extracted.
+#' @param pattern an optional regular expression. Only file names matching the regular expression will be extracted.
 #' @param pattern_zip an optional regular expression. Only zip file names which match the regular expression will be unziped.
 #' @param n_files Number of files to extract. A negative value will starts from the bottom of the files list.
 #' @param parallel If \code{TRUE}, a parallelised extraction is performed.
