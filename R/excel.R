@@ -139,70 +139,67 @@ excel_importer_ <- function(fichier, num_onglet = 1, ligne_debut = 1, na = NULL,
   return(import)
 }
 
-#' Importer les fichiers Excel d'un repertoire (recursif)
+#' Import Microsoft Excel files located in a path.
 #'
-#' Importer les fichiers Excel d'un répertoire (récursif).
-#'
-#' @param regex_fichier Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.
-#' @param chemin Chemin du répertoire à partir duquel seront importés les fichiers excel (récursif).
-#' @param regex_onglet Expression régulière à partir de laquelle les onglet dont le nom matche sont importés.
-#' @param ligne_debut Ligne de début à partir duquel importer.
-#' @param na Caractères à considérer comme vide en plus de \code{c("")}.
-#' @param col_types Type des champs (utilisé par \code{readxl::read_excel}.
-#' @param normaliser Normaliser les noms de champ de table.
-#' @param paralleliser \code{TRUE}, import parallelisé des fichiers excel.
-#' @param archive_zip \code{TRUE}, les fichiers excel contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
-#' @param message_import \code{TRUE}, affichage du message d'import
+#' @param pattern A regular expression. Only file names matching the regular expression will be imported.
+#' @param path Path du répertoire à partir duquel seront importés les fichiers excel (récursif).
+#' @param pattern_tab A regular expression. Only tab names in excel files matching the regular expression will be imported.
+#' @param skip Inherits from \code{readxl::read_excel}.
+#' @param na Inherits from \code{readxl::read_excel}.
+#' @param col_types Inherits from \code{readxl::read_excel}.
+#' @param parallel If \code{TRUE}, a excel files are imported using all CPU cores..
+#' @param zip If \code{TRUE} then excel files within zip files are also imported.
+#' @param message If \code{TRUE} then a message indicates how many files are imported.
 #'
 #' @return Un data frame dont le champ "import" est la liste des data frame importés.
 #'
 #' @examples
-#' impexp::importer_masse_xlsx(paste0(find.package("impexp"), "/extdata"), regex_fichier = "xlsx$", regex_onglet = "impexp")
+#' impexp::excel_import_path(paste0(find.package("impexp"), "/extdata"), pattern = "xlsx$", pattern_tab = "impexp")
 #'
 #' @export
-excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = ".", ligne_debut = 1, na = NULL, col_types = NULL, normaliser = TRUE, paralleliser = FALSE, archive_zip = FALSE, message_import = TRUE) {
+excel_import_path <- function(pattern, path = ".", pattern_tab = ".", skip = 0, na = NULL, col_types = NULL, parallel = FALSE, zip = FALSE, message = TRUE) {
 
-  if (!dir.exists(chemin)) {
-    stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
+  if (!dir.exists(path)) {
+    stop("The path \"", path,"\" does not exist", call. = FALSE)
   }
 
-  fichiers <- dplyr::tibble(fichier = list.files(chemin, recursive = TRUE, full.names = TRUE) %>%
-                              stringr::str_subset(regex_fichier) %>%
+  fichiers <- dplyr::tibble(fichier = list.files(path, recursive = TRUE, full.names = TRUE) %>%
+                              stringr::str_subset(pattern) %>%
                               iconv(from = "UTF-8"))
 
-  # Si l'on inclut les archives zip
-  if (archive_zip == TRUE) {
+  # If zip files are included
+  if (zip == TRUE) {
 
-    archives_zip <- impexp::zip_extract_path(chemin, pattern = regex_fichier, parallel = paralleliser)
+    archives_zip <- impexp::zip_extract_path(path, pattern = pattern, parallel = parallel)
 
     fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
       arrange(fichier)
 
   } else {
     fichiers <- fichiers %>%
-      dplyr::mutate(archive_zip = NA_character_)
+      dplyr::mutate(zip = NA_character_)
   }
 
   if (nrow(fichiers) == 0) {
-    message("Aucun fichier ne correspond aux paramètres saisis")
+    message("No files matches the paramters")
 
     return(fichiers)
   }
 
-  if (message_import == TRUE) {
-    message("Import de ", length(unique(fichiers$fichier))," fichiers excel...")
+  if (message == TRUE) {
+    message(length(unique(fichiers$fichier))," Excel files imported...")
     pbapply::pboptions(type = "timer")
   } else {
     pbapply::pboptions(type = "none")
   }
 
-  if (paralleliser == TRUE) {
+  if (parallel == TRUE) {
     cluster <- parallel::makeCluster(parallel::detectCores())
   } else {
     cluster <- NULL
   }
 
-  import_masse_xlsx <- pbapply::pblapply(fichiers$fichier %>% unique, excel_importer, regex_onglet = regex_onglet, ligne_debut = ligne_debut, na = na, col_types = col_types, normaliser = normaliser, cl = cluster) %>%
+  excel_import_path <- pbapply::pblapply(fichiers$fichier %>% unique, excel_importer, pattern_tab = pattern_tab, skip = skip, na = na, col_types = col_types, normaliser = normaliser, cl = cluster) %>%
     dplyr::bind_rows() %>%
     dplyr::mutate(erreur = lapply(import, attributes) %>%
                     purrr::map_chr( ~ ifelse(!is.null(.$erreur), .$erreur, NA_character_)),
@@ -216,17 +213,17 @@ excel_importer_masse <- function(regex_fichier, chemin = ".", regex_onglet = "."
     dplyr::pull(fichier) %>%
     file.remove()
 
-  if (paralleliser == TRUE) {
+  if (parallel == TRUE) {
     parallel::stopCluster(cluster)
   }
 
-  if (archive_zip == TRUE) {
-    import_masse_xlsx <- dplyr::left_join(fichiers, import_masse_xlsx, by = "fichier") %>%
+  if (zip == TRUE) {
+    excel_import_path <- dplyr::left_join(fichiers, excel_import_path, by = "fichier") %>%
       dplyr::mutate(fichier = stringr::str_match(fichier, "/(.+)")[, 2])
 
   }
 
-  return(import_masse_xlsx)
+  return(excel_import_path)
 
 }
 
