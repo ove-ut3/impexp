@@ -35,5 +35,6 @@ Import Microsoft Excel files located in a path.
 }
 \examples{
 impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp")
+impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", zip = TRUE)
 
 }
