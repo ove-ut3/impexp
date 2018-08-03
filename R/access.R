@@ -107,23 +107,17 @@ access_export <- function(data, path, table_name = NULL, override = TRUE){
   RODBC::odbcClose(connection)
 }
 
-#' Executer des commandes SQL dans une base Access
+#' Execute SQL queries in a Microsoft Access database.
 #'
-#' Exécuter des commandes SQL dans une base Access
-#'
-#' @param liste_sql Un vecteur de commandes SQL au format chaîne de caractères.
-#' @param base_access Chemin de la base Access.
+#' @param sql SQL queries as a character vector.
+#' @param path Path to the Access database.
 #'
 #' @export
-access_executer_sql <- function(liste_sql, base_access = "Tables_Ref.accdb") {
+access_execute_sql <- function(sql, path) {
 
-  if (!file.exists(base_access)) {
-    stop("La base Access \"", base_access,"\" n'existe pas...", call. = FALSE)
-  }
+  connexion <- impexp::access_connect(path)
 
-  connexion <- impexp::access_connect(base_access)
-
-  purrr::walk(liste_sql, ~ DBI::dbExecute(connexion, .))
+  purrr::walk(sql, ~ DBI::dbExecute(connexion, .))
 
   DBI::dbDisconnect(connexion)
 }
