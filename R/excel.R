@@ -127,7 +127,7 @@ excel_importer_ <- function(fichier, num_onglet = 1, ligne_debut = 1, na = NULL,
     }
 
     if (normaliser == TRUE) {
-      import <- impexp::normaliser_nom_champs(import)
+      import <- patchr::normalise_colnames(import)
     }
 
   } else {

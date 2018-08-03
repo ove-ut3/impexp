@@ -47,7 +47,7 @@ csv_importer <- function(fichier, fonction = "read.csv2", ligne_debut = 1, encod
   }
 
   if (normaliser == TRUE) {
-    csv_importer <- impexp::normaliser_nom_champs(csv_importer)
+    csv_importer <- patchr::normalise_colnames(csv_importer)
   }
 
   csv_importer <- dplyr::as_tibble(csv_importer)

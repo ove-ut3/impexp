@@ -51,7 +51,7 @@ access_import <- function(table, path){
   DBI::dbDisconnect(connection)
 
   import <- import %>%
-    impexp::normaliser_nom_champs() %>%
+    patchr::normalise_colnames() %>%
     impexp::caracteres_vides_na() %>%
     dplyr::mutate_at(.vars = dplyr::vars(which(purrr::map_lgl(., ~ any(class(.) == "POSIXct")))), lubridate::as_date)
 

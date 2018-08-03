@@ -17,6 +17,7 @@ Imports:
   lubridate,
   odbc,
   openxlsx,
+  patchr,
   parallel,
   pbapply,
   purrr,
