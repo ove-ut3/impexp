@@ -58,59 +58,53 @@ access_import <- function(table, path){
   return(import)
 }
 
-#' Exporter une table vers une base Access
+#' Export a data frame to a Microsoft Access database.
 #'
-#' Exporter une table vers une base Access.
-#'
-#' @param table Data frame (sans guillemets) à exporter vers Access.
-#' @param base_access Chemin de la base Access.
-#' @param table_access Nom de la table Access créée. Par défaut, utilisation du nom du data frame.
-#' @param ecraser \code{TRUE}, exporter même si une table Access du même nom exite déjà; \code{FALSE}, ne pas écraser si une table du même existe déjà.
+#' @param data Data frame to export, unquoted.
+#' @param path Path to the Access database.
+#' @param table_name Optional name of the table to export as a character. By default, the name of the data frame is used.
+#' @param override If \code{TRUE} then the new data frame override the Access table if it already exists in the database.
 #'
 #' @examples
-#' # Export d'un data frame dont le nom dans Access sera "data_frame"
-#' impexp::access_exporter(data_frame, base_access = "Chemin/vers/une/base/Access.accdb")
-#'
-#' # Export d'un data frame dont le nom dans Access sera "export"
-#' impexp::access_exporter(data_frame, base_access = "Chemin/vers/une/base/Access.accdb",
-#'   table_access = "export")
+#' impexp::access_export(data_frame, path = "Path/to/the/database.accdb")
+#' impexp::access_export(data_frame, path = "Path/to/the/database.accdb"), table_name = "export")
 #'
 #' @export
-access_exporter <- function(table, base_access = "Tables_Ref.accdb", table_access = NULL, ecraser = TRUE){
+access_export <- function(data, path, table_name = NULL, override = TRUE){
 
-  if (is.null(table_access)) {
-    table_access <- deparse(substitute(table))
+  if (is.null(table_name)) {
+    table_name <- deparse(substitute(data))
   }
 
-  # https://github.com/tidyverse/dbplyr/pull/36
+  # https://github.com/r-dbi/odbc/issues/79
   #
-  # connexion <- impexp::access_connect(base_access)
+  # connection <- impexp::access_connect(path)
   #
-  # if (intersect(DBI::dbListTables(connexion), table_access) %>% length() != 0 & ecraser) {
-  #   message("Table \"", table_access, "\" ecrasée")
-  #   DBI::dbRemoveTable(connexion, table_access)
+  # if (intersect(DBI::dbListTables(connection), table_name) %>% length() != 0 & override) {
+  #   message("Table \"", table_name, "\" overridden")
+  #   DBI::dbRemoveTable(connection, table_name)
   # }
   #
-  # colnames(table) <- toupper(colnames(table))
+  # colnames(data) <- toupper(colnames(data))
   #
-  # DBI::dbWriteTable(connexion, name = table_access, value = table)
+  # DBI::dbWriteTable(connection, name = table_name, value = data)
   #
-  # DBI::dbDisconnect(connexion)
+  # DBI::dbDisconnect(connection)
 
-  connexion <- RODBC::odbcConnectAccess2007(base_access)
-  connexion_dbi <- impexp::access_connect(base_access)
+  connection <- RODBC::odbcConnectAccess2007(path)
+  connection_dbi <- impexp::access_connect(path)
 
-  if (intersect(DBI::dbListTables(connexion_dbi), table_access) %>% length() != 0 & ecraser) {
-    message("Table \"", table_access, "\" ecrasée")
-    RODBC::sqlDrop(connexion, table_access)
+  if (intersect(DBI::dbListTables(connection_dbi), table_name) %>% length() != 0 & override) {
+    message("Table \"", table_name, "\" overridden")
+    RODBC::sqlDrop(connection, table_name)
   }
-  DBI::dbDisconnect(connexion_dbi)
+  DBI::dbDisconnect(connection_dbi)
 
-  colnames(table) <- toupper(colnames(table))
+  colnames(data) <- toupper(colnames(data))
 
-  RODBC::sqlSave(connexion, dat = table, tablename = table_access, rownames = FALSE)
+  RODBC::sqlSave(connection, dat = data, tablename = table_name, rownames = FALSE)
 
-  RODBC::odbcClose(connexion)
+  RODBC::odbcClose(connection)
 }
 
 #' Executer des commandes SQL dans une base Access
