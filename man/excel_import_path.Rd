@@ -11,7 +11,7 @@ excel_import_path(pattern, path = ".", pattern_tab = ".", skip = 0,
 \arguments{
 \item{pattern}{A regular expression. Only file names matching the regular expression will be imported.}
 
-\item{path}{Path du répertoire à partir duquel seront importés les fichiers excel (récursif).}
+\item{path}{Path where the excel files are located (recursive).}
 
 \item{pattern_tab}{A regular expression. Only tab names in excel files matching the regular expression will be imported.}
 
@@ -21,14 +21,14 @@ excel_import_path(pattern, path = ".", pattern_tab = ".", skip = 0,
 
 \item{col_types}{Inherits from \code{readxl::read_excel}.}
 
-\item{parallel}{If \code{TRUE}, a excel files are imported using all CPU cores..}
+\item{parallel}{If \code{TRUE}, a excel files are imported using all CPU cores.}
 
 \item{zip}{If \code{TRUE} then excel files within zip files are also imported.}
 
 \item{message}{If \code{TRUE} then a message indicates how many files are imported.}
 }
 \value{
-Un data frame dont le champ "import" est la liste des data frame importés.
+A data frame whith a column-list "import" containing all tibbles.
 }
 \description{
 Import Microsoft Excel files located in a path.

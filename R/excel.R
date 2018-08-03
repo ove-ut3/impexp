@@ -142,16 +142,16 @@ excel_importer_ <- function(fichier, num_onglet = 1, ligne_debut = 1, na = NULL,
 #' Import Microsoft Excel files located in a path.
 #'
 #' @param pattern A regular expression. Only file names matching the regular expression will be imported.
-#' @param path Path du répertoire à partir duquel seront importés les fichiers excel (récursif).
+#' @param path Path where the excel files are located (recursive).
 #' @param pattern_tab A regular expression. Only tab names in excel files matching the regular expression will be imported.
 #' @param skip Inherits from \code{readxl::read_excel}.
 #' @param na Inherits from \code{readxl::read_excel}.
 #' @param col_types Inherits from \code{readxl::read_excel}.
-#' @param parallel If \code{TRUE}, a excel files are imported using all CPU cores..
+#' @param parallel If \code{TRUE}, a excel files are imported using all CPU cores.
 #' @param zip If \code{TRUE} then excel files within zip files are also imported.
 #' @param message If \code{TRUE} then a message indicates how many files are imported.
 #'
-#' @return Un data frame dont le champ "import" est la liste des data frame importés.
+#' @return A data frame whith a column-list "import" containing all tibbles.
 #'
 #' @examples
 #' impexp::excel_import_path(paste0(find.package("impexp"), "/extdata"), pattern = "xlsx$", pattern_tab = "impexp")
