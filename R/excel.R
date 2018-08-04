@@ -3,7 +3,7 @@
 #' @param pattern A regular expression. Only file names matching the regular expression will be imported.
 #' @param path Path where the excel files are located (recursive).
 #' @param pattern_sheet A regular expression. Only sheet names in excel files matching the regular expression will be imported.
-#' @param parallel If \code{TRUE}, a excel files are imported using all CPU cores.
+#' @param parallel If \code{TRUE} then excel files are imported using all CPU cores.
 #' @param zip If \code{TRUE} then excel files within zip files are also imported.
 #' @param message If \code{TRUE} then a message indicates how many files are imported.
 #' @param \dots Optional arguments from \code{readxl::read_excel} function.

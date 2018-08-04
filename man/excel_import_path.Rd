@@ -15,7 +15,7 @@ excel_import_path(pattern = "\\\\.xlsx?$", path = ".",
 
 \item{pattern_sheet}{A regular expression. Only sheet names in excel files matching the regular expression will be imported.}
 
-\item{parallel}{If \code{TRUE}, a excel files are imported using all CPU cores.}
+\item{parallel}{If \code{TRUE} then excel files are imported using all CPU cores.}
 
 \item{zip}{If \code{TRUE} then excel files within zip files are also imported.}
 
