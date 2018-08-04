@@ -103,7 +103,8 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
 
   zip_files <- zip_files %>%
     dplyr::mutate(exdir = stringr::str_match(zip_file, "(.+)/")[, 2],
-                  file = paste0(exdir, "/", file))
+                  file = paste0(exdir, "/", file) %>%
+                    iconv(from = "UTF-8"))
 
   return(zip_files)
 }
