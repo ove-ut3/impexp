@@ -55,97 +55,92 @@ csv_importer <- function(fichier, fonction = "read.csv2", ligne_debut = 1, encod
   return(csv_importer)
 }
 
-#' Importer les fichiers CSV d'un repertoire (recursif)
+#' Import csv files located in a path.
 #'
-#' Importer les fichiers CSV d'un répertoire (récursif).
+#' @param pattern A regular expression. Only file names matching the regular expression will be imported.
+#' @param path Path where the csv files are located (recursive).
+#' @param n_csv Number of csv files to extract. A negative value will starts from the bottom of the files list.
+#' @param parallel If \code{TRUE} then csv files are imported using all CPU cores.
+#' @param zip If \code{TRUE} then csv files within zip files are also imported.
+#' @param pattern_zip A regular expression. Only zip files matching the regular expression will be extracted.
+#' @param message If \code{TRUE} then a message indicates how many files are imported.
+#' @param \dots Optional arguments from \code{data.table::fread} function.
 #'
-#' @param regex_fichier Expression régulière à partir de laquelle les fichiers dont le nom matche sont importés.
-#' @param chemin Chemin du répertoire à partir duquel seront importés les fichiers excel (récursif).
-#' @param fonction Fonction à utiliser pour l'import CSV.
-#' @param ligne_debut Ligne de début à partir duquel importer.
-#' @param encoding Encodage des fichiers CSV.
-#' @param na Caractères à considérer comme vide en plus de \code{c("NA", "", " ")}.
-#' @param col_types Type des champs (utilisé par \code{data.table::fread}).
-#' @param normaliser Normaliser les noms de champ de table.
-#' @param n_csv Nombre de CSV à importer. Une valeur négative correspond au nombre de CSV à partir de la fin dans la liste.
-#' @param paralleliser \code{TRUE}, import parallelisé des fichiers CSV.
-#' @param archive_zip \code{TRUE}, les fichiers CSV contenus dans des archives zip sont également importés; \code{FALSE} les archives zip sont ignorées.
-#' @param regex_zip Expression régulière pour filtrer les archives zip à traiter.
-#' @param warning_type Affichage des warnings liés aux types des champs importés.
-#' @param message_import \code{TRUE}, affichage du message d'import
-#'
-#' @return Un data frame dont le champ "import" est la liste des data frame importés.
+#' @return A data frame whith a column-list "import" containing all tibbles.
 #'
 #' @export
-csv_importer_masse <- function(regex_fichier, chemin = ".", fonction = "read.csv2", ligne_debut = 1, encoding = "Latin-1", na = NULL, col_types = NULL, normaliser = TRUE, n_csv = Inf, paralleliser = FALSE, archive_zip = FALSE, regex_zip = "\\.zip$", warning_type = FALSE, message_import = TRUE) {
+csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, zip = FALSE, pattern_zip = "\\.zip$", message = TRUE, ...) {
 
-  if (!dir.exists(chemin)) {
-    stop("Le répertoire \"", chemin,"\" n'existe pas.", call. = FALSE)
+  if (!dir.exists(path)) {
+    stop("The path \"", path,"\" does not exist", call. = FALSE)
   }
 
-  fichiers <- dplyr::tibble(fichier = list.files(chemin, recursive = TRUE, full.names = TRUE) %>%
-                              stringr::str_subset(regex_fichier) %>%
-                              iconv(from = "UTF-8"),
-                            archive_zip = NA_character_)
+  files <- dplyr::tibble(file = list.files(path, recursive = TRUE, full.names = TRUE) %>%
+                           stringr::str_subset(pattern) %>%
+                           iconv(from = "UTF-8"),
+                         zip_file = NA_character_)
 
-  # Si l'on inclut les archives zip
-  if (archive_zip == TRUE) {
+  # If zip files are included
+  if (zip == TRUE) {
 
-    archives_zip <- impexp::zip_extract_path(chemin, pattern = regex_fichier, pattern_zip = regex_zip, n_files = n_csv, parallel = paralleliser)
+    zip_files <- impexp::zip_extract_path(path, pattern = pattern, pattern_zip = pattern_zip, n_files = n_csv, parallel = parallel) %>%
+      dplyr::select(-exdir)
 
-    fichiers <- dplyr::bind_rows(archives_zip, fichiers) %>%
-      dplyr::arrange(fichier)
+    files <- dplyr::bind_rows(zip_files, files) %>%
+      dplyr::arrange(file)
 
   }
 
-  if (nrow(fichiers) > abs(n_csv)) {
+  if (nrow(files) > abs(n_csv)) {
 
     if (n_csv > 0) {
-      fichiers <- dplyr::filter(fichiers, dplyr::row_number() <= n_csv)
+      files <- dplyr::filter(files, dplyr::row_number() <= n_csv)
     } else if (n_csv < 0) {
-      fichiers <- fichiers %>%
+      files <- files %>%
         dplyr::filter(dplyr::row_number() > n() + n_csv)
     }
 
   }
 
-  if (nrow(fichiers) == 0) {
-    message("Aucun fichier ne correspond aux paramètres saisis")
+  if (nrow(files) == 0) {
+    message("No files matches the parameters")
 
-    return(fichiers)
+    return(files)
   }
 
-  if (message_import == TRUE) {
-    message("Import de ", length(unique(fichiers$fichier))," fichier(s) csv...")
+  if (message == TRUE) {
+    message(length(unique(files$file))," csv files imported...")
     pbapply::pboptions(type = "timer")
   } else {
     pbapply::pboptions(type = "none")
   }
 
-  if (paralleliser == TRUE) {
+  if (parallel == TRUE) {
     cluster <- parallel::makeCluster(parallel::detectCores())
   } else {
     cluster <- NULL
   }
 
-  csv_importer_masse <- dplyr::tibble(fichier = unique(fichiers$fichier),
-                                      import = pbapply::pblapply(unique(fichiers$fichier), impexp::csv_importer, fonction = fonction, ligne_debut = ligne_debut, encoding = encoding, na = na, col_types = col_types, normaliser = normaliser, warning_type = warning_type, cl = cluster))
+  csv_import_path <- files %>%
+    dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
+      data.table::fread(import$file, ...) %>%
+        dplyr::as_tibble()
+    }, cl = cluster))
 
-  suppression <- dplyr::filter(fichiers, !is.na(archive_zip)) %>%
-    dplyr::pull(fichier) %>%
+  remove <- dplyr::filter(files, !is.na(zip_file)) %>%
+    dplyr::pull(file) %>%
     file.remove()
 
-  if (paralleliser == TRUE) {
+  if (parallel == TRUE) {
     parallel::stopCluster(cluster)
   }
 
-  if (archive_zip == TRUE) {
-    csv_importer_masse <- fichiers %>%
-      dplyr::select(-repertoire_sortie) %>%
-      dplyr::left_join(csv_importer_masse, by = "fichier") %>%
-      dplyr::mutate(fichier = stringr::str_match(fichier, "/(.+)")[, 2])
+  if (zip == TRUE) {
+    csv_import_path <- files %>%
+      dplyr::left_join(csv_import_path, by = c("zip_file", "file")) %>%
+      dplyr::mutate(file = stringr::str_match(file, "/(.+)")[, 2])
 
   }
 
-  return(csv_importer_masse)
+  return(csv_import_path)
 }
