@@ -5,8 +5,8 @@
 \title{Import Microsoft Excel files located in a path.}
 \usage{
 excel_import_path(pattern = "\\\\.xlsx?$", path = ".",
-  pattern_sheet = ".", skip = 0, na = "", col_types = NULL,
-  parallel = FALSE, zip = FALSE, message = TRUE)
+  pattern_sheet = ".", parallel = FALSE, zip = FALSE,
+  message = TRUE, ...)
 }
 \arguments{
 \item{pattern}{A regular expression. Only file names matching the regular expression will be imported.}
@@ -15,17 +15,13 @@ excel_import_path(pattern = "\\\\.xlsx?$", path = ".",
 
 \item{pattern_sheet}{A regular expression. Only sheet names in excel files matching the regular expression will be imported.}
 
-\item{skip}{Inherits from \code{readxl::read_excel}.}
-
-\item{na}{Inherits from \code{readxl::read_excel}.}
-
-\item{col_types}{Inherits from \code{readxl::read_excel}.}
-
 \item{parallel}{If \code{TRUE}, a excel files are imported using all CPU cores.}
 
 \item{zip}{If \code{TRUE} then excel files within zip files are also imported.}
 
 \item{message}{If \code{TRUE} then a message indicates how many files are imported.}
+
+\item{\dots}{Optional arguments from \code{readxl::read_excel} function.}
 }
 \value{
 A data frame whith a column-list "import" containing all tibbles.
@@ -35,6 +31,7 @@ Import Microsoft Excel files located in a path.
 }
 \examples{
 impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp")
+impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", skip = 1)
 impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", zip = TRUE)
 
 }

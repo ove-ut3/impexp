@@ -3,21 +3,20 @@
 #' @param pattern A regular expression. Only file names matching the regular expression will be imported.
 #' @param path Path where the excel files are located (recursive).
 #' @param pattern_sheet A regular expression. Only sheet names in excel files matching the regular expression will be imported.
-#' @param skip Inherits from \code{readxl::read_excel}.
-#' @param na Inherits from \code{readxl::read_excel}.
-#' @param col_types Inherits from \code{readxl::read_excel}.
 #' @param parallel If \code{TRUE}, a excel files are imported using all CPU cores.
 #' @param zip If \code{TRUE} then excel files within zip files are also imported.
 #' @param message If \code{TRUE} then a message indicates how many files are imported.
+#' @param \dots Optional arguments from \code{readxl::read_excel} function.
 #'
 #' @return A data frame whith a column-list "import" containing all tibbles.
 #'
 #' @examples
 #' impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp")
+#' impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", skip = 1)
 #' impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", zip = TRUE)
 #'
 #' @export
-excel_import_path <- function(pattern = "\\.xlsx?$", path = ".", pattern_sheet = ".", skip = 0, na = "", col_types = NULL, parallel = FALSE, zip = FALSE, message = TRUE) {
+excel_import_path <- function(pattern = "\\.xlsx?$", path = ".", pattern_sheet = ".", parallel = FALSE, zip = FALSE, message = TRUE, ...) {
 
   if (!dir.exists(path)) {
     stop("The path \"", path,"\" does not exist", call. = FALSE)
@@ -65,7 +64,7 @@ excel_import_path <- function(pattern = "\\.xlsx?$", path = ".", pattern_sheet =
     tidyr::unnest() %>%
     dplyr::filter(stringr::str_detect(sheet, pattern_sheet)) %>%
     dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
-      readxl::read_excel(import$file, import$sheet, skip = skip, na = na, col_types = col_types)
+      readxl::read_excel(import$file, import$sheet, ...)
     }, cl = cluster))
 
   suppression <- dplyr::filter(files, !is.na(zip_file)) %>%
