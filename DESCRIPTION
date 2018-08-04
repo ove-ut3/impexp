@@ -1,29 +1,28 @@
 Package: impexp
-Title: Fonctions d'importation et exportation : Access, Excel, CSV, ODBC, SAS
+Title: Additional import and export functions from/to Microsoft Access, Excel and csv files
 Version: 0.1
 Authors@R: person("Stéphane Le Hénanff", "Stéphane Le Hénanff", email = "github@le-henanff.fr", role = c("aut", "cre"))
-Description: Fonctions d'importation : Access, Excel, SQLite, ODBC, SAS.
+Description: Additional import and export functions from/to Microsoft Access, Excel and csv files.
+    It also looks into zip files to import data.
 Depends:
     R (>= 3.2.5)
 License: Etalab
 Encoding: UTF-8
 LazyData: true
 Imports:
-  caractr,
   data.table,
   DBI,
   dplyr,
-  haven,
   lubridate,
   odbc,
   openxlsx,
-  patchr,
   parallel,
+  patchr,
   pbapply,
   purrr,
   readxl,
   RODBC,
-  RSQLite,
-  stringr
+  stringr,
+  tidyr
 RoxygenNote: 6.1.0
 Suggests: testthat
