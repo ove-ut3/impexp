@@ -84,15 +84,6 @@ excel_import_path <- function(pattern = "\\.xlsx?$", path = ".", pattern_sheet =
   return(excel_import_path)
 }
 
-#' Create a sheet in a Microsoft Excel file.
-#'
-#' @param workbook An \code{openxlsx} worbook object.
-#' @param data A data frame.
-#' @param sheet A sheet name.
-#' @param footer Footer notes to place beneath tables in sheet.
-#' @param n_cols_rowname Number of columns containg row names. These columns usualy don't need header.
-#'
-#' @export
 #' @keywords internal
 excel_sheet <- function(workbook, data, sheet, footer = NULL, n_cols_rowname = 0) {
 

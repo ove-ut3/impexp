@@ -1,10 +1,3 @@
-#' Connect to a Microsoft Access database.
-#'
-#' @param path Path to the Access database.
-#'
-#' @return A DBI connection.
-#'
-#' @export
 #' @keywords internal
 access_connect <- function(path) {
 

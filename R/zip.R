@@ -1,16 +1,3 @@
-#' Extract files from a zip.
-#'
-#' Files within the zip file can be selected with the pattern argument.
-#'
-#' @param zip_file Path to the zip file.
-#' @param pattern an optional regular expression. Only file names which match the regular expression will be extracted.
-#' @param exdir The directory to extract files to. It will be created if necessary.
-#' @param remove_zip If \code{TRUE}, the zip file is removed.
-#'
-#' @examples
-#' impexp::zip_extract("archive.zip", pattern = "pdf$", exdir = "test_zip")
-#'
-#' @export
 #' @keywords internal
 zip_extract <- function(zip_file, pattern = NULL, exdir = NULL, remove_zip = FALSE) {
 
@@ -34,18 +21,6 @@ zip_extract <- function(zip_file, pattern = NULL, exdir = NULL, remove_zip = FAL
   }
 }
 
-#' Extract files from zip located in a path.
-#'
-#' @param path Path where the zip files are located (recursive).
-#' @param pattern an optional regular expression. Only file names matching the regular expression will be extracted.
-#' @param pattern_zip an optional regular expression. Only zip file names which match the regular expression will be unziped.
-#' @param n_files Number of files to extract. A negative value will starts from the bottom of the files list.
-#' @param parallel If \code{TRUE}, a parallelised extraction is performed.
-#'
-#' @examples
-#' impexp::zip_extract_path("Chemin/vers/un/répartoire", pattern = "pdf$")
-#'
-#' @export
 #' @keywords internal
 zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = Inf, parallel = FALSE) {
 
