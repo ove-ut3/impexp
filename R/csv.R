@@ -26,7 +26,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
   # If zip files are included
   if (zip == TRUE) {
 
-    zip_files <- impexp::zip_extract_path(path, pattern = pattern, pattern_zip = pattern_zip, n_files = n_csv, parallel = parallel) %>%
+    zip_files <- zip_extract_path(path, pattern = pattern, pattern_zip = pattern_zip, n_files = n_csv, parallel = parallel) %>%
       dplyr::select(-exdir)
 
     files <- dplyr::bind_rows(zip_files, files) %>%

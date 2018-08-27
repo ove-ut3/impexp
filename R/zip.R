@@ -68,7 +68,7 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
     split(1:nrow(.)) %>%
     pbapply::pblapply(function(ligne) {
 
-      impexp::zip_extract(ligne$zip_file, pattern = pattern)
+      zip_extract(ligne$zip_file, pattern = pattern)
 
     }, cl = cluster)
 

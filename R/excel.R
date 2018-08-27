@@ -29,7 +29,7 @@ excel_import_path <- function(pattern = "\\.xlsx?$", path = ".", pattern_sheet =
   # If zip files are included
   if (zip == TRUE) {
 
-    zip_files <- impexp::zip_extract_path(path, pattern = pattern, parallel = parallel) %>%
+    zip_files <- zip_extract_path(path, pattern = pattern, parallel = parallel) %>%
       dplyr::select(-exdir)
 
     files <- dplyr::bind_rows(zip_files, files) %>%
@@ -269,7 +269,7 @@ excel_export <- function(data, path, create_dir = FALSE, sheet = NULL, footer = 
     footer <- rep(NA_character_, length(data)) %>% as.list()
   }
 
-  purrr::pwalk(list(data, sheet, footer), impexp::excel_sheet, workbook = workbook, n_cols_rowname = n_cols_rowname)
+  purrr::pwalk(list(data, sheet, footer), excel_sheet, workbook = workbook, n_cols_rowname = n_cols_rowname)
 
   if (create_dir == TRUE) {
     stringr::str_match(path, "(.+)/[^/]+?$")[, 2] %>%

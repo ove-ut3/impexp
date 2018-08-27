@@ -32,7 +32,7 @@ access_connect <- function(path) {
 #' @export
 access_import <- function(table, path){
 
-  connection <- impexp::access_connect(path)
+  connection <- access_connect(path)
 
   if (match(table, DBI::dbListTables(connection)) %>% .[!is.na(.)] %>% length() == 0) {
     stop(paste0("Table \"", table, "\" not found in the database"), call. = FALSE)
@@ -71,7 +71,7 @@ access_export <- function(data, path, table_name = NULL, override = TRUE){
 
   # https://github.com/r-dbi/odbc/issues/79
   #
-  # connection <- impexp::access_connect(path)
+  # connection <- access_connect(path)
   #
   # if (intersect(DBI::dbListTables(connection), table_name) %>% length() != 0 & override) {
   #   message("Table \"", table_name, "\" overridden")
@@ -85,7 +85,7 @@ access_export <- function(data, path, table_name = NULL, override = TRUE){
   # DBI::dbDisconnect(connection)
 
   connection <- RODBC::odbcConnectAccess2007(path)
-  connection_dbi <- impexp::access_connect(path)
+  connection_dbi <- access_connect(path)
 
   if (intersect(DBI::dbListTables(connection_dbi), table_name) %>% length() != 0 & override) {
     message("Table \"", table_name, "\" overridden")
@@ -108,7 +108,7 @@ access_export <- function(data, path, table_name = NULL, override = TRUE){
 #' @export
 access_execute_sql <- function(sql, path) {
 
-  connexion <- impexp::access_connect(path)
+  connexion <- access_connect(path)
 
   purrr::walk(sql, ~ DBI::dbExecute(connexion, .))
 
