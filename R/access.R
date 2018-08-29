@@ -1,23 +1,3 @@
-#' @keywords internal
-access_connect <- function(path) {
-
-  if (!file.exists(path)) {
-    stop(paste0("The Access database\" ", path, "\" does not exist"), call. = FALSE)
-  }
-
-  if(!stringr::str_detect(path, "[A-Z]:\\/")) {
-    dbq <- paste0(getwd(), "/", path)
-  } else {
-    dbq <- path
-  }
-
-  connection <- DBI::dbConnect(odbc::odbc(),
-                               driver = "Microsoft Access Driver (*.mdb, *.accdb)",
-                               dbq = iconv(dbq, to = "Windows-1252"),
-                               encoding = "Windows-1252")
-  return(connection)
-}
-
 #' Import a Microsoft Access database table.
 #'
 #' @param table Name of the table to import as a character.
