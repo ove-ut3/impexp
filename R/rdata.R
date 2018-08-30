@@ -1,37 +1,37 @@
-#' Import an objet from a RData file.
+#' Import an objet from a R data file.
 #'
-#' @param rdata RData file path.
+#' @param r_file R data file path.
 #' @param object Object name to load.
 #'
-#' @return If parameter \code{object} stays \code{NULL} then all objects of the RData file loaded in a named list.\cr
+#' @return If parameter \code{object} stays \code{NULL} then all objects of the R data file loaded in a named list.\cr
 #' Otherwise, only the object specified is loaded.
 #'
 #' @examples
-#' impexp::rdata_import(paste0(find.package("impexp"), "/extdata/impexp.RData"))
-#' impexp::rdata_import(paste0(find.package("impexp"), "/extdata/impexp.RData"), "data")
+#' impexp::r_import(paste0(find.package("impexp"), "/extdata/impexp.RData"))
+#' impexp::r_import(paste0(find.package("impexp"), "/extdata/impexp.RData"), "data")
 #'
 #' @export
-rdata_import <- function(rdata, object = NULL){
+r_import <- function(r_data, object = NULL){
 
-  if (!file.exists(rdata)) {
-    stop(paste0("File \"", rdata, "\" doas not exist"), call. = FALSE)
+  if (!file.exists(r_data)) {
+    stop(paste0("File \"", r_data, "\" doas not exist"), call. = FALSE)
   }
 
   env = new.env()
-  load(file = rdata, envir = env)
+  load(file = r_data, envir = env)
 
-  rdata_file <- stringr::str_match(rdata, "([^\\/]+?\\.RData)$")[, 2]
+  r_data_file <- stringr::str_match(r_data, "([^\\/]+?)\\.(rda|RData)$")[, 2]
 
-  if (length(env) == 1 & paste0(names(env)[1], ".RData") == rdata_file) {
-    rdata_import <- env[[names(env)]]
-    return(rdata_import)
+  if (length(env) == 1 & names(env)[1] == r_data_file) {
+    r_data_import <- env[[names(env)]]
+    return(r_data_import)
   }
 
   if (!is.null(object)) {
-    rdata_import <- env[[object]]
+    r_data_import <- env[[object]]
   } else {
-    rdata_import <- as.list(env)
+    r_data_import <- as.list(env)
   }
 
-  return(rdata_import)
+  return(r_data_import)
 }
