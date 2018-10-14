@@ -1,3 +1,29 @@
+#' List tables within a Microsoft Access.
+#'
+#' @param path Path to the Access database.
+#' @param sys_tables If \code{TRUE} then returns also system tables.
+#'
+#' @return A character vector containing table names.
+#'
+#' @examples
+#' impexp::access_tables(path = paste0(path.package("impexp"), "/extdata/impexp.accdb"))
+#'
+#' @export
+access_tables <- function(path, sys_tables = FALSE){
+
+  connection <- access_connect(path)
+
+  tables <- DBI::dbListTables(connection)
+
+  DBI::dbDisconnect(connection)
+
+  if (sys_tables == FALSE) {
+    tables <- tables[which(!stringr::str_detect(tables, "^MSys"))]
+  }
+
+  return(tables)
+}
+
 #' Import a Microsoft Access database table.
 #'
 #' @param table Name of the table to import as a character.

@@ -3,6 +3,7 @@
 export(access_execute_sql)
 export(access_export)
 export(access_import)
+export(access_tables)
 export(csv_import_path)
 export(excel_export)
 export(excel_import_path)
