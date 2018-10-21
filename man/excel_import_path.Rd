@@ -4,14 +4,14 @@
 \alias{excel_import_path}
 \title{Import Microsoft Excel files located in a path.}
 \usage{
-excel_import_path(pattern = "\\\\.xlsx?$", path = ".",
+excel_import_path(path = ".", pattern = "\\\\.xlsx?$",
   pattern_sheet = ".", parallel = FALSE, zip = FALSE,
-  message = TRUE, ...)
+  message = FALSE, ...)
 }
 \arguments{
-\item{pattern}{A regular expression. Only file names matching the regular expression will be imported.}
-
 \item{path}{Path where the excel files are located (recursive).}
+
+\item{pattern}{A regular expression. Only file names matching the regular expression will be imported.}
 
 \item{pattern_sheet}{A regular expression. Only sheet names in excel files matching the regular expression will be imported.}
 
@@ -30,8 +30,8 @@ A data frame whith a column-list "import" containing all tibbles.
 Import Microsoft Excel files located in a path.
 }
 \examples{
-impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp")
-impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", skip = 1)
-impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", zip = TRUE)
+impexp::excel_import_path(paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp")
+impexp::excel_import_path(paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", skip = 1)
+impexp::excel_import_path(paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", zip = TRUE)
 
 }

@@ -11,12 +11,12 @@
 #' @return A data frame whith a column-list "import" containing all tibbles.
 #'
 #' @examples
-#' impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp")
-#' impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", skip = 1)
-#' impexp::excel_import_path(path = paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", zip = TRUE)
+#' impexp::excel_import_path(paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp")
+#' impexp::excel_import_path(paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", skip = 1)
+#' impexp::excel_import_path(paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", zip = TRUE)
 #'
 #' @export
-excel_import_path <- function(pattern = "\\.xlsx?$", path = ".", pattern_sheet = ".", parallel = FALSE, zip = FALSE, message = TRUE, ...) {
+excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet = ".", parallel = FALSE, zip = FALSE, message = FALSE, ...) {
 
   if (!dir.exists(path)) {
     stop("The path \"", path,"\" does not exist", call. = FALSE)
