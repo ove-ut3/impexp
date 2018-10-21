@@ -18,6 +18,6 @@ A character vector containing table names.
 List tables within a Microsoft Access.
 }
 \examples{
-impexp::access_tables(path = paste0(path.package("impexp"), "/extdata/impexp.accdb"))
+impexp::access_tables(path = paste0(find.package("impexp"), "/extdata/impexp.accdb"))
 
 }
