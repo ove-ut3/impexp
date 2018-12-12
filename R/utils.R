@@ -1,18 +1,14 @@
 access_connect <- function(path) {
 
+  path <- tools::file_path_as_absolute(path)
+
   if (!file.exists(path)) {
     stop(paste0("The Access database\" ", path, "\" does not exist"), call. = FALSE)
   }
 
-  if(!stringr::str_detect(path, "[A-Z]:\\/")) {
-    dbq <- paste0(getwd(), "/", path)
-  } else {
-    dbq <- path
-  }
-
   connection <- DBI::dbConnect(odbc::odbc(),
                                driver = "Microsoft Access Driver (*.mdb, *.accdb)",
-                               dbq = iconv(dbq, to = "Windows-1252"),
+                               dbq = iconv(path, to = "Windows-1252"),
                                encoding = "Windows-1252")
   return(connection)
 }
