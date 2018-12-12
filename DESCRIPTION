@@ -23,6 +23,7 @@ Imports:
   readxl,
   RODBC,
   stringr,
-  tidyr
+  tidyr,
+  tools
 RoxygenNote: 6.1.1
 Suggests: testthat
