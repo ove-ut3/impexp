@@ -4,7 +4,7 @@ access_connect <- function(path) {
     tools::file_path_as_absolute()
 
   if (!file.exists(path)) {
-    stop(paste0("The Access database\" ", path, "\" does not exist"), call. = FALSE)
+    stop(glue::glue("The Access database\"{path}\" does not exist"), call. = FALSE)
   }
 
   connection <- DBI::dbConnect(odbc::odbc(),
@@ -240,7 +240,7 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
 
   zip_files <- zip_files %>%
     dplyr::mutate(exdir = stringr::str_match(zip_file, "(.+)/")[, 2],
-                  file = paste0(exdir, "/", file) %>%
+                  file = glue::glue("{exdir}/{file}") %>%
                     iconv(from = "UTF-8"))
 
   return(zip_files)

@@ -41,7 +41,7 @@ access_import <- function(table, path){
   connection <- access_connect(path)
 
   if (match(table, DBI::dbListTables(connection)) %>% .[!is.na(.)] %>% length() == 0) {
-    stop(paste0("Table \"", table, "\" not found in the database"), call. = FALSE)
+    stop(glue::glue("Table \"{table}\" not found in the database"), call. = FALSE)
   }
 
   import <- DBI::dbReadTable(connection, table) %>%
