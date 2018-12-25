@@ -1,6 +1,7 @@
 access_connect <- function(path) {
 
-  path <- tools::file_path_as_absolute(path)
+  path <- stringr::str_replace(path, "/$", "") %>%
+    tools::file_path_as_absolute()
 
   if (!file.exists(path)) {
     stop(paste0("The Access database\" ", path, "\" does not exist"), call. = FALSE)
