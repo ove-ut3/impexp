@@ -25,6 +25,5 @@ Imports:
   stringr,
   tidyr,
   tools
-Suggests: testthat
 Remotes:
     stephLH/patchr
