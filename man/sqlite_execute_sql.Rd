@@ -7,11 +7,11 @@
 sqlite_execute_sql(sql_list, path, wait_unlock = TRUE)
 }
 \arguments{
+\item{sql_list}{A vector of SQL queries.}
+
 \item{path}{SQLite database path.}
 
 \item{wait_unlock}{Wait until SQLite database is unlocked.}
-
-\item{liste_sql}{A vector of SQL queries.}
 }
 \description{
 Execute SQL queries in a SQLite database.

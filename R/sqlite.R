@@ -111,7 +111,7 @@ sqlite_append_rows <- function(data, table_name, path) {
 
 #' Execute SQL queries in a SQLite database.
 #'
-#' @param liste_sql A vector of SQL queries.
+#' @param sql_list A vector of SQL queries.
 #' @param path SQLite database path.
 #' @param wait_unlock Wait until SQLite database is unlocked.
 #'
@@ -125,20 +125,20 @@ sqlite_execute_sql <- function(sql_list, path, wait_unlock = TRUE) {
   connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
   if (wait_unlock == FALSE) {
-    purrr::walk(liste_sql, ~ DBI::dbExecute(connection, .))
+    purrr::walk(sql_list, ~ DBI::dbExecute(connection, .))
 
   } else {
     execute_sql_safe <- purrr::safely(DBI::dbExecute)
 
-    execute_sql <- purrr::map(liste_sql, ~ execute_sql_safe(connection, .))
+    execute_sql <- purrr::map(sql_list, ~ execute_sql_safe(connection, .))
 
     temoin_erreur <- purrr::map_lgl(execute_sql, ~ !is.null(.$error))
 
     while(any(temoin_erreur)) {
 
-      liste_sql <- liste_sql[temoin_erreur]
+      sql_list <- sql_list[temoin_erreur]
 
-      execute_sql <- purrr::map(liste_sql, ~ execute_sql_safe(connection, .))
+      execute_sql <- purrr::map(sql_list, ~ execute_sql_safe(connection, .))
 
       temoin_erreur <- purrr::map_lgl(execute_sql, ~ !is.null(.$error))
     }
