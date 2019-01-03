@@ -23,6 +23,7 @@ Imports:
     purrr,
     readxl,
     RODBC,
+    RSQLite,
     stringr,
     tidyr,
     tools
