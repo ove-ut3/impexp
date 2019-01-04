@@ -5,7 +5,7 @@
 #' @export
 sqlite_create <- function(path) {
 
-  creation <- RSQLite::dbConnect(RSQLite::SQLite(), dbname = path)
+  creation <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
   DBI::dbDisconnect(creation)
 
   return(path)
