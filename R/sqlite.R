@@ -68,13 +68,13 @@ sqlite_import <- function(path, table = NULL) {
 
 #' Export a table to a SQLite database.
 #'
-#' @param data Data frame to export, unquoted.
 #' @param path SQLite database path.
+#' @param data Data frame to export, unquoted.
 #' @param table_name Optional name of the table to export as a character. By default, the name of the data frame is used.
 #' @param override If \code{TRUE} then the new data frame override the SQLite table if it already exists in the database.
 #'
 #' @export
-sqlite_export <- function(table, path, table_name = NULL, override = FALSE, message = TRUE) {
+sqlite_export <- function(path, table, table_name = NULL, override = FALSE, message = TRUE) {
 
   if (!file.exists(path)) {
     stop("SQLite databse \"", path,"\" does not exist.", call. = FALSE)
@@ -93,12 +93,12 @@ sqlite_export <- function(table, path, table_name = NULL, override = FALSE, mess
 
 #' Append rows to a table in a SQLite database.
 #'
-#' @param data Data frame to append, unquoted.
-#' @param table Table name in SQLite database to append data.
 #' @param path SQLite database path.
+#' @param data Data frame to append, unquoted.
+#' @param table_name Table name in SQLite database to append data.
 #'
 #' @export
-sqlite_append_rows <- function(data, table_name, path) {
+sqlite_append_rows <- function(path, data, table_name) {
 
   if (!file.exists(path)) {
     stop("SQLite databse \"", path,"\" does not exist.", call. = FALSE)
@@ -117,12 +117,12 @@ sqlite_append_rows <- function(data, table_name, path) {
 
 #' Execute SQL queries in a SQLite database.
 #'
-#' @param sql_list A vector of SQL queries.
 #' @param path SQLite database path.
+#' @param sql_list A vector of SQL queries.
 #' @param wait_unlock Wait until SQLite database is unlocked.
 #'
 #' @export
-sqlite_execute_sql <- function(sql_list, path, wait_unlock = TRUE) {
+sqlite_execute_sql <- function(path, sql_list, wait_unlock = TRUE) {
 
   if (!file.exists(path)) {
     stop("SQLite databse \"", path,"\" does not exist.", call. = FALSE)

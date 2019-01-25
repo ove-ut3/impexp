@@ -4,7 +4,7 @@
 \alias{sqlite_export}
 \title{Export a table to a SQLite database.}
 \usage{
-sqlite_export(table, path, table_name = NULL, override = FALSE,
+sqlite_export(path, table, table_name = NULL, override = FALSE,
   message = TRUE)
 }
 \arguments{

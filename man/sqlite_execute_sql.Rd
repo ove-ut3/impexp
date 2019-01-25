@@ -4,12 +4,12 @@
 \alias{sqlite_execute_sql}
 \title{Execute SQL queries in a SQLite database.}
 \usage{
-sqlite_execute_sql(sql_list, path, wait_unlock = TRUE)
+sqlite_execute_sql(path, sql_list, wait_unlock = TRUE)
 }
 \arguments{
-\item{sql_list}{A vector of SQL queries.}
-
 \item{path}{SQLite database path.}
+
+\item{sql_list}{A vector of SQL queries.}
 
 \item{wait_unlock}{Wait until SQLite database is unlocked.}
 }

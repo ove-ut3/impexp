@@ -4,14 +4,14 @@
 \alias{sqlite_append_rows}
 \title{Append rows to a table in a SQLite database.}
 \usage{
-sqlite_append_rows(data, table_name, path)
+sqlite_append_rows(path, data, table_name)
 }
 \arguments{
-\item{data}{Data frame to append, unquoted.}
-
 \item{path}{SQLite database path.}
 
-\item{table}{Table name in SQLite database to append data.}
+\item{data}{Data frame to append, unquoted.}
+
+\item{table_name}{Table name in SQLite database to append data.}
 }
 \description{
 Append rows to a table in a SQLite database.
