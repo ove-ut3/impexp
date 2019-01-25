@@ -19,7 +19,7 @@ sqlite_create <- function(path) {
 sqlite_list_tables <- function(path) {
 
   if (!file.exists(path)) {
-    stop("SQLite databse \"", path,"\" does not exist.", call. = FALSE)
+    stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
   }
 
   connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
@@ -42,7 +42,7 @@ sqlite_list_tables <- function(path) {
 sqlite_import <- function(path, table = NULL) {
 
   if (!file.exists(path)) {
-    stop("SQLite databse \"", path,"\" does not exist.", call. = FALSE)
+    stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
   }
 
   connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
@@ -77,7 +77,7 @@ sqlite_import <- function(path, table = NULL) {
 sqlite_export <- function(path, table, table_name = NULL, override = FALSE, message = TRUE) {
 
   if (!file.exists(path)) {
-    stop("SQLite databse \"", path,"\" does not exist.", call. = FALSE)
+    stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
   }
 
   connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
@@ -98,13 +98,19 @@ sqlite_export <- function(path, table, table_name = NULL, override = FALSE, mess
 #' @param table_name Table name in SQLite database to append data.
 #'
 #' @export
-sqlite_append_rows <- function(path, data, table_name) {
+sqlite_append_rows <- function(path, data, table_name = NULL) {
 
   if (!file.exists(path)) {
-    stop("SQLite databse \"", path,"\" does not exist.", call. = FALSE)
+    stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
   }
 
-  if (ncol(sqlite_import(table_name, path)) != ncol(data)) {
+  if (is.null(table_name)) {
+    table_name <- path %>%
+      stringr::str_extract("([^/]+?)$") %>%
+      tools::file_path_sans_ext()
+  }
+
+  if (ncol(sqlite_import(path, table_name)) != ncol(data)) {
     stop("data and table_name data must have the same number of columns.", call. = FALSE)
   }
 
@@ -125,7 +131,7 @@ sqlite_append_rows <- function(path, data, table_name) {
 sqlite_execute_sql <- function(path, sql_list, wait_unlock = TRUE) {
 
   if (!file.exists(path)) {
-    stop("SQLite databse \"", path,"\" does not exist.", call. = FALSE)
+    stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
   }
 
   connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
