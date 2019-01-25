@@ -33,19 +33,25 @@ sqlite_list_tables <- function(path) {
 
 #' Import a SQLite database table.
 #'
-#' @param table Name of the table to import as a character.
 #' @param path SQLite database path.
+#' @param table Name of the table to import as a character.
 #'
 #' @return A tibble.
 #'
 #' @export
-sqlite_import <- function(table, path) {
+sqlite_import <- function(path, table = NULL) {
 
   if (!file.exists(path)) {
     stop("SQLite databse \"", path,"\" does not exist.", call. = FALSE)
   }
 
   connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+
+  if (is.null(table)) {
+    table <- path %>%
+      stringr::str_extract("([^/]+?)$") %>%
+      tools::file_path_sans_ext()
+  }
 
   if (!table %in% DBI::dbListTables(connection)) {
     DBI::dbDisconnect(connection)

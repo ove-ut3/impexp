@@ -4,12 +4,12 @@
 \alias{sqlite_import}
 \title{Import a SQLite database table.}
 \usage{
-sqlite_import(table, path)
+sqlite_import(path, table = NULL)
 }
 \arguments{
-\item{table}{Name of the table to import as a character.}
-
 \item{path}{SQLite database path.}
+
+\item{table}{Name of the table to import as a character.}
 }
 \value{
 A tibble.
