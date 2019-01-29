@@ -70,7 +70,7 @@ sqlite_import <- function(path, table = NULL) {
 #'
 #' @param path SQLite database path.
 #' @param data Data frame to export, unquoted.
-#' @param table_name Optional name of the table to export as a character. By default, the name of the data frame is used.
+#' @param table_name Optional name of the table to export as a character. By default, the name of sqlite database is used.
 #' @param override If \code{TRUE} then the new data frame override the SQLite table if it already exists in the database.
 #'
 #' @export
@@ -83,7 +83,9 @@ sqlite_export <- function(path, table, table_name = NULL, override = FALSE, mess
   connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
   if (is.null(table_name)) {
-    table_name <- deparse(substitute(table))
+    table_name <- path %>%
+      stringr::str_extract("([^/]+?)$") %>%
+      tools::file_path_sans_ext()
   }
 
   DBI::dbWriteTable(connection, name = table_name, value = table, row.names = FALSE, overwrite = override)

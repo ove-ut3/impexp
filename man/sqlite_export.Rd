@@ -10,7 +10,7 @@ sqlite_export(path, table, table_name = NULL, override = FALSE,
 \arguments{
 \item{path}{SQLite database path.}
 
-\item{table_name}{Optional name of the table to export as a character. By default, the name of the data frame is used.}
+\item{table_name}{Optional name of the table to export as a character. By default, the name of sqlite database is used.}
 
 \item{override}{If \code{TRUE} then the new data frame override the SQLite table if it already exists in the database.}
 
