@@ -3,7 +3,7 @@
 #' @param pattern A regular expression. Only file names matching the regular expression will be imported.
 #' @param path Path where the csv files are located (recursive).
 #' @param n_csv Number of csv files to extract. A negative value will starts from the bottom of the files list.
-#' @param parallel If \code{TRUE} then csv files are imported using all CPU cores (using parallel package).
+#' @param parallel If \code{TRUE} then csv files are imported using all CPU cores (using parallel & pbapply packages).
 #' @param zip If \code{TRUE} then csv files within zip files are also imported.
 #' @param pattern_zip A regular expression. Only zip files matching the regular expression will be extracted.
 #' @param progress_bar If \code{TRUE} then a progress bar is displayed (using pbapply package).
@@ -13,7 +13,7 @@
 #' @return A data frame whith a column-list "import" containing all tibbles.
 #'
 #' @export
-csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, zip = FALSE, pattern_zip = "\\.zip$", progress_bar = TRUE, message = FALSE, ...) {
+csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, zip = FALSE, pattern_zip = "\\.zip$", progress_bar = FALSE, message = FALSE, ...) {
 
   if (!dir.exists(path)) {
     stop("The path \"", path,"\" does not exist", call. = FALSE)
@@ -27,7 +27,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
   # If zip files are included
   if (zip == TRUE) {
 
-    zip_files <- zip_extract_path(path, pattern = pattern, pattern_zip = pattern_zip, n_files = n_csv, parallel = parallel) %>%
+    zip_files <- zip_extract_path(path, pattern = pattern, pattern_zip = pattern_zip, n_files = n_csv, parallel = parallel, progress_bar = progress_bar, message = message) %>%
       dplyr::select(-exdir)
 
     files <- dplyr::bind_rows(zip_files, files) %>%
@@ -64,8 +64,8 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
     message(length(unique(files$file))," csv file(s) imported...")
   }
 
-  if (parallel == TRUE & !"parallel" %in% installed.packages()[, 1]) {
-    stop("parallel package needs to be installed", call. = FALSE)
+  if (parallel == TRUE & !all(c("parallel", "pbapply") %in% installed.packages()[, 1])) {
+    stop("parallel and pbapply packages need to be installed", call. = FALSE)
   }
 
   if (parallel == TRUE) {
@@ -74,11 +74,23 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
     cluster <- NULL
   }
 
-  csv_import_path <- files %>%
-    dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
-      data.table::fread(import$file, ...) %>%
-        dplyr::as_tibble()
-    }, cl = cluster))
+  if (progress_bar == TRUE | parallel == TRUE) {
+
+    csv_import_path <- files %>%
+      dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
+        data.table::fread(import$file, ...) %>%
+          dplyr::as_tibble()
+      }, cl = cluster))
+
+  } else {
+
+    csv_import_path <- files %>%
+      dplyr::mutate(import = lapply(split(., 1:nrow(.)), function(import) {
+        data.table::fread(import$file, ...) %>%
+          dplyr::as_tibble()
+      }))
+
+  }
 
   remove <- dplyr::filter(files, !is.na(zip_file)) %>%
     dplyr::pull(file) %>%

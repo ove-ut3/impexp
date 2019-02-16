@@ -184,7 +184,7 @@ zip_extract <- function(zip_file, pattern = NULL, exdir = NULL, remove_zip = FAL
   }
 }
 
-zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = Inf, parallel = FALSE) {
+zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = Inf, parallel = FALSE, progress_bar = FALSE, message = FALSE) {
 
   if (!dir.exists(path)) {
     stop("The path \"", path,"\" does not exist", call. = FALSE)
@@ -218,7 +218,9 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
 
   }
 
-  message("Extraction from ", length(zip_files$zip_file), " zip file(s)...")
+  if (message == TRUE) {
+    message("Extraction from ", length(zip_files$zip_file), " zip file(s)...")
+  }
 
   if (parallel == TRUE) {
     cluster <- parallel::makeCluster(parallel::detectCores())
@@ -226,13 +228,27 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
     cluster <- NULL
   }
 
-  decompression <- zip_files %>%
-    split(1:nrow(.)) %>%
-    pbapply::pblapply(function(ligne) {
+  if (progress_bar == TRUE | parallel == TRUE) {
 
-      zip_extract(ligne$zip_file, pattern = pattern)
+    decompression <- zip_files %>%
+      split(1:nrow(.)) %>%
+      pbapply::pblapply(function(ligne) {
 
-    }, cl = cluster)
+        zip_extract(ligne$zip_file, pattern = pattern)
+
+      }, cl = cluster)
+
+  } else {
+
+    decompression <- zip_files %>%
+      split(1:nrow(.)) %>%
+      lapply(function(ligne) {
+
+        zip_extract(ligne$zip_file, pattern = pattern)
+
+      })
+
+  }
 
   if (parallel == TRUE) {
     parallel::stopCluster(cluster)

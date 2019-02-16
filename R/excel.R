@@ -3,7 +3,7 @@
 #' @param pattern A regular expression. Only file names matching the regular expression will be imported.
 #' @param path Path where the excel files are located (recursive).
 #' @param pattern_sheet A regular expression. Only sheet names in excel files matching the regular expression will be imported.
-#' @param parallel If \code{TRUE} then excel files are imported using all CPU cores (using parallel package).
+#' @param parallel If \code{TRUE} then excel files are imported using all CPU cores (using parallel & pbapply packages).
 #' @param zip If \code{TRUE} then excel files within zip files are also imported.
 #' @param progress_bar If \code{TRUE} then a progress bar is displayed (using pbapply package).
 #' @param message If \code{TRUE} then a message indicates how many files are imported.
@@ -17,7 +17,7 @@
 #' impexp::excel_import_path(paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", zip = TRUE)
 #'
 #' @export
-excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet = ".", parallel = FALSE, zip = FALSE, progress_bar = TRUE, message = FALSE, ...) {
+excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet = ".", parallel = FALSE, zip = FALSE, progress_bar = FALSE, message = FALSE, ...) {
 
   if (!dir.exists(path)) {
     stop("The path \"", path,"\" does not exist", call. = FALSE)
@@ -30,7 +30,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
   # If zip files are included
   if (zip == TRUE) {
 
-    zip_files <- zip_extract_path(path, pattern = pattern, parallel = parallel) %>%
+    zip_files <- zip_extract_path(path, pattern = pattern, parallel = parallel, progress_bar = progress_bar, message = message) %>%
       dplyr::select(-exdir)
 
     files <- dplyr::bind_rows(zip_files, files) %>%
@@ -59,8 +59,8 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
     message(length(unique(files$file))," excel file(s) imported...")
   }
 
-  if (parallel == TRUE & !"parallel" %in% installed.packages()[, 1]) {
-    stop("parallel package needs to be installed", call. = FALSE)
+  if (parallel == TRUE & !all(c("parallel", "pbapply") %in% installed.packages()[, 1])) {
+    stop("parallel and pbapply packages need to be installed", call. = FALSE)
   }
 
   if (parallel == TRUE) {
@@ -69,13 +69,27 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
     cluster <- NULL
   }
 
-  excel_import_path <- files %>%
-    dplyr::mutate(sheet = purrr::map(file, readxl::excel_sheets)) %>%
-    tidyr::unnest() %>%
-    dplyr::filter(stringr::str_detect(sheet, pattern_sheet)) %>%
-    dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
-      readxl::read_excel(import$file, import$sheet, ...)
-    }, cl = cluster))
+  if (progress_bar == TRUE | parallel == TRUE) {
+
+    excel_import_path <- files %>%
+      dplyr::mutate(sheet = purrr::map(file, readxl::excel_sheets)) %>%
+      tidyr::unnest() %>%
+      dplyr::filter(stringr::str_detect(sheet, pattern_sheet)) %>%
+      dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
+        readxl::read_excel(import$file, import$sheet, ...)
+      }, cl = cluster))
+
+  } else {
+
+    excel_import_path <- files %>%
+      dplyr::mutate(sheet = purrr::map(file, readxl::excel_sheets)) %>%
+      tidyr::unnest() %>%
+      dplyr::filter(stringr::str_detect(sheet, pattern_sheet)) %>%
+      dplyr::mutate(import = lapply(split(., 1:nrow(.)), function(import) {
+        readxl::read_excel(import$file, import$sheet, ...)
+      }))
+
+  }
 
   suppression <- dplyr::filter(files, !is.na(zip_file)) %>%
     dplyr::pull(file) %>%
