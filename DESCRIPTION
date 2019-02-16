@@ -16,16 +16,17 @@ Imports:
     dplyr,
     lubridate,
     odbc,
-    openxlsx,
     patchr,
-    parallel,
-    pbapply,
     purrr,
     readxl,
-    RODBC,
     RSQLite,
     stringr,
     tidyr,
     tools
+Suggests:
+    openxlsx,
+    parallel,
+    pbapply,
+    RODBC
 Remotes:
     stephLH/patchr

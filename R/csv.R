@@ -3,16 +3,17 @@
 #' @param pattern A regular expression. Only file names matching the regular expression will be imported.
 #' @param path Path where the csv files are located (recursive).
 #' @param n_csv Number of csv files to extract. A negative value will starts from the bottom of the files list.
-#' @param parallel If \code{TRUE} then csv files are imported using all CPU cores.
+#' @param parallel If \code{TRUE} then csv files are imported using all CPU cores (using parallel package).
 #' @param zip If \code{TRUE} then csv files within zip files are also imported.
 #' @param pattern_zip A regular expression. Only zip files matching the regular expression will be extracted.
+#' @param progress_bar If \code{TRUE} then a progress bar is displayed (using pbapply package).
 #' @param message If \code{TRUE} then a message indicates how many files are imported.
 #' @param \dots Optional arguments from \code{data.table::fread} function.
 #'
 #' @return A data frame whith a column-list "import" containing all tibbles.
 #'
 #' @export
-csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, zip = FALSE, pattern_zip = "\\.zip$", message = TRUE, ...) {
+csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, zip = FALSE, pattern_zip = "\\.zip$", progress_bar = TRUE, message = FALSE, ...) {
 
   if (!dir.exists(path)) {
     stop("The path \"", path,"\" does not exist", call. = FALSE)
@@ -51,11 +52,20 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
     return(files)
   }
 
-  if (message == TRUE) {
-    message(length(unique(files$file))," csv files imported...")
+  if (progress_bar == TRUE & !"pbapply" %in% installed.packages()[, 1]) {
+    stop("pbapply package needs to be installed", call. = FALSE)
+  }
+
+  if (progress_bar == TRUE) {
     pbapply::pboptions(type = "timer")
-  } else {
-    pbapply::pboptions(type = "none")
+  }
+
+  if (message == TRUE) {
+    message(length(unique(files$file))," csv file(s) imported...")
+  }
+
+  if (parallel == TRUE & !"parallel" %in% installed.packages()[, 1]) {
+    stop("parallel package needs to be installed", call. = FALSE)
   }
 
   if (parallel == TRUE) {

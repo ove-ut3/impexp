@@ -5,7 +5,8 @@
 \title{Import csv files located in a path.}
 \usage{
 csv_import_path(pattern, path = ".", n_csv = Inf, parallel = FALSE,
-  zip = FALSE, pattern_zip = "\\\\.zip$", message = TRUE, ...)
+  zip = FALSE, pattern_zip = "\\\\.zip$", progress_bar = TRUE,
+  message = FALSE, ...)
 }
 \arguments{
 \item{pattern}{A regular expression. Only file names matching the regular expression will be imported.}
@@ -14,11 +15,13 @@ csv_import_path(pattern, path = ".", n_csv = Inf, parallel = FALSE,
 
 \item{n_csv}{Number of csv files to extract. A negative value will starts from the bottom of the files list.}
 
-\item{parallel}{If \code{TRUE} then csv files are imported using all CPU cores.}
+\item{parallel}{If \code{TRUE} then csv files are imported using all CPU cores (using parallel package).}
 
 \item{zip}{If \code{TRUE} then csv files within zip files are also imported.}
 
 \item{pattern_zip}{A regular expression. Only zip files matching the regular expression will be extracted.}
+
+\item{progress_bar}{If \code{TRUE} then a progress bar is displayed (using pbapply package).}
 
 \item{message}{If \code{TRUE} then a message indicates how many files are imported.}
 

@@ -3,8 +3,9 @@
 #' @param pattern A regular expression. Only file names matching the regular expression will be imported.
 #' @param path Path where the excel files are located (recursive).
 #' @param pattern_sheet A regular expression. Only sheet names in excel files matching the regular expression will be imported.
-#' @param parallel If \code{TRUE} then excel files are imported using all CPU cores.
+#' @param parallel If \code{TRUE} then excel files are imported using all CPU cores (using parallel package).
 #' @param zip If \code{TRUE} then excel files within zip files are also imported.
+#' @param progress_bar If \code{TRUE} then a progress bar is displayed (using pbapply package).
 #' @param message If \code{TRUE} then a message indicates how many files are imported.
 #' @param \dots Optional arguments from \code{readxl::read_excel} function.
 #'
@@ -16,7 +17,7 @@
 #' impexp::excel_import_path(paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp", zip = TRUE)
 #'
 #' @export
-excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet = ".", parallel = FALSE, zip = FALSE, message = FALSE, ...) {
+excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet = ".", parallel = FALSE, zip = FALSE, progress_bar = TRUE, message = FALSE, ...) {
 
   if (!dir.exists(path)) {
     stop("The path \"", path,"\" does not exist", call. = FALSE)
@@ -46,11 +47,20 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
     return(files)
   }
 
-  if (message == TRUE) {
-    message(length(unique(files$file))," Excel files imported...")
+  if (progress_bar == TRUE & !"pbapply" %in% installed.packages()[, 1]) {
+    stop("pbapply package needs to be installed", call. = FALSE)
+  }
+
+  if (progress_bar == TRUE) {
     pbapply::pboptions(type = "timer")
-  } else {
-    pbapply::pboptions(type = "none")
+  }
+
+  if (message == TRUE) {
+    message(length(unique(files$file))," excel file(s) imported...")
+  }
+
+  if (parallel == TRUE & !"parallel" %in% installed.packages()[, 1]) {
+    stop("parallel package needs to be installed", call. = FALSE)
   }
 
   if (parallel == TRUE) {
@@ -84,7 +94,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
   return(excel_import_path)
 }
 
-#' Export a Microsoft Excel file.
+#' Export a Microsoft Excel file (using openxlsx).
 #'
 #' @param data A data frame or a named list of data frames that will be sheets in the Excel file.
 #' @param path Path to the created Excel file.
@@ -95,6 +105,10 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
 #'
 #' @export
 excel_export <- function(data, path, create_dir = FALSE, sheet = NULL, footer = NULL, n_cols_rowname = 0) {
+
+  if (!"openxlsx" %in% installed.packages()[, 1]) {
+    stop("openxlsx package needs to be installed", call. = FALSE)
+  }
 
   if (any(class(data) == "data.frame")) {
     data <- list("data" = data)

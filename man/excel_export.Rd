@@ -2,7 +2,7 @@
 % Please edit documentation in R/excel.R
 \name{excel_export}
 \alias{excel_export}
-\title{Export a Microsoft Excel file.}
+\title{Export a Microsoft Excel file (using openxlsx).}
 \usage{
 excel_export(data, path, create_dir = FALSE, sheet = NULL,
   footer = NULL, n_cols_rowname = 0)
@@ -21,5 +21,5 @@ excel_export(data, path, create_dir = FALSE, sheet = NULL,
 \item{n_cols_rowname}{Number of columns containg row names. These columns usualy don't need header.}
 }
 \description{
-Export a Microsoft Excel file.
+Export a Microsoft Excel file (using openxlsx).
 }

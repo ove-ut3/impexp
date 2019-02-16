@@ -2,7 +2,7 @@
 % Please edit documentation in R/access.R
 \name{access_export}
 \alias{access_export}
-\title{Export a data frame to a Microsoft Access database.}
+\title{Export a data frame to a Microsoft Access database (using RODBC).}
 \usage{
 access_export(data, path, table_name = NULL, override = TRUE)
 }
@@ -16,7 +16,7 @@ access_export(data, path, table_name = NULL, override = TRUE)
 \item{override}{If \code{TRUE} then the new data frame override the Access table if it already exists in the database.}
 }
 \description{
-Export a data frame to a Microsoft Access database.
+Export a data frame to a Microsoft Access database (using RODBC).
 }
 \examples{
 impexp::access_export(data_frame, path = "Path/to/the/database.accdb")

@@ -57,7 +57,7 @@ access_import <- function(table, path){
   return(import)
 }
 
-#' Export a data frame to a Microsoft Access database.
+#' Export a data frame to a Microsoft Access database (using RODBC).
 #'
 #' @param data Data frame to export, unquoted.
 #' @param path Path to the Access database.
@@ -89,6 +89,10 @@ access_export <- function(data, path, table_name = NULL, override = TRUE){
   # DBI::dbWriteTable(connection, name = table_name, value = data)
   #
   # DBI::dbDisconnect(connection)
+
+  if (!"RODBC" %in% installed.packages()[, 1]) {
+    stop("RODBC package needs to be installed", call. = FALSE)
+  }
 
   connection <- RODBC::odbcConnectAccess2007(path)
   connection_dbi <- access_connect(path)
