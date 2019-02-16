@@ -56,10 +56,6 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
     stop("pbapply package needs to be installed", call. = FALSE)
   }
 
-  if (progress_bar == TRUE) {
-    pbapply::pboptions(type = "timer")
-  }
-
   if (message == TRUE) {
     message(length(unique(files$file))," csv file(s) imported...")
   }

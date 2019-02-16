@@ -51,10 +51,6 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
     stop("pbapply package needs to be installed", call. = FALSE)
   }
 
-  if (progress_bar == TRUE) {
-    pbapply::pboptions(type = "timer")
-  }
-
   if (message == TRUE) {
     message(length(unique(files$file))," excel file(s) imported...")
   }
