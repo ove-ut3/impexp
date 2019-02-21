@@ -71,10 +71,10 @@ sqlite_import <- function(path, table = NULL) {
 #' @param path SQLite database path.
 #' @param data Data frame to export, unquoted.
 #' @param table_name Optional name of the table to export as a character. By default, the name of sqlite database is used.
-#' @param override If \code{TRUE} then the new data frame override the SQLite table if it already exists in the database.
+#' @param ... Additional arguments to \code{DBI::dbWriteTable}.
 #'
 #' @export
-sqlite_export <- function(path, table, table_name = NULL, override = FALSE, message = TRUE) {
+sqlite_export <- function(path, table, table_name = NULL, ...) {
 
   if (!file.exists(path)) {
     stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
@@ -88,7 +88,7 @@ sqlite_export <- function(path, table, table_name = NULL, override = FALSE, mess
       tools::file_path_sans_ext()
   }
 
-  DBI::dbWriteTable(connection, name = table_name, value = table, row.names = FALSE, overwrite = override)
+  DBI::dbWriteTable(connection, name = table_name, value = table, row.names = FALSE, ...)
 
   DBI::dbDisconnect(connection)
 }

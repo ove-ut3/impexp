@@ -4,15 +4,14 @@
 \alias{sqlite_export}
 \title{Export a table to a SQLite database.}
 \usage{
-sqlite_export(path, table, table_name = NULL, override = FALSE,
-  message = TRUE)
+sqlite_export(path, table, table_name = NULL, ...)
 }
 \arguments{
 \item{path}{SQLite database path.}
 
 \item{table_name}{Optional name of the table to export as a character. By default, the name of sqlite database is used.}
 
-\item{override}{If \code{TRUE} then the new data frame override the SQLite table if it already exists in the database.}
+\item{...}{Additional arguments to \code{DBI::dbWriteTable}.}
 
 \item{data}{Data frame to export, unquoted.}
 }
