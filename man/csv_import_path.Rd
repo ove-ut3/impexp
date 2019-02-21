@@ -5,7 +5,7 @@
 \title{Import csv files located in a path.}
 \usage{
 csv_import_path(pattern, path = ".", n_csv = Inf, parallel = FALSE,
-  zip = FALSE, pattern_zip = "\\\\.zip$", progress_bar = TRUE,
+  zip = FALSE, pattern_zip = "\\\\.zip$", progress_bar = FALSE,
   message = FALSE, ...)
 }
 \arguments{
@@ -15,7 +15,7 @@ csv_import_path(pattern, path = ".", n_csv = Inf, parallel = FALSE,
 
 \item{n_csv}{Number of csv files to extract. A negative value will starts from the bottom of the files list.}
 
-\item{parallel}{If \code{TRUE} then csv files are imported using all CPU cores (using parallel package).}
+\item{parallel}{If \code{TRUE} then csv files are imported using all CPU cores (using parallel & pbapply packages).}
 
 \item{zip}{If \code{TRUE} then csv files within zip files are also imported.}
 

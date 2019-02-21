@@ -6,7 +6,7 @@
 \usage{
 excel_import_path(path = ".", pattern = "\\\\.xlsx?$",
   pattern_sheet = ".", parallel = FALSE, zip = FALSE,
-  progress_bar = TRUE, message = FALSE, ...)
+  progress_bar = FALSE, message = FALSE, ...)
 }
 \arguments{
 \item{path}{Path where the excel files are located (recursive).}
@@ -15,7 +15,7 @@ excel_import_path(path = ".", pattern = "\\\\.xlsx?$",
 
 \item{pattern_sheet}{A regular expression. Only sheet names in excel files matching the regular expression will be imported.}
 
-\item{parallel}{If \code{TRUE} then excel files are imported using all CPU cores (using parallel package).}
+\item{parallel}{If \code{TRUE} then excel files are imported using all CPU cores (using parallel & pbapply packages).}
 
 \item{zip}{If \code{TRUE} then excel files within zip files are also imported.}
 
