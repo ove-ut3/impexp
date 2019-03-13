@@ -27,8 +27,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
   # If zip files are included
   if (zip == TRUE) {
 
-    zip_files <- zip_extract_path(path, pattern = pattern, pattern_zip = pattern_zip, n_files = n_csv, parallel = parallel, progress_bar = progress_bar, message = message) %>%
-      dplyr::select(-exdir)
+    zip_files <- zip_extract_path(path, pattern = pattern, pattern_zip = pattern_zip, n_files = n_csv, parallel = parallel, progress_bar = progress_bar, message = message, files = TRUE)
 
     files <- dplyr::bind_rows(zip_files, files) %>%
       dplyr::arrange(file)
@@ -74,23 +73,39 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
 
     csv_import_path <- files %>%
       dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
-        data.table::fread(import$file, showProgress = FALSE, ...) %>%
+
+        if (!is.na(import$zip_file)) {
+          zip_extract(import$zip_file, pattern = pattern, exdir = ".")
+        }
+
+        data <- data.table::fread(import$file, showProgress = FALSE, ...) %>%
           dplyr::as_tibble()
+
+        remove <- file.remove(import$file)
+
+        data
+
       }, cl = cluster))
 
   } else {
 
     csv_import_path <- files %>%
       dplyr::mutate(import = lapply(split(., 1:nrow(.)), function(import) {
-        data.table::fread(import$file, showProgress = FALSE, ...) %>%
+
+        if (!is.na(import$zip_file)) {
+          zip_extract(import$zip_file, pattern = pattern, exdir = ".")
+        }
+
+        data <- data.table::fread(import$file, showProgress = FALSE, ...) %>%
           dplyr::as_tibble()
+
+        remove <- file.remove(import$file)
+
+        data
+
       }))
 
   }
-
-  remove <- dplyr::filter(files, !is.na(zip_file)) %>%
-    dplyr::pull(file) %>%
-    file.remove()
 
   if (parallel == TRUE) {
     parallel::stopCluster(cluster)

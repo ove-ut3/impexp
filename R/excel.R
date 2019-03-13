@@ -30,8 +30,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
   # If zip files are included
   if (zip == TRUE) {
 
-    zip_files <- zip_extract_path(path, pattern = pattern, parallel = parallel, progress_bar = progress_bar, message = message) %>%
-      dplyr::select(-exdir)
+    zip_files <- zip_extract_path(path, pattern = pattern, parallel = parallel, progress_bar = progress_bar, message = message, files = TRUE)
 
     files <- dplyr::bind_rows(zip_files, files) %>%
       dplyr::arrange(file)
@@ -72,7 +71,17 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
       tidyr::unnest() %>%
       dplyr::filter(stringr::str_detect(sheet, pattern_sheet)) %>%
       dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
-        readxl::read_excel(import$file, import$sheet, ...)
+
+        if (!is.na(import$zip_file)) {
+          zip_extract(import$zip_file, pattern = pattern, exdir = ".")
+        }
+
+        data <- readxl::read_excel(import$file, import$sheet, ...)
+
+        remove <- file.remove(import$file)
+
+        data
+
       }, cl = cluster))
 
   } else {
@@ -82,14 +91,20 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
       tidyr::unnest() %>%
       dplyr::filter(stringr::str_detect(sheet, pattern_sheet)) %>%
       dplyr::mutate(import = lapply(split(., 1:nrow(.)), function(import) {
-        readxl::read_excel(import$file, import$sheet, ...)
+
+        if (!is.na(import$zip_file)) {
+          zip_extract(import$zip_file, pattern = pattern, exdir = ".")
+        }
+
+        data <- readxl::read_excel(import$file, import$sheet, ...)
+
+        remove <- file.remove(import$file)
+
+        data
+
       }))
 
   }
-
-  suppression <- dplyr::filter(files, !is.na(zip_file)) %>%
-    dplyr::pull(file) %>%
-    file.remove()
 
   if (parallel == TRUE) {
     parallel::stopCluster(cluster)

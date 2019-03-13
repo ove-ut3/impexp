@@ -184,7 +184,7 @@ zip_extract <- function(zip_file, pattern = NULL, exdir = NULL, remove_zip = FAL
   }
 }
 
-zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = Inf, parallel = FALSE, progress_bar = FALSE, message = FALSE) {
+zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = Inf, parallel = FALSE, progress_bar = FALSE, message = FALSE, files = FALSE) {
 
   if (!dir.exists(path)) {
     stop("The path \"", path,"\" does not exist", call. = FALSE)
@@ -206,6 +206,10 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
     dplyr::filter(stringr::str_detect(file, pattern)) %>%
     dplyr::inner_join(zip_files, ., by = "id_zip") %>%
     dplyr::select(-id_zip)
+
+  if (files == TRUE) {
+    return(zip_files)
+  }
 
   if (nrow(zip_files) > abs(n_files)) {
 
