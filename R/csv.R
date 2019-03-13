@@ -74,7 +74,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
 
     csv_import_path <- files %>%
       dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
-        data.table::fread(import$file, ...) %>%
+        data.table::fread(import$file, showProgress = FALSE, ...) %>%
           dplyr::as_tibble()
       }, cl = cluster))
 
@@ -82,7 +82,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
 
     csv_import_path <- files %>%
       dplyr::mutate(import = lapply(split(., 1:nrow(.)), function(import) {
-        data.table::fread(import$file, ...) %>%
+        data.table::fread(import$file, showProgress = FALSE, ...) %>%
           dplyr::as_tibble()
       }))
 
