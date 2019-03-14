@@ -77,7 +77,9 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
 
         data <- readxl::read_excel(import$file, import$sheet, ...)
 
-        remove <- file.remove(import$file)
+        if (!is.na(import$zip_file)) {
+          remove <- file.remove(import$file)
+        }
 
         data
 
@@ -97,7 +99,9 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
 
         data <- readxl::read_excel(import$file, import$sheet, ...)
 
-        remove <- file.remove(import$file)
+        if (!is.na(import$zip_file)) {
+          remove <- file.remove(import$file)
+        }
 
         data
 

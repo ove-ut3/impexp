@@ -80,7 +80,9 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
         data <- data.table::fread(import$file, showProgress = FALSE, ...) %>%
           dplyr::as_tibble()
 
-        remove <- file.remove(import$file)
+        if (!is.na(import$zip_file)) {
+          remove <- file.remove(import$file)
+        }
 
         data
 
@@ -98,7 +100,9 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
         data <- data.table::fread(import$file, showProgress = FALSE, ...) %>%
           dplyr::as_tibble()
 
-        remove <- file.remove(import$file)
+        if (!is.na(import$zip_file)) {
+          remove <- file.remove(import$file)
+        }
 
         data
 
