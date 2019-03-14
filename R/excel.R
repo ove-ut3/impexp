@@ -36,8 +36,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
       dplyr::arrange(file)
 
   } else {
-    files <- files %>%
-      dplyr::mutate(zip_file = NA_character_)
+    files <- dplyr::mutate(files, zip_file = NA_character_)
   }
 
   if (nrow(files) == 0) {
@@ -73,7 +72,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
       dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
 
         if (!is.na(import$zip_file)) {
-          zip_extract(import$zip_file, pattern = pattern, exdir = ".")
+          zip_extract(import$zip_file, pattern = pattern)
         }
 
         data <- readxl::read_excel(import$file, import$sheet, ...)
@@ -93,7 +92,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
       dplyr::mutate(import = lapply(split(., 1:nrow(.)), function(import) {
 
         if (!is.na(import$zip_file)) {
-          zip_extract(import$zip_file, pattern = pattern, exdir = ".")
+          zip_extract(import$zip_file, pattern = pattern)
         }
 
         data <- readxl::read_excel(import$file, import$sheet, ...)
@@ -108,12 +107,6 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
 
   if (parallel == TRUE) {
     parallel::stopCluster(cluster)
-  }
-
-  if (zip == TRUE) {
-    excel_import_path <- dplyr::left_join(files, excel_import_path, by = c("zip_file", "file")) %>%
-      dplyr::mutate(file = stringr::str_match(file, "/(.+)")[, 2])
-
   }
 
   return(excel_import_path)

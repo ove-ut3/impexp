@@ -39,8 +39,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
     if (n_csv > 0) {
       files <- dplyr::filter(files, dplyr::row_number() <= n_csv)
     } else if (n_csv < 0) {
-      files <- files %>%
-        dplyr::filter(dplyr::row_number() > n() + n_csv)
+      files <- dplyr::filter(files, dplyr::row_number() > n() + n_csv)
     }
 
   }
@@ -75,7 +74,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
       dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
 
         if (!is.na(import$zip_file)) {
-          zip_extract(import$zip_file, pattern = pattern, exdir = ".")
+          zip_extract(import$zip_file, pattern = pattern)
         }
 
         data <- data.table::fread(import$file, showProgress = FALSE, ...) %>%
@@ -93,7 +92,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
       dplyr::mutate(import = lapply(split(., 1:nrow(.)), function(import) {
 
         if (!is.na(import$zip_file)) {
-          zip_extract(import$zip_file, pattern = pattern, exdir = ".")
+          zip_extract(import$zip_file, pattern = pattern)
         }
 
         data <- data.table::fread(import$file, showProgress = FALSE, ...) %>%
@@ -109,13 +108,6 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
 
   if (parallel == TRUE) {
     parallel::stopCluster(cluster)
-  }
-
-  if (zip == TRUE) {
-    csv_import_path <- files %>%
-      dplyr::left_join(csv_import_path, by = c("zip_file", "file")) %>%
-      dplyr::mutate(file = stringr::str_match(file, "/(.+)")[, 2])
-
   }
 
   return(csv_import_path)
