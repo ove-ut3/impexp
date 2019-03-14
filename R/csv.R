@@ -21,7 +21,8 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
 
   files <- dplyr::tibble(file = list.files(path, recursive = TRUE, full.names = TRUE) %>%
                            stringr::str_subset(pattern) %>%
-                           iconv(from = "UTF-8"),
+                           iconv(from = "UTF-8") %>%
+                           purrr::map_chr(tools::file_path_as_absolute),
                          zip_file = NA_character_)
 
   # If zip files are included

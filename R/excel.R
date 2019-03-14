@@ -25,7 +25,9 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
 
   files <- dplyr::tibble(file = list.files(path, recursive = TRUE, full.names = TRUE) %>%
                            stringr::str_subset(pattern) %>%
-                           iconv(from = "UTF-8"))
+                           iconv(from = "UTF-8") %>%
+                           purrr::map_chr(tools::file_path_as_absolute),
+                         zip_files = NA_character_)
 
   # If zip files are included
   if (zip == TRUE) {
