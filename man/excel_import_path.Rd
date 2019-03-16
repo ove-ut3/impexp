@@ -26,7 +26,7 @@ excel_import_path(path = ".", pattern = "\\\\.xlsx?$",
 \item{\dots}{Optional arguments from \code{readxl::read_excel} function.}
 }
 \value{
-A data frame whith a column-list "import" containing all tibbles.
+A data frame with a column-list "import" containing all tibbles.
 }
 \description{
 Import Microsoft Excel files located in a path.

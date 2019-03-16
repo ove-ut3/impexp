@@ -9,7 +9,7 @@
 #' @param message If \code{TRUE} then a message indicates how many files are imported.
 #' @param \dots Optional arguments from \code{readxl::read_excel} function.
 #'
-#' @return A data frame whith a column-list "import" containing all tibbles.
+#' @return A data frame with a column-list "import" containing all tibbles.
 #'
 #' @examples
 #' impexp::excel_import_path(paste0(find.package("impexp"), "/extdata"), pattern_sheet = "impexp")

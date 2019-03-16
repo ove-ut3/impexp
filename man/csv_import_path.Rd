@@ -28,7 +28,7 @@ csv_import_path(pattern, path = ".", n_csv = Inf, parallel = FALSE,
 \item{\dots}{Optional arguments from \code{data.table::fread} function.}
 }
 \value{
-A data frame whith a column-list "import" containing all tibbles.
+A data frame with a column-list "import" containing all tibbles.
 }
 \description{
 Import csv files located in a path.

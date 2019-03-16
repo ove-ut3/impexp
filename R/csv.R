@@ -10,7 +10,7 @@
 #' @param message If \code{TRUE} then a message indicates how many files are imported.
 #' @param \dots Optional arguments from \code{data.table::fread} function.
 #'
-#' @return A data frame whith a column-list "import" containing all tibbles.
+#' @return A data frame with a column-list "import" containing all tibbles.
 #'
 #' @export
 csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, zip = FALSE, pattern_zip = "\\.zip$", progress_bar = FALSE, message = FALSE, ...) {
