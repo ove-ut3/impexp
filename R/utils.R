@@ -264,39 +264,3 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
 
   return(zip_files)
 }
-
-str_normalise_colnames <- function(string){
-
-  if (class(string) != "character") {
-    stop("Input vector must be a character vector", call. = FALSE)
-  }
-
-  # Lower case and conv from ISO-8859-1 if it does not work
-  normalised_string <- tryCatch(
-    {
-      tolower(string)
-    },
-    error = function(cond) {
-      normalised_string <- stringr::str_conv(string, "ISO-8859-1") %>%
-        tolower()
-      return(normalised_string)
-    }
-  )
-
-  normalised_string <- normalised_string %>%
-    # Replacement of punctuation and spaces by an underscore
-    stringr::str_replace_all("[[:punct:]\\s]+", "_") %>%
-    # A trailing undersore is removed
-    stringr::str_remove_all("_$") %>%
-    # All non alphanumeric strings are removed
-    stringr::str_remove_all("[^\\w]") %>%
-    # All accents are removed
-    caractr::str_remove_accent()
-
-  # If duplicate, make unique
-  if(length(normalised_string) != length(unique(normalised_string))) {
-    normalised_string <- make.unique(normalised_string, sep = "_")
-  }
-
-  return(normalised_string)
-}
