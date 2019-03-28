@@ -50,8 +50,8 @@ access_import <- function(table, path){
   DBI::dbDisconnect(connection)
 
   import <- import %>%
-    patchr::normalise_colnames() %>%
-    patchr::replace_empty_to_na() %>%
+    impexp::normalise_colnames() %>%
+    dplyr::mutate_if(data, is.character, dplyr::na_if, "") %>%
     dplyr::mutate_at(.vars = dplyr::vars(which(purrr::map_lgl(., ~ any(class(.) == "POSIXct")))), lubridate::as_date)
 
   return(import)

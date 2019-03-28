@@ -28,5 +28,3 @@ Suggests:
     parallel,
     pbapply,
     RODBC
-Remotes:
-    stephLH/patchr
