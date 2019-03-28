@@ -265,7 +265,7 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
   return(zip_files)
 }
 
-import <- function(zip_file, file, format) {
+import <- function(zip_file, file, pattern, format, ...) {
 
   if (!is.na(zip_file)) {
     zip_extract(zip_file, pattern = pattern)

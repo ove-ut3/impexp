@@ -74,7 +74,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
     csv_import_path <- files %>%
       dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
 
-        import(import$zip_file, import$file, "csv")
+        import(import$zip_file, import$file, pattern, "csv", ...)
 
       }, cl = cluster))
 
@@ -83,7 +83,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
     csv_import_path <- files %>%
       dplyr::mutate(import = lapply(split(., 1:nrow(.)), function(import) {
 
-        import(import$zip_file, import$file, "csv")
+        import(import$zip_file, import$file, pattern, "csv", ...)
 
       }))
 
