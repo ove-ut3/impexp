@@ -264,3 +264,29 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
 
   return(zip_files)
 }
+
+import <- function(zip_file, file, format) {
+
+  if (!is.na(zip_file)) {
+    zip_extract(zip_file, pattern = pattern)
+  }
+
+  if (format == "csv") {
+
+    data <- data.table::fread(file, showProgress = FALSE, ...) %>%
+      dplyr::as_tibble() %>%
+      dplyr::mutate_if(is.character, dplyr::na_if, "")
+
+  } else if (format == "excel") {
+
+    data <- readxl::read_excel(import$file, import$sheet, ...)
+
+  }
+
+  if (!is.na(zip_file)) {
+    remove <- file.remove(file)
+  }
+
+  data
+
+}

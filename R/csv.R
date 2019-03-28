@@ -74,18 +74,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
     csv_import_path <- files %>%
       dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
 
-        if (!is.na(import$zip_file)) {
-          zip_extract(import$zip_file, pattern = pattern)
-        }
-
-        data <- data.table::fread(import$file, showProgress = FALSE, ...) %>%
-          dplyr::as_tibble()
-
-        if (!is.na(import$zip_file)) {
-          remove <- file.remove(import$file)
-        }
-
-        data
+        import(import$zip_file, import$file, "csv")
 
       }, cl = cluster))
 
@@ -94,18 +83,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
     csv_import_path <- files %>%
       dplyr::mutate(import = lapply(split(., 1:nrow(.)), function(import) {
 
-        if (!is.na(import$zip_file)) {
-          zip_extract(import$zip_file, pattern = pattern)
-        }
-
-        data <- data.table::fread(import$file, showProgress = FALSE, ...) %>%
-          dplyr::as_tibble()
-
-        if (!is.na(import$zip_file)) {
-          remove <- file.remove(import$file)
-        }
-
-        data
+        import(import$zip_file, import$file, "csv")
 
       }))
 
