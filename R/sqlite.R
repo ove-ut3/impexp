@@ -138,6 +138,8 @@ sqlite_execute_sql <- function(path, sql_list, wait_unlock = TRUE) {
 
   connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
+  sql_list <- stringr::str_replace_all(sql_list, "([^'])'([^'])", "\\1''\\2")
+
   if (wait_unlock == FALSE) {
     purrr::walk(sql_list, ~ DBI::dbExecute(connection, .))
 
