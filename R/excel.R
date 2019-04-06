@@ -73,7 +73,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
       dplyr::filter(stringr::str_detect(sheet, pattern_sheet)) %>%
       dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
 
-        import(import$zip_file, import$file, pattern, "excel", ...)
+        import(import$zip_file, import$file, pattern, "excel", import$sheet, ...)
 
       }, cl = cluster))
 
@@ -85,7 +85,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
       dplyr::filter(stringr::str_detect(sheet, pattern_sheet)) %>%
       dplyr::mutate(import = lapply(split(., 1:nrow(.)), function(import) {
 
-        import(import$zip_file, import$file, pattern, "excel", ...)
+        import(import$zip_file, import$file, pattern, "excel", import$sheet, ...)
 
       }))
 
