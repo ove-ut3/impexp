@@ -65,12 +65,14 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
     cluster <- NULL
   }
 
+  excel_import_path <- files %>%
+    dplyr::mutate(sheet = purrr::map(file, readxl::excel_sheets)) %>%
+    tidyr::unnest() %>%
+    dplyr::filter(stringr::str_detect(sheet, pattern_sheet))
+
   if (progress_bar == TRUE | parallel == TRUE) {
 
-    excel_import_path <- files %>%
-      dplyr::mutate(sheet = purrr::map(file, readxl::excel_sheets)) %>%
-      tidyr::unnest() %>%
-      dplyr::filter(stringr::str_detect(sheet, pattern_sheet)) %>%
+    excel_import_path <- excel_import_path %>%
       dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
 
         import(import$zip_file, import$file, "excel", import$sheet, ...)
@@ -79,10 +81,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
 
   } else {
 
-    excel_import_path <- files %>%
-      dplyr::mutate(sheet = purrr::map(file, readxl::excel_sheets)) %>%
-      tidyr::unnest() %>%
-      dplyr::filter(stringr::str_detect(sheet, pattern_sheet)) %>%
+    excel_import_path <- excel_import_path %>%
       dplyr::mutate(import = lapply(split(., 1:nrow(.)), function(import) {
 
         import(import$zip_file, import$file, "excel", import$sheet, ...)
