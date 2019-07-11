@@ -78,7 +78,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
   excel_import_path <- files %>%
     dplyr::mutate(sheet = purrr::map(file, readxl::excel_sheets)) %>%
     tidyr::unnest() %>%
-    dplyr::filter(stringr::str_detect(sheet, pattern_sheet))
+    dplyr::filter(stringr::str_detect(.data$sheet, pattern_sheet))
 
   if (progress_bar == TRUE | parallel == TRUE) {
 

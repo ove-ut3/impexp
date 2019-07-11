@@ -22,23 +22,23 @@ excel_sheet <- function(workbook, data, sheet, footer = NULL, n_cols_rowname = 0
 
   if (!is.null(data[["sous_titre_"]])) {
     line_subtitle <- which(data$sous_titre_ == "O")
-    data <- dplyr::select(data, -sous_titre_)
+    data <- dplyr::select(data, -.data$sous_titre_)
   }
 
   if (!is.null(data[["indentation_"]])) {
     data <- data %>%
-      dplyr::mutate(lib = paste0(purrr::map_chr(indentation_, ~ paste0(rep("    ", . - 1), collapse = "")), lib)) %>%
-      dplyr::select(-indentation_)
+      dplyr::mutate(lib = paste0(purrr::map_chr(.data$indentation_, ~ paste0(rep("    ", . - 1), collapse = "")), .data$lib)) %>%
+      dplyr::select(-.data$indentation_)
   }
 
   if (!is.null(data[["dont_"]])) {
     line_subtotal <- which(data$dont_ == "O")
-    data <- dplyr::select(data, -dont_)
+    data <- dplyr::select(data, -.data$dont_)
   }
 
   if (!is.null(data[["dont_derniere_ligne_"]])) {
     line_subtotal_last <- which(data$dont_derniere_ligne_ == "O")
-    data <- dplyr::select(data, -dont_derniere_ligne_)
+    data <- dplyr::select(data, -.data$dont_derniere_ligne_)
   }
 
   style_figures <- openxlsx::createStyle(halign = "right")
@@ -202,14 +202,14 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
     dplyr::mutate(id_zip = dplyr::row_number() %>% as.character())
 
   zip_files <- purrr::map_df(zip_files$zip_file, utils::unzip, list = TRUE, .id = "id_zip") %>%
-    dplyr::select(id_zip, file = Name) %>%
+    dplyr::select(.data$id_zip, file = .data$Name) %>%
     dplyr::filter(stringr::str_detect(file, pattern)) %>%
     dplyr::inner_join(zip_files, ., by = "id_zip") %>%
-    dplyr::mutate(zip_file = purrr::map_chr(zip_file, tools::file_path_as_absolute),
-                  exdir = stringr::str_match(zip_file, "(.+)/")[, 2],
-                  file = paste0(exdir, "/", file) %>%
+    dplyr::mutate(zip_file = purrr::map_chr(.data$zip_file, tools::file_path_as_absolute),
+                  exdir = stringr::str_match(.data$zip_file, "(.+)/")[, 2],
+                  file = paste0(.data$exdir, "/", file) %>%
                     iconv(from = "UTF-8")) %>%
-    dplyr::select(-id_zip, -exdir)
+    dplyr::select(-.data$id_zip, -.data$exdir)
 
   if (files == TRUE) {
     return(zip_files)

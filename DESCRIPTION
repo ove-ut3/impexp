@@ -19,6 +19,7 @@ Imports:
     odbc,
     purrr,
     readxl,
+    rlang,
     RSQLite,
     stringr,
     tidyr,
