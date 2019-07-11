@@ -6,10 +6,10 @@
 #' @return A character vector containing table names.
 #'
 #' @examples
-#' impexp::access_tables(path = paste0(find.package("impexp"), "/extdata/impexp.accdb"))
+#' impexp::access_list_tables(path = paste0(find.package("impexp"), "/extdata/impexp.accdb))
 #'
 #' @export
-access_tables <- function(path, sys_tables = FALSE){
+access_list_tables <- function(path, sys_tables = FALSE){
 
   connection <- access_connect(path)
 
