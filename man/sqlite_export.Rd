@@ -9,11 +9,11 @@ sqlite_export(path, table, table_name = NULL, ...)
 \arguments{
 \item{path}{SQLite database path.}
 
+\item{table}{Data frame to export, unquoted.}
+
 \item{table_name}{Optional name of the table to export as a character. By default, the name of sqlite database is used.}
 
 \item{...}{Additional arguments to \code{DBI::dbWriteTable}.}
-
-\item{data}{Data frame to export, unquoted.}
 }
 \description{
 Export a table to a SQLite database.

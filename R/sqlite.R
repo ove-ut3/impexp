@@ -69,7 +69,7 @@ sqlite_import <- function(path, table = NULL) {
 #' Export a table to a SQLite database.
 #'
 #' @param path SQLite database path.
-#' @param data Data frame to export, unquoted.
+#' @param table Data frame to export, unquoted.
 #' @param table_name Optional name of the table to export as a character. By default, the name of sqlite database is used.
 #' @param ... Additional arguments to \code{DBI::dbWriteTable}.
 #'
