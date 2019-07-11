@@ -221,7 +221,7 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
       zip_files <- dplyr::filter(zip_files, dplyr::row_number() <= n_files)
     } else if (n_files < 0) {
       zip_files <- zip_files %>%
-        dplyr::filter(dplyr::row_number() > n() + n_files)
+        dplyr::filter(dplyr::row_number() > dplyr::n() + n_files)
     }
 
   }

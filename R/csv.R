@@ -40,7 +40,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
     if (n_csv > 0) {
       files <- dplyr::filter(files, dplyr::row_number() <= n_csv)
     } else if (n_csv < 0) {
-      files <- dplyr::filter(files, dplyr::row_number() > n() + n_csv)
+      files <- dplyr::filter(files, dplyr::row_number() > dplyr::n() + n_csv)
     }
 
   }
