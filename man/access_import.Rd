@@ -18,7 +18,6 @@ A data frame.
 Import a Microsoft Access database table.
 }
 \examples{
-impexp::access_import("Table_impexp",
-  path = paste0(find.package("impexp"), "/extdata/impexp.accdb"))
+impexp::access_import("Table_impexp", system.file("extdata/impexp.accdb", package = "impexp"))
 
 }

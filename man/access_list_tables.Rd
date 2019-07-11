@@ -18,9 +18,6 @@ A character vector containing table names.
 List tables within a Microsoft Access.
 }
 \examples{
-
-\dontrun{
 impexp::access_list_tables(system.file("extdata/impexp.accdb", package = "impexp"))
-}
 
 }

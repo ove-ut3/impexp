@@ -7,8 +7,8 @@
 #' Otherwise, only the object specified is loaded.
 #'
 #' @examples
-#' impexp::r_import(paste0(find.package("impexp"), "/extdata/impexp.RData"))
-#' impexp::r_import(paste0(find.package("impexp"), "/extdata/impexp.RData"), "data")
+#' impexp::r_import(system.file("extdata/impexp.RData", package = "impexp"))
+#' impexp::r_import(system.file("extdata/impexp.RData", package = "impexp"), "data")
 #'
 #' @export
 r_import <- function(r_data, object = NULL){
