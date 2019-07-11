@@ -32,8 +32,18 @@ A data frame with a column-list "import" containing all tibbles.
 Import Microsoft Excel files located in a path.
 }
 \examples{
-impexp::excel_import_path(system.file("extdata", package = "impexp"), pattern_sheet = "impexp")
-impexp::excel_import_path(system.file("extdata", package = "impexp"), pattern_sheet = "impexp", skip = 1)
-impexp::excel_import_path(system.file("extdata", package = "impexp"), pattern_sheet = "impexp", zip = TRUE)
+impexp::excel_import_path(
+  system.file("extdata", package = "impexp"),
+  pattern_sheet = "impexp"
+)
+
+impexp::excel_import_path(
+  system.file("extdata", package = "impexp"),
+  pattern_sheet = "impexp", skip = 1
+)
+impexp::excel_import_path(
+  system.file("extdata", package = "impexp"),
+  pattern_sheet = "impexp", zip = TRUE
+)
 
 }

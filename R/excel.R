@@ -12,9 +12,19 @@
 #' @return A data frame with a column-list "import" containing all tibbles.
 #'
 #' @examples
-#' impexp::excel_import_path(system.file("extdata", package = "impexp"), pattern_sheet = "impexp")
-#' impexp::excel_import_path(system.file("extdata", package = "impexp"), pattern_sheet = "impexp", skip = 1)
-#' impexp::excel_import_path(system.file("extdata", package = "impexp"), pattern_sheet = "impexp", zip = TRUE)
+#' impexp::excel_import_path(
+#'   system.file("extdata", package = "impexp"),
+#'   pattern_sheet = "impexp"
+#' )
+#'
+#' impexp::excel_import_path(
+#'   system.file("extdata", package = "impexp"),
+#'   pattern_sheet = "impexp", skip = 1
+#' )
+#' impexp::excel_import_path(
+#'   system.file("extdata", package = "impexp"),
+#'   pattern_sheet = "impexp", zip = TRUE
+#' )
 #'
 #' @export
 excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet = ".", parallel = FALSE, zip = FALSE, progress_bar = FALSE, message = FALSE, ...) {
