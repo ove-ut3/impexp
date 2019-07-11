@@ -26,5 +26,4 @@ Imports:
 Suggests:
     openxlsx,
     parallel,
-    pbapply,
-    RODBC
+    pbapply
