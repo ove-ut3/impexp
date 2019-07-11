@@ -1,6 +1,6 @@
 #' Import an objet from a R data file.
 #'
-#' @param r_file R data file path.
+#' @param r_data R data file path.
 #' @param object Object name to load.
 #'
 #' @return If parameter \code{object} stays \code{NULL} then all objects of the R data file loaded in a named list.\cr

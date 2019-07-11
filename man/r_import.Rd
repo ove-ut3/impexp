@@ -7,9 +7,9 @@
 r_import(r_data, object = NULL)
 }
 \arguments{
-\item{object}{Object name to load.}
+\item{r_data}{R data file path.}
 
-\item{r_file}{R data file path.}
+\item{object}{Object name to load.}
 }
 \value{
 If parameter \code{object} stays \code{NULL} then all objects of the R data file loaded in a named list.\cr
