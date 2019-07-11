@@ -86,7 +86,7 @@ excel_sheet <- function(workbook, data, sheet, footer = NULL, n_cols_rowname = 0
       style <- style_title1
 
       if (line_title == 1) {
-        col_border <- purrr::map_int(merge, tail, 1)
+        col_border <- purrr::map_int(merge, utils::tail, 1)
       }
 
     } else {
@@ -168,7 +168,7 @@ zip_extract <- function(zip_file, pattern = NULL, exdir = NULL, remove_zip = FAL
     stop("The zip file \"", zip_file,"\" does not exist", call. = FALSE)
   }
 
-  files <- unzip(zip_file, list = TRUE)[["Name"]]
+  files <- utils::unzip(zip_file, list = TRUE)[["Name"]]
 
   if (!is.null(pattern)) files <- files[stringr::str_detect(files, pattern)]
 
@@ -176,7 +176,7 @@ zip_extract <- function(zip_file, pattern = NULL, exdir = NULL, remove_zip = FAL
     exdir <- stringr::str_match(zip_file, "(.+)/")[, 2]
   }
 
-  unzip(zip_file, files, exdir = exdir)
+  utils::unzip(zip_file, files, exdir = exdir)
 
   if (remove_zip == TRUE) {
     file.remove(zip_file) %>%
@@ -201,7 +201,7 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
   zip_files <- zip_files %>%
     dplyr::mutate(id_zip = dplyr::row_number() %>% as.character())
 
-  zip_files <- purrr::map_df(zip_files$zip_file, unzip, list = TRUE, .id = "id_zip") %>%
+  zip_files <- purrr::map_df(zip_files$zip_file, utils::unzip, list = TRUE, .id = "id_zip") %>%
     dplyr::select(id_zip, file = Name) %>%
     dplyr::filter(stringr::str_detect(file, pattern)) %>%
     dplyr::inner_join(zip_files, ., by = "id_zip") %>%

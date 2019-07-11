@@ -22,7 +22,8 @@ Imports:
     RSQLite,
     stringr,
     tidyr,
-    tools
+    tools,
+    utils
 Suggests:
     openxlsx,
     parallel,

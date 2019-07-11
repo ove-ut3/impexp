@@ -51,7 +51,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
     return(files)
   }
 
-  if (progress_bar == TRUE & !"pbapply" %in% installed.packages()[, 1]) {
+  if (progress_bar == TRUE & !"pbapply" %in% utils::installed.packages()[, 1]) {
     stop("pbapply package needs to be installed", call. = FALSE)
   }
 
@@ -59,7 +59,7 @@ csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, 
     message(length(unique(files$file))," csv file(s) imported...")
   }
 
-  if (parallel == TRUE & !all(c("parallel", "pbapply") %in% installed.packages()[, 1])) {
+  if (parallel == TRUE & !all(c("parallel", "pbapply") %in% utils::installed.packages()[, 1])) {
     stop("parallel and pbapply packages need to be installed", call. = FALSE)
   }
 

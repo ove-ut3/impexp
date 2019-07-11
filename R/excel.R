@@ -57,7 +57,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
     return(files)
   }
 
-  if (progress_bar == TRUE & !"pbapply" %in% installed.packages()[, 1]) {
+  if (progress_bar == TRUE & !"pbapply" %in% utils::installed.packages()[, 1]) {
     stop("pbapply package needs to be installed", call. = FALSE)
   }
 
@@ -65,7 +65,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
     message(length(unique(files$file))," excel file(s) imported...")
   }
 
-  if (parallel == TRUE & !all(c("parallel", "pbapply") %in% installed.packages()[, 1])) {
+  if (parallel == TRUE & !all(c("parallel", "pbapply") %in% utils::installed.packages()[, 1])) {
     stop("parallel and pbapply packages need to be installed", call. = FALSE)
   }
 
@@ -119,7 +119,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
 #' @export
 excel_export <- function(data, path, create_dir = FALSE, sheet = NULL, footer = NULL, n_cols_rowname = 0) {
 
-  if (!"openxlsx" %in% installed.packages()[, 1]) {
+  if (!"openxlsx" %in% utils::installed.packages()[, 1]) {
     stop("openxlsx package needs to be installed", call. = FALSE)
   }
 
