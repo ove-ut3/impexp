@@ -21,6 +21,7 @@
 #'   system.file("extdata", package = "impexp"),
 #'   pattern_sheet = "impexp", skip = 1
 #' )
+#'
 #' impexp::excel_import_path(
 #'   system.file("extdata", package = "impexp"),
 #'   pattern_sheet = "impexp", zip = TRUE
@@ -37,7 +38,7 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
                            stringr::str_subset(pattern) %>%
                            iconv(from = "UTF-8") %>%
                            purrr::map_chr(tools::file_path_as_absolute),
-                         zip_files = NA_character_)
+                         zip_file = NA_character_)
 
   # If zip files are included
   if (zip == TRUE) {
@@ -75,26 +76,21 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
     cluster <- NULL
   }
 
-  excel_import_path <- files %>%
-    dplyr::mutate(sheet = purrr::map(file, readxl::excel_sheets)) %>%
-    tidyr::unnest() %>%
-    dplyr::filter(stringr::str_detect(.data$sheet, pattern_sheet))
-
   if (progress_bar == TRUE | parallel == TRUE) {
 
-    excel_import_path <- excel_import_path %>%
+    excel_import_path <- files %>%
       dplyr::mutate(import = pbapply::pblapply(split(., 1:nrow(.)), function(import) {
 
-        import(import$zip_file, import$file, "excel", import$sheet, ...)
+        import(import$zip_file, import$file, "excel", pattern_sheet, ...)
 
       }, cl = cluster))
 
   } else {
 
-    excel_import_path <- excel_import_path %>%
+    excel_import_path <- files %>%
       dplyr::mutate(import = lapply(split(., 1:nrow(.)), function(import) {
 
-        import(import$zip_file, import$file, "excel", import$sheet, ...)
+        import(import$zip_file, import$file, "excel", pattern_sheet, ...)
 
       }))
 
@@ -103,6 +99,10 @@ excel_import_path <- function(path = ".", pattern = "\\.xlsx?$", pattern_sheet =
   if (parallel == TRUE) {
     parallel::stopCluster(cluster)
   }
+
+  excel_import_path <- excel_import_path %>%
+    dplyr::pull(import) %>%
+    dplyr::bind_rows()
 
   return(excel_import_path)
 }

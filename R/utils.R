@@ -265,7 +265,7 @@ zip_extract_path <- function(path, pattern, pattern_zip = "\\.zip$", n_files = I
   return(zip_files)
 }
 
-import <- function(zip_file, file, format, sheet = NULL, ...) {
+import <- function(zip_file, file, format, pattern_sheet, ...) {
 
   if (!is.na(zip_file)) {
     zip_extract(zip_file, pattern = stringr::str_extract(file, "[^/]+?$"))
@@ -273,13 +273,17 @@ import <- function(zip_file, file, format, sheet = NULL, ...) {
 
   if (format == "csv") {
 
-    data <- data.table::fread(file, showProgress = FALSE, ...) %>%
+    data <- data.table::fread(file = file, showProgress = FALSE, ...) %>%
       dplyr::as_tibble() %>%
       dplyr::mutate_if(is.character, dplyr::na_if, "")
 
   } else if (format == "excel") {
 
-    data <- readxl::read_excel(file, sheet, ...)
+    data <- dplyr::tibble(zip_file, file) %>%
+      dplyr::mutate(sheet = purrr::map(file, readxl::excel_sheets)) %>%
+      tidyr::unnest() %>%
+      dplyr::filter(stringr::str_detect(.data$sheet, pattern_sheet)) %>%
+      dplyr::mutate(import = purrr::map(file, readxl::read_excel, .data$sheet, ...))
 
   }
 
