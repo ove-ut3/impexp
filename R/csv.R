@@ -1,7 +1,7 @@
 #' Import csv files located in a path.
 #'
-#' @param pattern A regular expression. Only file names matching the regular expression will be imported.
 #' @param path Path where the csv files are located (recursive).
+#' @param pattern A regular expression. Only file names matching the regular expression will be imported.
 #' @param n_csv Number of csv files to extract. A negative value will starts from the bottom of the files list.
 #' @param parallel If \code{TRUE} then csv files are imported using all CPU cores (using parallel & pbapply packages).
 #' @param zip If \code{TRUE} then csv files within zip files are also imported.
@@ -13,7 +13,7 @@
 #' @return A data frame with a column-list "import" containing all tibbles.
 #'
 #' @export
-csv_import_path <- function(pattern, path = ".", n_csv = Inf, parallel = FALSE, zip = FALSE, pattern_zip = "\\.zip$", progress_bar = FALSE, message = FALSE, ...) {
+csv_import_path <- function(path = ".", pattern = "\\.csv$", n_csv = Inf, parallel = FALSE, zip = FALSE, pattern_zip = "\\.zip$", progress_bar = FALSE, message = FALSE, ...) {
 
   if (!dir.exists(path)) {
     stop("The path \"", path,"\" does not exist", call. = FALSE)
