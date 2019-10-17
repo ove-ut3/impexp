@@ -4,12 +4,14 @@
 \alias{sqlite_import}
 \title{Import a SQLite database table.}
 \usage{
-sqlite_import(path, table = NULL)
+sqlite_import(path, table = NULL, ...)
 }
 \arguments{
 \item{path}{SQLite database path.}
 
 \item{table}{Name of the table to import as a character.}
+
+\item{\dots}{Additional arguments passed to \code{DBI::dbReadTable}.}
 }
 \value{
 A tibble.
