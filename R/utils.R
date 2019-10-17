@@ -281,7 +281,7 @@ import <- function(zip_file, file, format, pattern_sheet, ...) {
 
     data <- dplyr::tibble(zip_file, file) %>%
       dplyr::mutate(sheet = purrr::map(file, readxl::excel_sheets)) %>%
-      tidyr::unnest() %>%
+      tidyr::unnest_legacy() %>%
       dplyr::filter(stringr::str_detect(.data$sheet, pattern_sheet)) %>%
       dplyr::mutate(import = purrr::map(file, readxl::read_excel, .data$sheet, ...))
 
