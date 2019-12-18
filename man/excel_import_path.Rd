@@ -4,9 +4,16 @@
 \alias{excel_import_path}
 \title{Import Microsoft Excel files located in a path.}
 \usage{
-excel_import_path(path = ".", pattern = "\\\\.xlsx?$",
-  pattern_sheet = ".", parallel = FALSE, zip = FALSE,
-  progress_bar = FALSE, message = FALSE, ...)
+excel_import_path(
+  path = ".",
+  pattern = "\\\\.xlsx?$",
+  pattern_sheet = ".",
+  parallel = FALSE,
+  zip = FALSE,
+  progress_bar = FALSE,
+  message = FALSE,
+  ...
+)
 }
 \arguments{
 \item{path}{Path where the excel files are located (recursive).}

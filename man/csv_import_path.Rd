@@ -4,9 +4,17 @@
 \alias{csv_import_path}
 \title{Import csv files located in a path.}
 \usage{
-csv_import_path(path = ".", pattern = "\\\\.csv$", n_csv = Inf,
-  parallel = FALSE, zip = FALSE, pattern_zip = "\\\\.zip$",
-  progress_bar = FALSE, message = FALSE, ...)
+csv_import_path(
+  path = ".",
+  pattern = "\\\\.csv$",
+  n_csv = Inf,
+  parallel = FALSE,
+  zip = FALSE,
+  pattern_zip = "\\\\.zip$",
+  progress_bar = FALSE,
+  message = FALSE,
+  ...
+)
 }
 \arguments{
 \item{path}{Path where the csv files are located (recursive).}

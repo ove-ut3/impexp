@@ -4,8 +4,14 @@
 \alias{excel_export}
 \title{Export a Microsoft Excel file (using openxlsx).}
 \usage{
-excel_export(data, path, create_dir = FALSE, sheet = NULL,
-  footer = NULL, n_cols_rowname = 0)
+excel_export(
+  data,
+  path,
+  create_dir = FALSE,
+  sheet = NULL,
+  footer = NULL,
+  n_cols_rowname = 0
+)
 }
 \arguments{
 \item{data}{A data frame or a named list of data frames that will be sheets in the Excel file.}
