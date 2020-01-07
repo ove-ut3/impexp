@@ -324,6 +324,8 @@ sqlite_wait_unlock <- function(f, connection, ...) {
 
     }
 
+  } else {
+    return(execute_sql$result)
   }
 
 }
