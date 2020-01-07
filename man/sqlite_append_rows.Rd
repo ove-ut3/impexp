@@ -4,7 +4,7 @@
 \alias{sqlite_append_rows}
 \title{Append rows to a table in a SQLite database.}
 \usage{
-sqlite_append_rows(path, data, table_name = NULL)
+sqlite_append_rows(path, data, table_name = NULL, wait_unlock = FALSE)
 }
 \arguments{
 \item{path}{SQLite database path.}
@@ -12,6 +12,8 @@ sqlite_append_rows(path, data, table_name = NULL)
 \item{data}{Data frame to append, unquoted.}
 
 \item{table_name}{Table name in SQLite database to append data.}
+
+\item{wait_unlock}{Wait until SQLite database is unlocked.}
 }
 \description{
 Append rows to a table in a SQLite database.

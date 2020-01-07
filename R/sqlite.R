@@ -35,12 +35,13 @@ sqlite_list_tables <- function(path) {
 #'
 #' @param path SQLite database path.
 #' @param table Name of the table to import as a character.
+#' @param wait_unlock Wait until SQLite database is unlocked.
 #' @param \dots Additional arguments passed to \code{DBI::dbReadTable}.
 #'
 #' @return A tibble.
 #'
 #' @export
-sqlite_import <- function(path, table = NULL, ...) {
+sqlite_import <- function(path, table = NULL, wait_unlock = FALSE, ...) {
 
   if (!file.exists(path)) {
     stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
@@ -59,8 +60,13 @@ sqlite_import <- function(path, table = NULL, ...) {
     stop("Table \"", table,"\" does not exist in \"", path,"\".", call. = FALSE)
   }
 
-  table <- DBI::dbReadTable(connection, table, ...) %>%
-    dplyr::as_tibble()
+  if (wait_unlock == FALSE) {
+    table <- DBI::dbReadTable(connection, table, ...)
+  } else {
+    table <- sqlite_wait_unlock(DBI::dbReadTable, connection, table, ...)
+  }
+
+  table <- dplyr::as_tibble(table)
 
   DBI::dbDisconnect(connection)
 
@@ -72,10 +78,11 @@ sqlite_import <- function(path, table = NULL, ...) {
 #' @param path SQLite database path.
 #' @param table Data frame to export, unquoted.
 #' @param table_name Optional name of the table to export as a character. By default, the name of sqlite database is used.
-#' @param ... Additional arguments to \code{DBI::dbWriteTable}.
+#' @param wait_unlock Wait until SQLite database is unlocked.
+#' @param \dots Additional arguments to \code{DBI::dbWriteTable}.
 #'
 #' @export
-sqlite_export <- function(path, table, table_name = NULL, ...) {
+sqlite_export <- function(path, table, table_name = NULL, wait_unlock = FALSE, ...) {
 
   if (!file.exists(path)) {
     stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
@@ -89,7 +96,11 @@ sqlite_export <- function(path, table, table_name = NULL, ...) {
       tools::file_path_sans_ext()
   }
 
-  DBI::dbWriteTable(connection, name = table_name, value = table, row.names = FALSE, ...)
+  if (wait_unlock == FALSE) {
+    DBI::dbWriteTable(connection, name = table_name, value = table, row.names = FALSE, ...)
+  } else {
+    sqlite_wait_unlock(DBI::dbWriteTable, connection, table_name, data, row.names = FALSE, ...)
+  }
 
   DBI::dbDisconnect(connection)
 }
@@ -99,9 +110,10 @@ sqlite_export <- function(path, table, table_name = NULL, ...) {
 #' @param path SQLite database path.
 #' @param data Data frame to append, unquoted.
 #' @param table_name Table name in SQLite database to append data.
+#' @param wait_unlock Wait until SQLite database is unlocked.
 #'
 #' @export
-sqlite_append_rows <- function(path, data, table_name = NULL) {
+sqlite_append_rows <- function(path, data, table_name = NULL, wait_unlock = FALSE) {
 
   if (!file.exists(path)) {
     stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
@@ -119,7 +131,11 @@ sqlite_append_rows <- function(path, data, table_name = NULL) {
 
   connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-  DBI::dbWriteTable(connection, table_name, data, append = TRUE, row.names = FALSE)
+  if (wait_unlock == FALSE) {
+    DBI::dbWriteTable(connection, table_name, data, append = TRUE, row.names = FALSE)
+  } else {
+    sqlite_wait_unlock(DBI::dbWriteTable, connection, table_name, data, append = TRUE, row.names = FALSE)
+  }
 
   DBI::dbDisconnect(connection)
 }
@@ -127,11 +143,11 @@ sqlite_append_rows <- function(path, data, table_name = NULL) {
 #' Execute SQL queries in a SQLite database.
 #'
 #' @param path SQLite database path.
-#' @param sql_list A vector of SQL queries.
+#' @param sql A SQL query.
 #' @param wait_unlock Wait until SQLite database is unlocked.
 #'
 #' @export
-sqlite_execute_sql <- function(path, sql_list, wait_unlock = TRUE) {
+sqlite_execute_sql <- function(path, sql, wait_unlock = FALSE) {
 
   if (!file.exists(path)) {
     stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
@@ -139,26 +155,12 @@ sqlite_execute_sql <- function(path, sql_list, wait_unlock = TRUE) {
 
   connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-  sql_list <- stringr::str_replace_all(sql_list, "([^'])'([^'])", "\\1''\\2")
+  sql <- stringr::str_replace_all(sql, "([^'])'([^'])", "\\1''\\2")
 
   if (wait_unlock == FALSE) {
-    purrr::walk(sql_list, ~ DBI::dbExecute(connection, .))
-
+    DBI::dbExecute(connection, sql)
   } else {
-    execute_sql_safe <- purrr::safely(DBI::dbExecute)
-
-    execute_sql <- purrr::map(sql_list, ~ execute_sql_safe(connection, .))
-
-    temoin_erreur <- purrr::map_lgl(execute_sql, ~ !is.null(.$error))
-
-    while(any(temoin_erreur)) {
-
-      sql_list <- sql_list[temoin_erreur]
-
-      execute_sql <- purrr::map(sql_list, ~ execute_sql_safe(connection, .))
-
-      temoin_erreur <- purrr::map_lgl(execute_sql, ~ !is.null(.$error))
-    }
+    sqlite_wait_unlock(DBI::dbExecute, connection, sql)
   }
 
   DBI::dbDisconnect(connection)

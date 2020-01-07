@@ -294,3 +294,36 @@ import <- function(zip_file, file, format, pattern_sheet, ...) {
   data
 
 }
+
+sqlite_wait_unlock <- function(f, connection, ...) {
+
+  execute_sql_safe <- purrr::safely(f)
+
+  execute_sql <- execute_sql_safe(connection, ...)
+
+  if (!is.null(execute_sql$error)) {
+
+    error_message <- execute_sql$error
+
+    if (stringr::str_detect(error_message, "database is locked", negate = TRUE)) {
+      DBI::dbDisconnect(connection)
+      stop(error_message, call. = FALSE)
+    }
+
+    while(stringr::str_detect(error_message, "database is locked")) {
+
+      Sys.sleep(1)
+
+      execute_sql <- execute_sql_safe(connection, ...)
+
+      if (!is.null(execute_sql$error)) {
+        error_message <- execute_sql$error
+      } else {
+        error_message <- "ok"
+      }
+
+    }
+
+  }
+
+}

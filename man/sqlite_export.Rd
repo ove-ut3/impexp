@@ -4,7 +4,7 @@
 \alias{sqlite_export}
 \title{Export a table to a SQLite database.}
 \usage{
-sqlite_export(path, table, table_name = NULL, ...)
+sqlite_export(path, table, table_name = NULL, wait_unlock = FALSE, ...)
 }
 \arguments{
 \item{path}{SQLite database path.}
@@ -13,7 +13,9 @@ sqlite_export(path, table, table_name = NULL, ...)
 
 \item{table_name}{Optional name of the table to export as a character. By default, the name of sqlite database is used.}
 
-\item{...}{Additional arguments to \code{DBI::dbWriteTable}.}
+\item{wait_unlock}{Wait until SQLite database is unlocked.}
+
+\item{\dots}{Additional arguments to \code{DBI::dbWriteTable}.}
 }
 \description{
 Export a table to a SQLite database.
