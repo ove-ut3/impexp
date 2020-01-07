@@ -4,7 +4,7 @@
 \alias{sqlite_export}
 \title{Export a table to a SQLite database.}
 \usage{
-sqlite_export(path, table, table_name = NULL, wait_unlock = FALSE, ...)
+sqlite_export(path, table, table_name = NULL, wait_unlock = TRUE, ...)
 }
 \arguments{
 \item{path}{SQLite database path.}

@@ -4,7 +4,7 @@
 \alias{sqlite_import}
 \title{Import a SQLite database table.}
 \usage{
-sqlite_import(path, table = NULL, wait_unlock = FALSE, ...)
+sqlite_import(path, table = NULL, wait_unlock = TRUE, ...)
 }
 \arguments{
 \item{path}{SQLite database path.}

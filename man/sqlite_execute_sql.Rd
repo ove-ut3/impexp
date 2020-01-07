@@ -4,7 +4,7 @@
 \alias{sqlite_execute_sql}
 \title{Execute SQL queries in a SQLite database.}
 \usage{
-sqlite_execute_sql(path, sql, wait_unlock = FALSE)
+sqlite_execute_sql(path, sql, wait_unlock = TRUE)
 }
 \arguments{
 \item{path}{SQLite database path.}

@@ -4,7 +4,7 @@
 \alias{sqlite_append_rows}
 \title{Append rows to a table in a SQLite database.}
 \usage{
-sqlite_append_rows(path, data, table_name = NULL, wait_unlock = FALSE)
+sqlite_append_rows(path, data, table_name = NULL, wait_unlock = TRUE)
 }
 \arguments{
 \item{path}{SQLite database path.}

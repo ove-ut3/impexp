@@ -41,7 +41,7 @@ sqlite_list_tables <- function(path) {
 #' @return A tibble.
 #'
 #' @export
-sqlite_import <- function(path, table = NULL, wait_unlock = FALSE, ...) {
+sqlite_import <- function(path, table = NULL, wait_unlock = TRUE, ...) {
 
   if (!file.exists(path)) {
     stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
@@ -82,7 +82,7 @@ sqlite_import <- function(path, table = NULL, wait_unlock = FALSE, ...) {
 #' @param \dots Additional arguments to \code{DBI::dbWriteTable}.
 #'
 #' @export
-sqlite_export <- function(path, table, table_name = NULL, wait_unlock = FALSE, ...) {
+sqlite_export <- function(path, table, table_name = NULL, wait_unlock = TRUE, ...) {
 
   if (!file.exists(path)) {
     stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
@@ -113,7 +113,7 @@ sqlite_export <- function(path, table, table_name = NULL, wait_unlock = FALSE, .
 #' @param wait_unlock Wait until SQLite database is unlocked.
 #'
 #' @export
-sqlite_append_rows <- function(path, data, table_name = NULL, wait_unlock = FALSE) {
+sqlite_append_rows <- function(path, data, table_name = NULL, wait_unlock = TRUE) {
 
   if (!file.exists(path)) {
     stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
@@ -147,7 +147,7 @@ sqlite_append_rows <- function(path, data, table_name = NULL, wait_unlock = FALS
 #' @param wait_unlock Wait until SQLite database is unlocked.
 #'
 #' @export
-sqlite_execute_sql <- function(path, sql, wait_unlock = FALSE) {
+sqlite_execute_sql <- function(path, sql, wait_unlock = TRUE) {
 
   if (!file.exists(path)) {
     stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
