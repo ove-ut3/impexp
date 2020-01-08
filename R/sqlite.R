@@ -76,13 +76,13 @@ sqlite_import <- function(path, table = NULL, wait_unlock = TRUE, ...) {
 #' Export a table to a SQLite database.
 #'
 #' @param path SQLite database path.
-#' @param table Data frame to export, unquoted.
+#' @param data Data frame to export, unquoted.
 #' @param table_name Optional name of the table to export as a character. By default, the name of sqlite database is used.
 #' @param wait_unlock Wait until SQLite database is unlocked.
 #' @param \dots Additional arguments to \code{DBI::dbWriteTable}.
 #'
 #' @export
-sqlite_export <- function(path, table, table_name = NULL, wait_unlock = TRUE, ...) {
+sqlite_export <- function(path, data, table_name = NULL, wait_unlock = TRUE, ...) {
 
   if (!file.exists(path)) {
     stop("SQLite database \"", path,"\" does not exist.", call. = FALSE)
@@ -97,7 +97,7 @@ sqlite_export <- function(path, table, table_name = NULL, wait_unlock = TRUE, ..
   }
 
   if (wait_unlock == FALSE) {
-    DBI::dbWriteTable(connection, name = table_name, value = table, row.names = FALSE, ...)
+    DBI::dbWriteTable(connection, name = table_name, value = data, row.names = FALSE, ...)
   } else {
     sqlite_wait_unlock(DBI::dbWriteTable, connection, table_name, data, row.names = FALSE, ...)
   }

@@ -4,12 +4,12 @@
 \alias{sqlite_export}
 \title{Export a table to a SQLite database.}
 \usage{
-sqlite_export(path, table, table_name = NULL, wait_unlock = TRUE, ...)
+sqlite_export(path, data, table_name = NULL, wait_unlock = TRUE, ...)
 }
 \arguments{
 \item{path}{SQLite database path.}
 
-\item{table}{Data frame to export, unquoted.}
+\item{data}{Data frame to export, unquoted.}
 
 \item{table_name}{Optional name of the table to export as a character. By default, the name of sqlite database is used.}
 
