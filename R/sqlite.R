@@ -63,7 +63,7 @@ sqlite_import <- function(path, table = NULL, wait_unlock = TRUE, ...) {
   if (wait_unlock == FALSE) {
     table <- DBI::dbReadTable(connection, table, ...)
   } else {
-    table <- sqlite_wait_unlock(DBI::dbReadTable, connection, table, ...)
+    table <- sqlite_wait_unlock(DBI::dbReadTable, connection, name = table, ...)
   }
 
   table <- dplyr::as_tibble(table)
@@ -99,7 +99,7 @@ sqlite_export <- function(path, data, table_name = NULL, wait_unlock = TRUE, ...
   if (wait_unlock == FALSE) {
     DBI::dbWriteTable(connection, name = table_name, value = data, row.names = FALSE, ...)
   } else {
-    sqlite_wait_unlock(DBI::dbWriteTable, connection, table_name, data, row.names = FALSE, ...)
+    sqlite_wait_unlock(DBI::dbWriteTable, connection, name = table_name, value = data, row.names = FALSE, ...)
   }
 
   DBI::dbDisconnect(connection)
@@ -134,7 +134,7 @@ sqlite_append_rows <- function(path, data, table_name = NULL, wait_unlock = TRUE
   if (wait_unlock == FALSE) {
     DBI::dbWriteTable(connection, table_name, data, append = TRUE, row.names = FALSE)
   } else {
-    sqlite_wait_unlock(DBI::dbWriteTable, connection, table_name, data, append = TRUE, row.names = FALSE)
+    sqlite_wait_unlock(DBI::dbWriteTable, connection, name = table_name, value = data, append = TRUE, row.names = FALSE)
   }
 
   DBI::dbDisconnect(connection)
@@ -160,7 +160,7 @@ sqlite_execute_sql <- function(path, sql, wait_unlock = TRUE) {
   if (wait_unlock == FALSE) {
     DBI::dbExecute(connection, sql)
   } else {
-    sqlite_wait_unlock(DBI::dbExecute, connection, sql)
+    sqlite_wait_unlock(DBI::dbExecute, connection, statement = sql)
   }
 
   DBI::dbDisconnect(connection)
