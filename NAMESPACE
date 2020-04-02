@@ -2,9 +2,7 @@
 
 export(access_import)
 export(access_list_tables)
-export(csv_import_path)
 export(excel_export)
-export(excel_import_path)
 export(r_import)
 export(sqlite_append_rows)
 export(sqlite_create)
