@@ -14,7 +14,7 @@
 r_import <- function(r_data, object = NULL){
 
   if (!file.exists(r_data)) {
-    stop(glue::glue("File \"{r_data}\" doas not exist"), call. = FALSE)
+    stop(glue::glue("File \"{r_data}\" does not exist"), call. = FALSE)
   }
 
   env = new.env()
